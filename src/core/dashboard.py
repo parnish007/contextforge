@@ -50,9 +50,10 @@ _AGENT_REGISTRY: dict[str, dict] = {
     "GhostCoder":{"status": "offline", "emoji": "🧠", "role": "LLM Distiller"},
     "PM":              {"status": "offline", "emoji": "📋", "role": "Project Manager (Phase 2)"},
     "Researcher":      {"status": "offline", "emoji": "🔎", "role": "Web Researcher (Phase 2)"},
-    "Shadow-Reviewer": {"status": "pending", "emoji": "🔍", "role": "Auditor (Phase 2)"},
-    "Token-Gater":     {"status": "pending", "emoji": "⚡", "role": "Cost Optimizer (Phase 2)"},
-    "Historian":       {"status": "pending", "emoji": "📜", "role": "Truth Keeper (Phase 2)"},
+    "Coder":           {"status": "offline", "emoji": "⚙", "role": "Builder / RAG Executor (Phase 3)"},
+    "Shadow-Reviewer": {"status": "offline", "emoji": "🔍", "role": "Semantic Gatekeeper (Phase 4)"},
+    "Historian":       {"status": "offline", "emoji": "📜", "role": "Temporal Archivist (Phase 4)"},
+    "Token-Gater":     {"status": "pending", "emoji": "⚡", "role": "Cost Router (Phase 4)"},
     "Sync-Master":     {"status": "pending", "emoji": "🔄", "role": "CRDT Sync (Phase 3)"},
     "Architect":       {"status": "pending", "emoji": "🏛", "role": "Lead Reasoner (Phase 4)"},
 }
@@ -173,12 +174,28 @@ class OmegaDashboard:
         online = sum(1 for a in _AGENT_REGISTRY.values() if a["status"] == "online")
         total = len(_AGENT_REGISTRY)
 
+        # Pull completion % from storage if available
+        pct_str = ""
+        sprint_str = ""
+        if self._storage and self._project_id:
+            try:
+                stats = self._storage.get_task_stats(self._project_id)
+                pct_str = f"  │  Completion {stats['pct_complete']}%"
+                if stats.get("current_sprint"):
+                    sprint_str = f"  │  Sprint: {stats['current_sprint']}"
+            except Exception:
+                pass
+
         txt = Text()
-        txt.append("  Phase 1 Pipeline  ", style="bold white on dark_blue")
+        txt.append("  Phase 2 — Command Layer  ", style="bold white on dark_blue")
         txt.append("  ")
         txt.append(f"Agents {online}/{total} online", style="green" if online > 0 else "yellow")
         txt.append("  │  ")
         txt.append(f"Uptime {up_str}", style="dim")
+        if pct_str:
+            txt.append(pct_str, style="cyan")
+        if sprint_str:
+            txt.append(sprint_str, style="dim")
         txt.append("\n")
         return txt
 
@@ -304,6 +321,94 @@ class OmegaDashboard:
             padding=(0, 1),
         )
 
+    def _make_tasks_panel(self) -> "Panel":
+        """Top 3 pending tasks from the PM tasks table."""
+        tasks = self._get_pending_tasks(limit=3)
+
+        if not tasks:
+            return Panel(
+                Text("  No tasks yet — use @pm <goal> to create tasks.", style="dim"),
+                title="[bold]Active Tasks[/bold]",
+                border_style="bright_black",
+            )
+
+        table = Table(
+            show_header=True,
+            header_style="bold dim",
+            box=box.SIMPLE_HEAD,
+            expand=True,
+            padding=(0, 1),
+        )
+        table.add_column("P", width=2, style="dim")
+        table.add_column("Title", ratio=3)
+        table.add_column("Assigned", width=12, style="cyan")
+        table.add_column("Status", width=11, justify="right")
+
+        status_colors = {
+            "pending":     "yellow",
+            "in_progress": "green",
+            "done":        "bright_black",
+            "blocked":     "red",
+        }
+
+        for t in tasks:
+            st = t.get("status", "pending")
+            table.add_row(
+                str(t.get("priority", 3)),
+                (t.get("title") or "")[:45],
+                (t.get("assigned_to") or "—")[:12],
+                Text(st, style=status_colors.get(st, "dim")),
+            )
+
+        return Panel(
+            table,
+            title="[bold]Active Tasks[/bold]",
+            border_style="bright_black",
+            padding=(0, 1),
+        )
+
+    def _make_research_panel(self) -> "Panel":
+        """Last 2 research knowledge nodes written by the Researcher."""
+        nodes = self._get_recent_research(limit=2)
+
+        if not nodes:
+            return Panel(
+                Text("  No research yet — use @research <topic> to fetch.", style="dim"),
+                title="[bold]Research Feed[/bold]",
+                border_style="bright_black",
+            )
+
+        table = Table(
+            show_header=False,
+            box=box.SIMPLE,
+            expand=True,
+            padding=(0, 1),
+        )
+        table.add_column("Summary", ratio=4)
+        table.add_column("Conf", width=5, justify="right")
+        table.add_column("Saved", width=10, style="dim")
+
+        for n in nodes:
+            conf = float(n.get("confidence") or 0)
+            conf_color = "green" if conf >= 0.70 else "yellow"
+            ts_raw = n.get("created_at", "")
+            ts = ts_raw[:10] if ts_raw else "—"
+            summary = (n.get("summary") or "")[:50]
+            if len(n.get("summary", "")) > 50:
+                summary += "…"
+            table.add_row(
+                summary,
+                Text(f"{conf:.2f}", style=conf_color),
+                ts,
+            )
+
+        return Panel(
+            table,
+            title="[bold]Research Feed[/bold]",
+            border_style="bright_black",
+            padding=(0, 1),
+        )
+
     # ------------------------------------------------------------------
     # Data helpers
     # ------------------------------------------------------------------
@@ -352,19 +457,93 @@ class OmegaDashboard:
             logger.debug(f"Dashboard: could not read nodes — {exc}")
             return []
 
+    def _get_pending_tasks(self, limit: int = 3) -> list[dict]:
+        """Read pending/in_progress tasks from StorageAdapter."""
+        if self._storage and self._project_id:
+            try:
+                tasks = self._storage.list_tasks(
+                    self._project_id, status=None, limit=limit * 2
+                )
+                # Prefer in_progress first, then pending
+                ordered = (
+                    [t for t in tasks if t.get("status") == "in_progress"]
+                    + [t for t in tasks if t.get("status") == "pending"]
+                )
+                return ordered[:limit]
+            except Exception as exc:
+                logger.debug(f"Dashboard: could not read tasks — {exc}")
+        # fallback: read directly from SQLite
+        if not Path(self._db_path).exists():
+            return []
+        try:
+            conn = sqlite3.connect(self._db_path)
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                "SELECT id, title, status, priority, assigned_to FROM tasks "
+                "WHERE status IN ('pending','in_progress') "
+                + (f"AND project_id=? " if self._project_id else "")
+                + "ORDER BY priority ASC, created_at ASC LIMIT ?",
+                ([self._project_id, limit] if self._project_id else [limit]),
+            ).fetchall()
+            conn.close()
+            return [dict(r) for r in rows]
+        except Exception as exc:
+            logger.debug(f"Dashboard: could not read tasks (direct) — {exc}")
+            return []
+
+    def _get_recent_research(self, limit: int = 2) -> list[dict]:
+        """Read recent research-area nodes from SQLite."""
+        if not Path(self._db_path).exists():
+            return []
+        try:
+            conn = sqlite3.connect(self._db_path)
+            conn.row_factory = sqlite3.Row
+            query = (
+                "SELECT id, summary, confidence, created_at FROM decision_nodes "
+                "WHERE tombstone=FALSE AND area='research' "
+            )
+            params: list = []
+            if self._project_id:
+                query += "AND project_id=? "
+                params.append(self._project_id)
+            query += "ORDER BY created_at DESC LIMIT ?"
+            params.append(limit)
+            rows = conn.execute(query, params).fetchall()
+            conn.close()
+            return [dict(r) for r in rows]
+        except Exception as exc:
+            logger.debug(f"Dashboard: could not read research nodes — {exc}")
+            return []
+
     # ------------------------------------------------------------------
     # Plain-text fallback
     # ------------------------------------------------------------------
 
     def _plain_render(self) -> None:
         """Minimal plain-text dashboard for environments without rich."""
-        print("\n=== ContextForge v3.0 — Omega-Pulse ===")
+        print("\n=== ContextForge v3.0 — Omega-Pulse v2 ===")
         print(f"  Time: {datetime.utcnow().strftime('%H:%M:%S UTC')}")
+        # Completion %
+        if self._storage and self._project_id:
+            try:
+                s = self._storage.get_task_stats(self._project_id)
+                print(f"  Completion: {s['pct_complete']}%  Sprint: {s.get('current_sprint') or 'N/A'}")
+            except Exception:
+                pass
         print("\n  Agents:")
         for name, info in _AGENT_REGISTRY.items():
-            print(f"    {info['emoji']} {name:20s} {info['status']}")
+            st = info["status"]
+            print(f"    {name:20s} [{st}]")
+        tasks = self._get_pending_tasks(3)
+        print(f"\n  Active Tasks ({len(tasks)}):")
+        for t in tasks:
+            print(f"    [{t.get('status','?'):11s}] P{t.get('priority',3)} {t.get('title','')[:55]}")
+        research = self._get_recent_research(2)
+        print(f"\n  Research Feed ({len(research)}):")
+        for r in research:
+            print(f"    [{r.get('created_at','')[:10]}] {r.get('summary','')[:60]}")
         nodes = self._get_recent_nodes(5)
-        print(f"\n  Recent nodes ({len(nodes)}):")
+        print(f"\n  Recent Decision Nodes ({len(nodes)}):")
         for n in nodes:
             print(f"    [{n.get('status','?'):8s}] {n.get('summary','')[:60]}")
         print()

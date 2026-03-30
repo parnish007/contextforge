@@ -121,6 +121,26 @@ CREATE TABLE IF NOT EXISTS preference_scores (
     updated_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS historical_nodes (
+    id              TEXT PRIMARY KEY,
+    original_id     TEXT NOT NULL,
+    project_id      TEXT,
+    summary         TEXT,
+    rationale       TEXT,
+    area            TEXT,
+    confidence      REAL,
+    status          TEXT,
+    created_by_agent TEXT,
+    archived_by     TEXT DEFAULT 'Historian',
+    archived_at     TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    archive_reason  TEXT DEFAULT '',
+    original_created_at TEXT,
+    type_metadata   TEXT DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_hist_original ON historical_nodes(original_id);
+CREATE INDEX IF NOT EXISTS idx_hist_project  ON historical_nodes(project_id, area);
+
 CREATE TABLE IF NOT EXISTS tasks (
     id              TEXT PRIMARY KEY,
     project_id      TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -383,6 +403,99 @@ class StorageAdapter:
             rows = conn.execute(
                 "SELECT * FROM decision_edges WHERE source_id=? OR target_id=?",
                 (node_id, node_id),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------
+    # Historical archive (Historian agent)
+    # ------------------------------------------------------------------
+
+    def archive_node(self, node_id: str, reason: str = "", archived_by: str = "Historian") -> bool:
+        """
+        Move a decision_node to historical_nodes and tombstone the original.
+        Returns True if the node was found and archived, False otherwise.
+        """
+        with self._conn() as conn:
+            row = conn.execute(
+                "SELECT * FROM decision_nodes WHERE id=?", (node_id,)
+            ).fetchone()
+            if not row:
+                return False
+            node = dict(row)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO historical_nodes
+                    (id, original_id, project_id, summary, rationale, area,
+                     confidence, status, created_by_agent, archived_by,
+                     archived_at, archive_reason, original_created_at, type_metadata)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                """,
+                (
+                    str(uuid.uuid4()),
+                    node["id"],
+                    node.get("project_id"),
+                    node.get("summary"),
+                    node.get("rationale"),
+                    node.get("area"),
+                    node.get("confidence"),
+                    node.get("status"),
+                    node.get("created_by_agent"),
+                    archived_by,
+                    _now(),
+                    reason,
+                    node.get("created_at"),
+                    node.get("type_metadata", "{}"),
+                ),
+            )
+            conn.execute(
+                "UPDATE decision_nodes SET tombstone=TRUE, updated_at=? WHERE id=?",
+                (_now(), node_id),
+            )
+        self._audit("Historian", "archive_node", node_id, detail={"reason": reason})
+        return True
+
+    def find_duplicates(self, project_id: str, area: str | None = None) -> list[list[dict]]:
+        """
+        Find groups of non-tombstoned nodes with the same (project_id, area, created_by_agent)
+        that share high lexical overlap in their summaries.
+        Returns list of groups; each group is [newest, ...older] sorted by created_at DESC.
+        """
+        query = (
+            "SELECT id, summary, area, created_by_agent, created_at, confidence "
+            "FROM decision_nodes WHERE tombstone=FALSE AND project_id=?"
+        )
+        params: list[Any] = [project_id]
+        if area:
+            query += " AND area=?"
+            params.append(area)
+        query += " ORDER BY created_at DESC"
+
+        with self._conn() as conn:
+            rows = conn.execute(query, params).fetchall()
+
+        nodes = [dict(r) for r in rows]
+        if len(nodes) < 2:
+            return []
+
+        # Group by (area, created_by_agent) — exact match
+        from collections import defaultdict
+        groups: dict[tuple, list[dict]] = defaultdict(list)
+        for n in nodes:
+            key = (n.get("area", ""), n.get("created_by_agent", ""))
+            groups[key].append(n)
+
+        duplicates = []
+        for group in groups.values():
+            if len(group) >= 2:
+                duplicates.append(group)  # already sorted newest-first
+        return duplicates
+
+    def list_historical(self, project_id: str, limit: int = 20) -> list[dict]:
+        with self._conn() as conn:
+            rows = conn.execute(
+                "SELECT * FROM historical_nodes WHERE project_id=? "
+                "ORDER BY archived_at DESC LIMIT ?",
+                (project_id, limit),
             ).fetchall()
         return [dict(r) for r in rows]
 

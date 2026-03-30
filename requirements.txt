@@ -7,3 +7,11 @@ loguru>=0.7.0
 pydantic>=2.0.0
 python-dotenv>=1.0.0
 rich>=14.0.0
+
+# Phase 2 — Researcher web search (tiered: use whichever key you have)
+# Tier 1: Tavily (best quality)
+tavily-python>=0.3.0
+# Tier 2: Serper (Google results via serper.dev)
+requests>=2.28.0
+# Tier 3: DuckDuckGo (no key needed, always available)
+duckduckgo-search>=6.0.0
