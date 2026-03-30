@@ -1,0 +1,9 @@
+# ContextForge v3.0 — The Omega Persistence Engine
+# Core Dependencies
+
+agentscope>=1.0.0
+watchdog>=4.0.0
+loguru>=0.7.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+rich>=14.0.0

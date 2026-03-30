@@ -1,0 +1,10 @@
+{
+  "_comment": "ContextForge prompts manifest — maps agent.skill to the active prompt version. Cold-start recovery file #3.",
+  "ghost_coder.code-architecture": "v1",
+  "ghost_coder.research-synthesis": "v1",
+  "ghost_coder.study-tracking": "v1",
+  "ghost_coder.general-capture": "v1",
+  "architect.decision-making": "v1",
+  "shadow_reviewer.validation": "v1",
+  "historian.temporal-consistency": "v1"
+}
