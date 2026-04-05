@@ -1,0 +1,30 @@
+\begin{table}[ht]
+\centering
+\caption{ContextForge v3.0 H-RAG vs.\ Standard RAG — OMEGA-75 Benchmark Results}
+\label{tab:omega75}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{System / Iteration} & \textbf{CSS}$\uparrow$ & \textbf{CTO (tokens)}$\downarrow$ & \textbf{ABR (\%)}$\uparrow$ & \textbf{L0\% }$\downarrow$ \\
+\midrule
+Standard RAG (baseline)             & 0.589 & 412{,}000 &   0.0 & 22.7 \\
+\midrule
+ContextForge Iter 1 (no defense)    & 0.743 & 284{,}120 &  66.7 &  4.0 \\
+ContextForge Iter 2 (+injection)    & 0.756 & 276{,}840 & 100.0 &  3.2 \\
+ContextForge Iter 3 (+GC opt.)      & 0.771 & 251{,}200 & 100.0 &  2.6 \\
+ContextForge Iter 4 (+stability)    & 0.784 & 239{,}440 & 100.0 &  2.0 \\
+\textbf{ContextForge Iter 5 (final)} & \textbf{0.812} & \textbf{231{,}780} & \textbf{100.0} & \textbf{1.3} \\
+\midrule
+\multicolumn{5}{l}{\textit{Improvement vs.\ Standard RAG}} \\
+Absolute                            & +0.223 & $-$180{,}220 & +100.0 & $-$21.4 \\
+Relative                            & +37.8\% & $-$43.7\%   & ---    & $-$94.3\% \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item CSS = Context Stability Score (higher is better).
+\item CTO = Cumulative Token Overhead across 75 turns.
+\item ABR = Adversarial Block Rate against 3 injected attacks (T30, T50, T70).
+\item L0\% = percentage of turns falling back to empty-stub retrieval (lower is better).
+\item All runs: stub-LLM mode (rule-based GhostCoder); real agent pipeline active.
+\end{tablenotes}
+\end{table}
