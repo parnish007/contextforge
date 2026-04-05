@@ -8,6 +8,8 @@ Ghost-Coder from hallucinating outdated APIs.
 Actions handled in reply() / metadata:
   research     — {"action": "research", "query": str}
   get_recent   — {"action": "get_recent", "limit": int}
+
+Part of the ContextForge Nexus Architecture — Researcher module.
 """
 
 from __future__ import annotations

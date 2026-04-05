@@ -9,7 +9,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SignalType(str, Enum):
@@ -61,8 +61,7 @@ class ContextSignal(BaseModel):
     # Optional project context attached by Sentry if PROJECT_ID is set
     project_id: str | None = None
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
     def is_decision_signal(self) -> bool:
         """Return True when this signal warrants pipeline processing."""

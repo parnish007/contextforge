@@ -1,17 +1,53 @@
-# ContextForge v3.0 — The Omega Persistence Engine
-# Core Dependencies
+# ContextForge v5.0 Nexus — The Omega Persistence Engine
+# Production dependencies
+#
+# Quick install:  pip install -r requirements.txt
+# Minimum Python: 3.10
 
-agentscope>=1.0.0
-watchdog>=4.0.0
-loguru>=0.7.0
-pydantic>=2.0.0
-python-dotenv>=1.0.0
-rich>=14.0.0
+# ── Core framework ──────────────────────────────────────────────────────────
+agentscope>=1.0.18          # Multi-agent orchestration + AgentBase / Msg
+pydantic>=2.0.0             # Signal and node schema validation
+python-dotenv>=1.0.0        # .env config loading
 
-# Phase 2 — Researcher web search (tiered: use whichever key you have)
-# Tier 1: Tavily (best quality)
+# ── File system watching (Sentry Agent) ─────────────────────────────────────
+watchdog>=4.0.0             # Cross-platform file system events
+
+# ── Terminal UI (Dashboard + HITL Gate) ─────────────────────────────────────
+rich>=14.0.0                # Panels, tables, progress bars
+
+# ── Logging ──────────────────────────────────────────────────────────────────
+loguru>=0.7.0               # Structured, coloured logging
+
+# ── Web search (Researcher Agent — tiered, all optional) ─────────────────────
+# Tier 1 — Tavily (best quality, recommended):  set TAVILY_API_KEY in .env
 tavily-python>=0.3.0
-# Tier 2: Serper (Google results via serper.dev)
-requests>=2.28.0
-# Tier 3: DuckDuckGo (no key needed, always available)
+# Tier 2 — Serper (Google results):             set SERPER_API_KEY in .env
+requests>=2.31.0
+# Tier 3 — DuckDuckGo (no key needed, always available)
 duckduckgo-search>=6.0.0
+
+# ── LLM providers (all optional — rule-based fallback always works) ───────────
+ollama>=0.1.7               # Required by AgentScope OllamaChatModel + Nexus tertiary
+groq>=0.9.0                 # Nexus primary LLM (Groq / Llama-3.3-70B)
+google-generativeai>=0.8.0  # Nexus secondary LLM (Gemini 2.5 Flash)
+# Gemini Flash:  set GEMINI_API_KEY in .env
+# Groq Llama:    set GROQ_API_KEY in .env
+# Ollama server: set OLLAMA_URL in .env (default http://localhost:11434)
+# The engine auto-detects which keys are present and picks the best available.
+
+# ── v5.0 Nexus: MCP Python server ───────────────────────────────────────────
+mcp>=1.0.0                  # MCP Python SDK (Stdio + SSE transport)
+starlette>=0.37.0           # SSE HTTP transport (optional, for remote access)
+uvicorn>=0.29.0             # ASGI server for SSE mode
+
+# ── v5.0 Nexus: Local-Edge Speculative RAG ───────────────────────────────────
+sentence-transformers>=2.7.0  # all-MiniLM-L6-v2 local embeddings (optional)
+numpy>=1.26.0               # Vector arithmetic for cosine similarity
+# FAISS (optional, faster ANN search — falls back to numpy cosine):
+# pip install faiss-cpu      (CPU) or  faiss-gpu  (CUDA)
+
+# ── v5.0 Nexus: Snapshot encryption (optional — falls back to base64) ────────
+cryptography>=42.0.0        # AES-256-GCM snapshot encryption
+
+# ── MCP server (TypeScript — run `npm install` inside src/server/) ───────────
+# Node.js 18+ required. See src/server/package.json for TS deps.

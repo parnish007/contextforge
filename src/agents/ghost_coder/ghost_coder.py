@@ -10,6 +10,8 @@ No-LLM fallback: if no model is reachable the SemanticDistiller produces
 rule-based node stubs (confidence ~0.4) so the pipeline never fully stalls.
 
 Spec reference: OMEGA_SPEC.md §6.2 (GhostCoderAgent class definition).
+
+Part of the ContextForge Nexus Architecture — Ghost Coder module.
 """
 
 from __future__ import annotations

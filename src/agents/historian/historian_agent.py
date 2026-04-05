@@ -15,6 +15,8 @@ Actions handled via reply():
   archive_node  — {"action": "archive_node", "node_id": str, "reason": str}
   list_history  — {"action": "list_history", "limit": int}
   get_stats     — {"action": "get_stats"}
+
+Part of the ContextForge Nexus Architecture — Historian module.
 """
 
 from __future__ import annotations
@@ -77,7 +79,7 @@ class HistorianAgent(AgentBase):
         name: str = "Historian",
         storage: "StorageAdapter | None" = None,
         project_id: str | None = None,
-        duplicate_threshold: float = 0.60,
+        duplicate_threshold: float = 0.53,   # tuned in Omega Evolution Iter 5
     ):
         super().__init__()
         self.name = name

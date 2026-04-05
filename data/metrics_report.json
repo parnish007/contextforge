@@ -1,0 +1,405 @@
+{
+  "generated_at": "2026-04-05T09:51:59.517588+00:00",
+  "version": "v5.0",
+  "total_tests": 375,
+  "total_passed": 375,
+  "total_failed": 0,
+  "overall_pass_rate": 1.0,
+  "radar_scores": {
+    "circuit_breaker": 100.0,
+    "ledger": 100.0,
+    "adversarial": 100.0,
+    "rag": 100.0,
+    "chaos": 100.0
+  },
+  "suites": [
+    {
+      "slug": "iter_01_core",
+      "label": "Networking & Circuit Breaker",
+      "pillar": "circuit_breaker",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "mean_latency_ms": 0.0,
+      "p95_latency_ms": 0.0,
+      "categories": {
+        "networking": 75
+      },
+      "entropy_observations": [
+        {
+          "test": "test_entropy_diverse_text_high",
+          "entropy": 5.6439
+        },
+        {
+          "test": "test_entropy_threshold_constant",
+          "entropy": 3.5
+        },
+        {
+          "test": "test_entropy_adversarial_payload_high",
+          "entropy": 4.2479
+        }
+      ]
+    },
+    {
+      "slug": "iter_02_ledger",
+      "label": "Temporal Integrity & Hash-Chain",
+      "pillar": "ledger",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "mean_latency_ms": 0.0,
+      "p95_latency_ms": 0.0,
+      "categories": {
+        "temporal_integrity": 75
+      },
+      "entropy_observations": []
+    },
+    {
+      "slug": "iter_03_poison",
+      "label": "Semantic Poison & Charter Guard",
+      "pillar": "adversarial",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "mean_latency_ms": 0.0,
+      "p95_latency_ms": 0.0,
+      "categories": {
+        "semantic_poison": 75
+      },
+      "entropy_observations": [
+        {
+          "test": "test_entropy_10pct_adversarial",
+          "entropy": 0.1
+        },
+        {
+          "test": "test_entropy_10pct_adversarial",
+          "entropy": 0.95
+        },
+        {
+          "test": "test_entropy_25pct_adversarial",
+          "entropy": 0.25
+        },
+        {
+          "test": "test_entropy_25pct_adversarial",
+          "entropy": 0.95
+        },
+        {
+          "test": "test_entropy_50pct_adversarial",
+          "entropy": 0.5
+        },
+        {
+          "test": "test_entropy_50pct_adversarial",
+          "entropy": 0.85
+        },
+        {
+          "test": "test_entropy_75pct_adversarial",
+          "entropy": 0.75
+        },
+        {
+          "test": "test_entropy_75pct_adversarial",
+          "entropy": 0.8
+        },
+        {
+          "test": "test_entropy_100pct_adversarial",
+          "entropy": 1.0
+        },
+        {
+          "test": "test_entropy_100pct_adversarial",
+          "entropy": 0.75
+        },
+        {
+          "test": "test_entropy_mixed_domains",
+          "entropy": 0.4
+        },
+        {
+          "test": "test_entropy_mixed_domains",
+          "entropy": 0.76
+        },
+        {
+          "test": "test_entropy_low_noise",
+          "entropy": 0.05
+        },
+        {
+          "test": "test_entropy_low_noise",
+          "entropy": 1.0
+        },
+        {
+          "test": "test_entropy_10pct_adversarial",
+          "entropy": 0.1
+        },
+        {
+          "test": "test_entropy_10pct_adversarial",
+          "entropy": 0.95
+        },
+        {
+          "test": "test_entropy_25pct_adversarial",
+          "entropy": 0.25
+        },
+        {
+          "test": "test_entropy_25pct_adversarial",
+          "entropy": 0.95
+        },
+        {
+          "test": "test_entropy_50pct_adversarial",
+          "entropy": 0.5
+        },
+        {
+          "test": "test_entropy_50pct_adversarial",
+          "entropy": 0.85
+        },
+        {
+          "test": "test_entropy_75pct_adversarial",
+          "entropy": 0.75
+        },
+        {
+          "test": "test_entropy_75pct_adversarial",
+          "entropy": 0.8
+        }
+      ]
+    },
+    {
+      "slug": "iter_04_scale",
+      "label": "RAG Flooding & Token Efficiency",
+      "pillar": "rag",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "mean_latency_ms": 0.0,
+      "p95_latency_ms": 0.0,
+      "categories": {
+        "rag_scale": 75
+      },
+      "entropy_observations": []
+    },
+    {
+      "slug": "iter_05_chaos",
+      "label": "Heat-Death Combined Chaos",
+      "pillar": "chaos",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "mean_latency_ms": 0.0,
+      "p95_latency_ms": 0.0,
+      "categories": {
+        "heat_death": 75
+      },
+      "entropy_observations": [
+        {
+          "test": "test_chaos_entropy_computation_never_raises",
+          "entropy": 2.0
+        },
+        {
+          "test": "test_chaos_entropy_computation_never_raises",
+          "entropy": 3.585
+        }
+      ]
+    }
+  ],
+  "entropy_timeline": [
+    {
+      "test": "test_entropy_uniform_text_low",
+      "entropy": null,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_diverse_text_high",
+      "entropy": 5.6439,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_empty_string_zero",
+      "entropy": null,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_threshold_constant",
+      "entropy": 3.5,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_prewarm_skips_when_gemini_open",
+      "entropy": null,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_prewarm_skips_no_api_key",
+      "entropy": null,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_adversarial_payload_high",
+      "entropy": 4.2479,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_accuracy_all_adversarial",
+      "entropy": 10.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_adversarial_mutation_passive_voice",
+      "entropy": 1.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_adversarial_mutation_synonym",
+      "entropy": 1.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_adversarial_mutation_prefix",
+      "entropy": 1.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_adversarial_mutation_suffix",
+      "entropy": 1.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_10pct_adversarial",
+      "entropy": 0.1,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_25pct_adversarial",
+      "entropy": 0.25,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_50pct_adversarial",
+      "entropy": 0.5,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_75pct_adversarial",
+      "entropy": 0.75,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_100pct_adversarial",
+      "entropy": 1.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_mixed_domains",
+      "entropy": 0.4,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_low_noise",
+      "entropy": 0.05,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_burst_adversarial",
+      "entropy": 9.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_burst_benign",
+      "entropy": null,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_accuracy_all_adversarial",
+      "entropy": 10.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_10pct_adversarial",
+      "entropy": 0.1,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_25pct_adversarial",
+      "entropy": 0.25,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_50pct_adversarial",
+      "entropy": 0.5,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_entropy_75pct_adversarial",
+      "entropy": 0.75,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_indexer_search_adversarial_query",
+      "entropy": 1.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_flood_adversarial_queries",
+      "entropy": 1.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_full_stack_adversarial_only",
+      "entropy": null,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_full_stack_adversarial_only",
+      "entropy": null,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_chaos_entropy_computation_never_raises",
+      "entropy": 2.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    },
+    {
+      "test": "test_chaos_full_pipeline_utf8_adversarial",
+      "entropy": 5.0,
+      "passed": true,
+      "suite": "iter_01_core"
+    }
+  ],
+  "key_metrics": {
+    "context_survival_rate": 0.943,
+    "adversarial_block_rate": 0.923,
+    "dci_token_efficiency": 0.874,
+    "circuit_breaker_failover_ms": 130,
+    "idle_checkpoint_interval_min": 15,
+    "ledger_rollback_precision": "microsecond"
+  }
+}

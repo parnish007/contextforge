@@ -1,0 +1,170 @@
+---
+# ContextForge v5.0 Nexus — Docker Compose
+# ==========================================
+# Wraps the Nexus MCP server (FastAPI/SSE) and the Local Indexer
+# into a single containerized environment.
+#
+# Services
+# ────────
+#   nexus-mcp      — MCP server, dual-transport: Stdio + SSE (port 8765)
+#   hub-connector  — Universal Hub Context-API (port 9000)
+#   ollama         — Local Llama fallback (port 11434)
+#
+# Usage
+# ─────
+#   docker compose up -d                    # start all services
+#   docker compose up nexus-mcp             # MCP server only
+#   docker compose logs -f nexus-mcp        # stream logs
+#   docker compose down -v                  # stop and remove volumes
+#
+# Persistence
+# ───────────
+#   All runtime state (SQLite DB, .forge snapshots, local index cache)
+#   is mounted from the host project directory so data survives restarts.
+
+version: "3.9"
+
+# ── Shared volume definition ──────────────────────────────────────────────────
+
+volumes:
+  ollama_data:   # Ollama model weights (persistent across restarts)
+
+# ── Network ───────────────────────────────────────────────────────────────────
+
+networks:
+  nexus_net:
+    driver: bridge
+
+# ── Services ──────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── nexus-mcp ──────────────────────────────────────────────────────────────
+  nexus-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nexus
+    image: contextforge/nexus-mcp:5.0
+    container_name: nexus-mcp
+    restart: unless-stopped
+    command: >
+      python -m src.transport.server
+        --sse
+        --host 0.0.0.0
+        --port 8765
+    ports:
+      - "8765:8765"   # MCP SSE / HTTP endpoint
+    environment:
+      # ── LLM Providers ────────────────────────────────────────────────
+      GROQ_API_KEY:   ${GROQ_API_KEY:-}
+      GROQ_MODEL:     ${GROQ_MODEL:-llama-3.3-70b-versatile}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL:   ${GEMINI_MODEL:-models/gemini-2.5-flash}
+      OLLAMA_URL:     http://ollama:11434
+      OLLAMA_MODEL:   ${OLLAMA_MODEL:-llama3.3}
+      # ── Storage ───────────────────────────────────────────────────────
+      DB_PATH:         /app/data/contextforge.db
+      PROJECT_ID:      ${PROJECT_ID:-contextforge-default}
+      # ── Security ──────────────────────────────────────────────────────
+      FORGE_SNAPSHOT_KEY:    ${FORGE_SNAPSHOT_KEY:-}
+      PROJECT_CHARTER_PATH:  /app/PROJECT_CHARTER.md
+      # ── Retrieval ─────────────────────────────────────────────────────
+      DCI_THRESHOLD:   ${DCI_THRESHOLD:-0.75}
+      TOKEN_BUDGET:    ${TOKEN_BUDGET:-1500}
+    volumes:
+      # Project directory → /app (live code + data persistence)
+      - type: bind
+        source: ${CONTEXTFORGE_ROOT:-C:/Users/AB/Desktop/Projects/contextforge}
+        target: /app
+      # Ensure data dir exists on host before mounting
+    working_dir: /app
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - nexus_net
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8765/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ── hub-connector ──────────────────────────────────────────────────────────
+  hub-connector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nexus
+    image: contextforge/nexus-mcp:5.0
+    container_name: hub-connector
+    restart: unless-stopped
+    command: >
+      python -c "
+      from src.bridge.hub_connector import get_hub;
+      hub = get_hub(
+          db_path='/app/data/contextforge.db',
+          project_root='/app',
+          port=9000,
+      );
+      hub.start(daemon=False)
+      "
+    ports:
+      - "9000:9000"   # Context-API HTTP endpoint
+    environment:
+      DB_PATH:         /app/data/contextforge.db
+      PROJECT_ID:      ${PROJECT_ID:-contextforge-default}
+      DCI_THRESHOLD:   ${DCI_THRESHOLD:-0.75}
+      TOKEN_BUDGET:    ${TOKEN_BUDGET:-1500}
+    volumes:
+      - type: bind
+        source: ${CONTEXTFORGE_ROOT:-C:/Users/AB/Desktop/Projects/contextforge}
+        target: /app
+    working_dir: /app
+    depends_on:
+      nexus-mcp:
+        condition: service_healthy
+    networks:
+      - nexus_net
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:9000/context/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ── ollama (local LLM fallback) ────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama   # persist model weights
+    networks:
+      - nexus_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"

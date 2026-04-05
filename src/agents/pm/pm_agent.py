@@ -13,6 +13,8 @@ Actions handled in reply() / metadata:
   list_tasks  — {"action": "list_tasks", "status": str | None}
   get_stats   — {"action": "get_stats"}
   update_task — {"action": "update_task", "task_id": str, "status": str}
+
+Part of the ContextForge Nexus Architecture — Pm module.
 """
 
 from __future__ import annotations

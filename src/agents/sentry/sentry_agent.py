@@ -10,6 +10,8 @@ Responsibilities:
   3. Deduplicate via SHA-256 content hashing (ignore identical re-saves)
   4. Batch signals (default threshold: 3) or flush on pause (default: 30 s)
   5. Broadcast a SignalBatch message to the AgentScope MsgHub
+
+Part of the ContextForge Nexus Architecture — Sentry module.
 """
 
 from __future__ import annotations

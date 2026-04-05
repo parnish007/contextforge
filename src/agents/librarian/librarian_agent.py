@@ -17,6 +17,8 @@ Responsibilities:
      ContextBundle that references the changed file / node.
 
 Spec reference: Section 2.2 (Hierarchical RAG) and Section 5 (Memory Schema).
+
+Part of the ContextForge Nexus Architecture — Librarian module.
 """
 
 from __future__ import annotations

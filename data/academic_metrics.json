@@ -1,0 +1,2633 @@
+{
+  "generated_at": "2026-04-05T11:00:03.467215+00:00",
+  "engine_version": "1.0",
+  "total_probes": 100,
+  "summary": {
+    "security": {
+      "adversarial_probes": 20,
+      "baseline_block_rate": 0.0,
+      "nexus_block_rate": 0.85,
+      "delta_block_rate": 0.85,
+      "baseline_false_positives": 0,
+      "nexus_false_positives": 14
+    },
+    "failover": {
+      "probes": 20,
+      "baseline_avg_latency_ms": 480.0,
+      "nexus_avg_latency_ms": 149.5,
+      "latency_reduction_ms": 330.5,
+      "latency_reduction_pct": 68.9
+    },
+    "rag": {
+      "probes": 40,
+      "baseline_injection_rate": 1.0,
+      "nexus_injection_rate": 0.0,
+      "total_tokens_baseline": 110491,
+      "total_tokens_nexus_injected": 0,
+      "token_noise_reduction": 1.0,
+      "tokens_saved": 110491
+    }
+  },
+  "per_probe": [
+    {
+      "probe_id": "sec_benign_00",
+      "category": "security",
+      "label": "Benign payload 1",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_01",
+      "category": "security",
+      "label": "Benign payload 2",
+      "entropy": 3.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_02",
+      "category": "security",
+      "label": "Benign payload 3",
+      "entropy": 3.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_03",
+      "category": "security",
+      "label": "Benign payload 4",
+      "entropy": 3.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_04",
+      "category": "security",
+      "label": "Benign payload 5",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_05",
+      "category": "security",
+      "label": "Benign payload 6",
+      "entropy": 3.122,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_06",
+      "category": "security",
+      "label": "Benign payload 7",
+      "entropy": 3.122,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_07",
+      "category": "security",
+      "label": "Benign payload 8",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_08",
+      "category": "security",
+      "label": "Benign payload 9",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_09",
+      "category": "security",
+      "label": "Benign payload 10",
+      "entropy": 3.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_10",
+      "category": "security",
+      "label": "Benign payload 11",
+      "entropy": 3.278,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_11",
+      "category": "security",
+      "label": "Benign payload 12",
+      "entropy": 3.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_12",
+      "category": "security",
+      "label": "Benign payload 13",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_13",
+      "category": "security",
+      "label": "Benign payload 14",
+      "entropy": 3.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_14",
+      "category": "security",
+      "label": "Benign payload 15",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_15",
+      "category": "security",
+      "label": "Benign payload 16",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_16",
+      "category": "security",
+      "label": "Benign payload 17",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_17",
+      "category": "security",
+      "label": "Benign payload 18",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_18",
+      "category": "security",
+      "label": "Benign payload 19",
+      "entropy": 3.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_benign_19",
+      "category": "security",
+      "label": "Benign payload 20",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_00",
+      "category": "security",
+      "label": "Adversarial payload 1",
+      "entropy": 2.948,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_01",
+      "category": "security",
+      "label": "Adversarial payload 2",
+      "entropy": 2.585,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_02",
+      "category": "security",
+      "label": "Adversarial payload 3",
+      "entropy": 4.322,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_03",
+      "category": "security",
+      "label": "Adversarial payload 4",
+      "entropy": 3.725,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_04",
+      "category": "security",
+      "label": "Adversarial payload 5",
+      "entropy": 3.7,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_05",
+      "category": "security",
+      "label": "Adversarial payload 6",
+      "entropy": 3.585,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_06",
+      "category": "security",
+      "label": "Adversarial payload 7",
+      "entropy": 3.907,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_07",
+      "category": "security",
+      "label": "Adversarial payload 8",
+      "entropy": 3.7,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_08",
+      "category": "security",
+      "label": "Adversarial payload 9",
+      "entropy": 3.7,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_09",
+      "category": "security",
+      "label": "Adversarial payload 10",
+      "entropy": 3.585,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_10",
+      "category": "security",
+      "label": "Adversarial payload 11",
+      "entropy": 3.0,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_11",
+      "category": "security",
+      "label": "Adversarial payload 12",
+      "entropy": -0.0,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_12",
+      "category": "security",
+      "label": "Adversarial payload 13",
+      "entropy": 3.7,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_13",
+      "category": "security",
+      "label": "Adversarial payload 14",
+      "entropy": 3.807,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_14",
+      "category": "security",
+      "label": "Adversarial payload 15",
+      "entropy": 3.585,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_15",
+      "category": "security",
+      "label": "Adversarial payload 16",
+      "entropy": 3.547,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_16",
+      "category": "security",
+      "label": "Adversarial payload 17",
+      "entropy": 3.7,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_17",
+      "category": "security",
+      "label": "Adversarial payload 18",
+      "entropy": 3.0,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_18",
+      "category": "security",
+      "label": "Adversarial payload 19",
+      "entropy": 3.7,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "sec_adv_19",
+      "category": "security",
+      "label": "Adversarial payload 20",
+      "entropy": 3.274,
+      "is_adversarial": true,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": true,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 1.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_00",
+      "category": "failover",
+      "label": "Groq 429 rate-limit burst",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_01",
+      "category": "failover",
+      "label": "Groq 500 internal server error",
+      "entropy": 3.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_02",
+      "category": "failover",
+      "label": "Groq network timeout",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_03",
+      "category": "failover",
+      "label": "Groq DNS resolution failure",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_04",
+      "category": "failover",
+      "label": "Groq SSL certificate error",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_05",
+      "category": "failover",
+      "label": "Gemini 429 quota exhausted",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_06",
+      "category": "failover",
+      "label": "Gemini 503 service unavailable",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_07",
+      "category": "failover",
+      "label": "Gemini API key revoked",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_08",
+      "category": "failover",
+      "label": "Gemini model deprecation error",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_09",
+      "category": "failover",
+      "label": "Gemini context window overflow",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_10",
+      "category": "failover",
+      "label": "Ollama process not running",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_11",
+      "category": "failover",
+      "label": "Ollama model not pulled",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_12",
+      "category": "failover",
+      "label": "Ollama CUDA OOM error",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_13",
+      "category": "failover",
+      "label": "All providers failing simultaneously",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_14",
+      "category": "failover",
+      "label": "Groq then Gemini sequential failure",
+      "entropy": 3.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_15",
+      "category": "failover",
+      "label": "Rolling provider storm (3 trips)",
+      "entropy": 3.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_16",
+      "category": "failover",
+      "label": "High-entropy prompt Groq trip",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_17",
+      "category": "failover",
+      "label": "Post-HALF_OPEN re-trip",
+      "entropy": 2.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_18",
+      "category": "failover",
+      "label": "Provider recovery after OPEN state",
+      "entropy": 3.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "failover_19",
+      "category": "failover",
+      "label": "Cold-start vs warm failover delta",
+      "entropy": 3.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 480.0,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 149.5,
+        "tokens_retrieved": 0,
+        "tokens_injected": 0,
+        "token_efficiency": 1.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 330.5,
+        "efficiency_gain": 0.0
+      }
+    },
+    {
+      "probe_id": "rag_00",
+      "category": "rag",
+      "label": "circuit breaker state machine CLOSED OPEN HALF_OPEN",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2772,
+        "tokens_injected": 2772,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2772,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_01",
+      "category": "rag",
+      "label": "Shannon entropy adversarial payload detection threshold",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2822,
+        "tokens_injected": 2822,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2822,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_02",
+      "category": "rag",
+      "label": "Differential Context Injection cosine similarity threshold",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2849,
+        "tokens_injected": 2849,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2849,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_03",
+      "category": "rag",
+      "label": "EventLedger append ReviewerGuard rollback microsecond",
+      "entropy": 2.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2807,
+        "tokens_injected": 2807,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2807,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_04",
+      "category": "rag",
+      "label": "FluidSync AES-256-GCM snapshot idle checkpoint",
+      "entropy": 2.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2906,
+        "tokens_injected": 2906,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2906,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_05",
+      "category": "rag",
+      "label": "NexusRouter Groq Gemini Ollama failover tri-core",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2776,
+        "tokens_injected": 2776,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2776,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_06",
+      "category": "rag",
+      "label": "JITLibrarian LRU cache hit warm context payload",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2746,
+        "tokens_injected": 2746,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2746,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_07",
+      "category": "rag",
+      "label": "LocalIndexer TF-IDF sentence-transformers embedding",
+      "entropy": 2.0,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2927,
+        "tokens_injected": 2927,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2927,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_08",
+      "category": "rag",
+      "label": "PROJECT_CHARTER hard constraints adversarial bypass",
+      "entropy": 2.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2738,
+        "tokens_injected": 2738,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2738,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_09",
+      "category": "rag",
+      "label": "SQLite rowid ordering temporal integrity hash chain",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3270,
+        "tokens_injected": 3270,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3270,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_10",
+      "category": "rag",
+      "label": "token budget enforcement greedy selection chunks",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2775,
+        "tokens_injected": 2775,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2775,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_11",
+      "category": "rag",
+      "label": "PermissionPolicy allowed blocked event types filter",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2424,
+        "tokens_injected": 2424,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2424,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_12",
+      "category": "rag",
+      "label": "predictive failover prewarm background asyncio task",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2931,
+        "tokens_injected": 2931,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2931,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_13",
+      "category": "rag",
+      "label": "temp_ledger context manager WAL SHM cleanup isolation",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2858,
+        "tokens_injected": 2858,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2858,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_14",
+      "category": "rag",
+      "label": "MCP transport server Stdio SSE dual-mode protocol",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2670,
+        "tokens_injected": 2670,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2670,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_15",
+      "category": "rag",
+      "label": "database connection pooling async context manager",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2811,
+        "tokens_injected": 2811,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2811,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_16",
+      "category": "rag",
+      "label": "JWT authentication refresh token rotation endpoint",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2813,
+        "tokens_injected": 2813,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2813,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_17",
+      "category": "rag",
+      "label": "rate limiting middleware FastAPI request throttle",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2949,
+        "tokens_injected": 2949,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2949,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_18",
+      "category": "rag",
+      "label": "SHA-256 content hash deduplication sentry watchdog",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2440,
+        "tokens_injected": 2440,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2440,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_19",
+      "category": "rag",
+      "label": "CRDT OR-Set semantics event-log union deduplication",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2962,
+        "tokens_injected": 2962,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2962,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_20",
+      "category": "rag",
+      "label": "vector similarity cosine dot product normalization",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2974,
+        "tokens_injected": 2974,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2974,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_21",
+      "category": "rag",
+      "label": "knowledge graph node confidence summary rationale",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2638,
+        "tokens_injected": 2638,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2638,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_22",
+      "category": "rag",
+      "label": "web search tavily serper duckduckgo synthesis",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2879,
+        "tokens_injected": 2879,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2879,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_23",
+      "category": "rag",
+      "label": "Docker health check container sidecar volume mount",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3034,
+        "tokens_injected": 3034,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3034,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_24",
+      "category": "rag",
+      "label": "Prometheus metrics endpoint observability tracing",
+      "entropy": 2.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2795,
+        "tokens_injected": 2795,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2795,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_25",
+      "category": "rag",
+      "label": "kubernetes deployment replica scaling affinity rule",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2452,
+        "tokens_injected": 2452,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2452,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_26",
+      "category": "rag",
+      "label": "React component lifecycle useEffect cleanup memory",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2663,
+        "tokens_injected": 2663,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2663,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_27",
+      "category": "rag",
+      "label": "nginx reverse proxy SSL termination upstream",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2558,
+        "tokens_injected": 2558,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2558,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_28",
+      "category": "rag",
+      "label": "terraform state locking backend configuration drift",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2638,
+        "tokens_injected": 2638,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2638,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_29",
+      "category": "rag",
+      "label": "GraphQL subscription resolver realtime websocket",
+      "entropy": 2.322,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2653,
+        "tokens_injected": 2653,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2653,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_30",
+      "category": "rag",
+      "label": "kafka consumer group offset commit partition",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2596,
+        "tokens_injected": 2596,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2596,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_31",
+      "category": "rag",
+      "label": "redis sentinel failover cluster slot replication",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3064,
+        "tokens_injected": 3064,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3064,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_32",
+      "category": "rag",
+      "label": "PostgreSQL VACUUM ANALYZE index bloat dead tuple",
+      "entropy": 2.807,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2477,
+        "tokens_injected": 2477,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2477,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_33",
+      "category": "rag",
+      "label": "Rust ownership borrow checker lifetime annotation",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2628,
+        "tokens_injected": 2628,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2628,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_34",
+      "category": "rag",
+      "label": "TypeScript generic conditional mapped utility type",
+      "entropy": 2.585,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2547,
+        "tokens_injected": 2547,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2547,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_35",
+      "category": "rag",
+      "label": "delete drop remove wipe purge kill destroy disable all",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2695,
+        "tokens_injected": 2695,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2695,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_36",
+      "category": "rag",
+      "label": "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a ",
+      "entropy": 0.139,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2643,
+        "tokens_injected": 2643,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2643,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_37",
+      "category": "rag",
+      "label": "the the the the the the the the the the the the the the the ",
+      "entropy": 0.896,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3052,
+        "tokens_injected": 3052,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 3052,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_38",
+      "category": "rag",
+      "label": "x y z w q r s t u v a b c d e f g h i j k l m n o p",
+      "entropy": 4.7,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2625,
+        "tokens_injected": 2625,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2625,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    },
+    {
+      "probe_id": "rag_39",
+      "category": "rag",
+      "label": "SELECT * FROM nodes; DROP TABLE events; -- inject",
+      "entropy": 3.17,
+      "is_adversarial": false,
+      "baseline": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2634,
+        "tokens_injected": 2634,
+        "token_efficiency": 1.0
+      },
+      "nexus": {
+        "security_blocked": false,
+        "failover_latency_ms": 0.0,
+        "tokens_retrieved": 2634,
+        "tokens_injected": 0,
+        "token_efficiency": 0.0
+      },
+      "delta": {
+        "security_gain": 0.0,
+        "latency_gain_ms": 0.0,
+        "efficiency_gain": -1.0
+      }
+    }
+  ]
+}

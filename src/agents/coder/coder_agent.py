@@ -21,6 +21,8 @@ Constraint (per spec): every generated code block must include a
 Actions handled in reply() / metadata:
   execute_task — {"action": "execute_task", "task_id": str}
   plan_only    — {"action": "plan_only",    "task_id": str}
+
+Part of the ContextForge Nexus Architecture — Coder module.
 """
 
 from __future__ import annotations
