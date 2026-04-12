@@ -10,7 +10,7 @@
 
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 > **Architecture:** The Nexus Architecture  
-> **Benchmark:** 450-test validation (375 OMEGA-75 + 75 adversarial boundary, 99 s real execution) · 100.0% pass rate · Φ = 80.7%  
+> **Benchmark:** 452-test validation (375 OMEGA-75 + 77 extended suites 06–09, 99 s real execution) · 100.0% pass rate · Φ = 80.7%  
 > **Paper:** [`docs/contextforge_research.tex`](docs/contextforge_research.tex)
 
 ---
@@ -35,13 +35,13 @@ ContextForge closes all three gaps with mathematically grounded, independently r
 
 ### 1. Dual-Signal Entropy-Gated Security
 
-Every write to the agent memory ledger passes through `ReviewerGuard`, which applies a **dual-signal gate** combining Shannon entropy with a Lempel–Ziv compression density check:
+Every write to the agent memory ledger passes through `ReviewerGuard`, which gates on Shannon entropy:
 
-$$H(X) = -\sum_{i} p(x_i) \log_2 p(x_i) \qquad \rho(\mathbf{w}) = \frac{|\text{LZ}(\mathbf{w})|}{|\mathbf{w}|}$$
+$$H(X) = -\sum_{i} p(x_i) \log_2 p(x_i)$$
 
-A write is flagged when **either** $H > H^* = 3.5$ bits (obfuscated/high-vocabulary payload) **or** $\rho < 0.60$ (repetition attack). This defence-in-depth ensures no single evasion strategy — raise vocabulary diversity *or* lower it — bypasses the filter.
+A write is flagged when $H > H^* = 3.5$ bits — the empirically validated boundary between natural-language prose ($H \approx 2.1$–$3.2$ bits) and obfuscated/adversarial payloads ($H \approx 3.8$–$5.2$ bits). The architecture additionally specifies a Lempel–Ziv compression density check $\rho(\mathbf{w}) = |\text{LZ}(\mathbf{w})| / |\mathbf{w}|$ to catch repetition attacks (low $H$, high repetition); this is described formally in the paper and is the next implementation milestone (see [`docs/RESEARCH.md`](docs/RESEARCH.md) §3.1 and [`benchmark/test_v5/iter_06_adversarial_boundary.py`](benchmark/test_v5/iter_06_adversarial_boundary.py) for the gap audit).
 
-Flagged writes are **quarantined** rather than hard-blocked: they enter a `quarantine_events` table for secondary async validation, preserving ledger availability. A **Tiered Clearance Logic** grants authenticated internal traffic an elevated threshold of $H^*_\text{VOH} \approx 4.38$ bits, reducing false positives for legitimate high-entropy technical content. Under the full deployed system, the semantic poison suite records **zero false positives** across all 10 benign technical probes (JWT, PostgreSQL RLS, gRPC, Terraform, Redis, agent events).
+Flagged writes enter a two-pass guard: regex match against destructive action patterns, then keyword overlap against `PROJECT_CHARTER.md`. A **Tiered Clearance Logic** grants authenticated internal traffic an elevated threshold of $H^*_{\text{VOH}} \approx 4.38$ bits, reducing false positives for legitimate high-entropy technical content. Under the full deployed system, the semantic poison suite records **zero false positives** across all 10 benign technical probes (JWT, PostgreSQL RLS, gRPC, Terraform, Redis, agent events).
 
 **Measured result:** +85.0 pp adversarial block rate vs. the Stateless RAG baseline (0% → 85%).
 
@@ -89,7 +89,7 @@ Measured on 100 probes × 2 modes via [`benchmark/engine.py`](benchmark/engine.p
 | Context survival rate | 74.0% | **94.3%** | **+20.3 pp** |
 | **Weighted Composite Safety Index Φ** | — | — | **+80.7%** |
 
-$$\Phi = w_S \cdot \Delta S + w_L \cdot \Delta L_{\%} + w_\text{DCI} \cdot \Delta_\text{DCI} = 0.5(85.0) + 0.3(68.9) + 0.2(87.4) = \mathbf{80.7\%}$$
+$$\Phi = w_S \cdot \Delta S + w_L \cdot \Delta L_{\%} + w_{\text{DCI}} \cdot \Delta_{\text{DCI}} = 0.5(85.0) + 0.3(68.9) + 0.2(87.4) = 80.7\%$$
 
 Φ is stable across weight perturbations: $w_S \in [0.3, 0.7]$ yields Φ ∈ [79.3%, 82.0%], confirming the result is not an artefact of the chosen weights.
 
@@ -273,6 +273,7 @@ See [`data/academic_metrics.md`](data/academic_metrics.md) for the mathematical 
 | Document | Audience | Contents |
 |----------|----------|----------|
 | [`docs/SETUP.md`](docs/SETUP.md) | MCP users | IDE setup, API keys, Ollama, troubleshooting |
+| [`docs/HOW_TO_USE.md`](docs/HOW_TO_USE.md) | All users | Readiness checks, tool usage, data location, export/push |
 | [`docs/ENGINEERING_REFERENCE.md`](docs/ENGINEERING_REFERENCE.md) | Developers | Full architecture deep-dive, all modules |
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | Researchers | Formal metrics, algorithms, Φ derivation, 5-iteration log |
 | [`docs/BENCHMARK_RESULTS.md`](docs/BENCHMARK_RESULTS.md) | Evaluators | Per-suite pass/fail tables, novelty claims, safety delta |
