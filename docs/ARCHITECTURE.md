@@ -1,5 +1,6 @@
-# ContextForge v5.0 Nexus — Architecture Reference
+# ContextForge — Architecture Reference
 
+> **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 > **RAT + Nexus**: Reasoning · Auditing · Tracking · Transport · Router · Memory · Retrieval · Sync
 
 ---

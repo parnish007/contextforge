@@ -1,6 +1,6 @@
-# ContextForge Nexus — Engineering Guide
+# ContextForge — Engineering Reference
 
-**Author:** Trilochan Sharma — Independent Researcher  
+**Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 **Version:** Nexus Architecture  
 **Last Updated:** 2026-04-05
 

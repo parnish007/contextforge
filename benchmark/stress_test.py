@@ -1,3 +1,5 @@
+# HISTORICAL — v3.0 stress test. Superseded by benchmark/test_v5/iter_05_chaos.py.
+# Kept for reproducibility of the v3.0 baseline numbers.
 """
 ContextForge v3.0 — Omega Specification Stress Test
 ====================================================

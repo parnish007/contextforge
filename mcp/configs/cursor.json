@@ -1,0 +1,14 @@
+{
+  "_comment": "Place at .cursor/mcp.json in project root OR global ~/.cursor/mcp.json",
+  "mcpServers": {
+    "contextforge": {
+      "command": "python",
+      "args": ["mcp/server.py", "--stdio"],
+      "cwd": "${workspaceRoot}",
+      "env": {
+        "DB_PATH": "data/contextforge.db",
+        "CHARTER_PATH": "PROJECT_CHARTER.md"
+      }
+    }
+  }
+}

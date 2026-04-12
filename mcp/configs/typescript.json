@@ -1,0 +1,13 @@
+{
+  "_comment": "Use the TypeScript server. Run 'cd mcp && npm install && npm run build' first.",
+  "mcpServers": {
+    "contextforge": {
+      "command": "node",
+      "args": ["mcp/dist/index.js"],
+      "cwd": "/absolute/path/to/contextforge",
+      "env": {
+        "DB_PATH": "data/contextforge.db"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "_comment": "Place at .vscode/mcp.json in project root. Requires GitHub Copilot Chat extension (VS Code 1.99+).",
+  "servers": {
+    "contextforge": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["mcp/server.py", "--stdio"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "DB_PATH": "data/contextforge.db",
+        "CHARTER_PATH": "PROJECT_CHARTER.md"
+      }
+    }
+  }
+}

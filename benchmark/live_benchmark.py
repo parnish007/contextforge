@@ -1,3 +1,5 @@
+# HISTORICAL — v3.0 live simulation. Superseded by benchmark/test_v5/ (OMEGA-75).
+# Kept for reproducibility of the v3.0 baseline numbers in EVOLUTION_LOG.md.
 """
 ContextForge v3.0 — Live High-Complexity Benchmark
 ====================================================

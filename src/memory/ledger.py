@@ -261,6 +261,28 @@ CREATE INDEX IF NOT EXISTS idx_events_status   ON events (status);
 
 
 # ---------------------------------------------------------------------------
+# Internal helper — compute latest hash from an already-open connection
+# ---------------------------------------------------------------------------
+
+def _inline_latest_hash(conn: sqlite3.Connection) -> str:
+    """
+    Compute the current hash-chain tip using *conn* (no new connection opened).
+
+    Mirrors ``EventLedger._latest_hash()`` exactly so that callers holding an
+    open transaction (e.g. ``rollback()``) can obtain the tip hash without
+    triggering a nested ``_conn()`` context manager, which would open a
+    second SQLite connection and risk a torn hash chain.
+    """
+    row = conn.execute(
+        "SELECT prev_hash, event_id FROM events ORDER BY rowid DESC LIMIT 1"
+    ).fetchone()
+    if not row:
+        return hashlib.sha256(b"genesis").hexdigest()
+    chain_input = f"{row['prev_hash'] or ''}{row['event_id']}"
+    return hashlib.sha256(chain_input.encode()).hexdigest()
+
+
+# ---------------------------------------------------------------------------
 # EventLedger
 # ---------------------------------------------------------------------------
 
@@ -439,7 +461,7 @@ class EventLedger:
                     json.dumps({"target_event_id": event_id, "target_timestamp": timestamp,
                                 "pruned_count": pruned}),
                     json.dumps({"auto": True}),
-                    self._latest_hash(),
+                    _inline_latest_hash(conn),
                     _now_iso(),
                 ),
             )

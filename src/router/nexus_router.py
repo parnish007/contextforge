@@ -213,7 +213,7 @@ class NexusRouter:
                 f"entropy={prompt_entropy:.2f} > {self._ENTROPY_THRESHOLD} — "
                 f"pre-warming Gemini in background"
             )
-            asyncio.ensure_future(self._prewarm_gemini())
+            asyncio.create_task(self._prewarm_gemini())
 
         last_error: Exception | None = None
 
@@ -387,7 +387,10 @@ class NexusRouter:
             messages=messages,
             options={"temperature": temperature, "num_predict": max_tokens},
         )
-        return resp["message"]["content"] or ""
+        # Handle both dict (ollama < 0.2.0) and Pydantic ChatResponse (ollama >= 0.2.0)
+        if hasattr(resp, "message"):
+            return resp.message.content or ""
+        return (resp["message"]["content"] or "")
 
 
 # ---------------------------------------------------------------------------

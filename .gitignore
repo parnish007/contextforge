@@ -141,10 +141,17 @@ $RECYCLE.BIN/
 .classpath
 .settings/
 
-# ── TypeScript / MCP Server ──────────────────────────────────
+# ── TypeScript / MCP Servers ─────────────────────────────────
 src/server/dist/
 src/server/node_modules/
 src/server/*.js.map
+# mcp/ server — keep dist/ (compiled JS) but not node_modules
+mcp/node_modules/
+mcp/__pycache__/
+# Keep compiled output so users can run without npm build step
+!mcp/dist/
+!mcp/dist/index.js
+!mcp/dist/index.d.ts
 
 # ── Local Docs (kept local, not for OSS repo) ────────────────
 CLAUDE.md

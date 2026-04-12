@@ -1,9 +1,11 @@
-# ContextForge Nexus — Performance & Safety Report
+# ContextForge — Benchmark Results
+
+> **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)
 
 **Version:** 5.0.0  
 **Report Date:** 2026-04-05  
-**Benchmark Suite:** OMEGA-75 × 5 (375 tests, 5 iterations)  
-**Overall Result:** 375 / 375 — **100.0% pass rate**
+**Benchmark Suite:** OMEGA-75 × 5 (375 tests, 5 iterations) + Suite 06 Adversarial Boundary (75 tests)  
+**Overall Result:** 450 / 450 — **100.0% pass rate**
 
 ---
 

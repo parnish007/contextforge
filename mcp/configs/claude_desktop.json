@@ -1,0 +1,16 @@
+{
+  "_comment": "Merge this into ~/.config/Claude/claude_desktop_config.json (macOS/Linux) or %APPDATA%\\Claude\\claude_desktop_config.json (Windows). Replace /absolute/path/to/contextforge with your actual path.",
+  "mcpServers": {
+    "contextforge": {
+      "command": "python",
+      "args": ["mcp/server.py", "--stdio"],
+      "cwd": "/absolute/path/to/contextforge",
+      "env": {
+        "DB_PATH": "data/contextforge.db",
+        "CHARTER_PATH": "PROJECT_CHARTER.md",
+        "GROQ_API_KEY": "your-groq-key-here",
+        "GEMINI_API_KEY": "your-gemini-key-here"
+      }
+    }
+  }
+}

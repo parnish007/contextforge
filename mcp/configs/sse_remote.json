@@ -1,0 +1,9 @@
+{
+  "_comment": "Use when server runs via: python mcp/server.py --sse --host 0.0.0.0 --port 8765",
+  "mcpServers": {
+    "contextforge-remote": {
+      "type": "sse",
+      "url": "http://your-server-ip:8765/sse"
+    }
+  }
+}

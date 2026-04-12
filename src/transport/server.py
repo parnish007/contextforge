@@ -98,12 +98,16 @@ def build_server() -> "Server":
         project_id: str = arguments.get("project_id", "contextforge-default")
         top_k: int = int(arguments.get("top_k", 5))
 
-        nodes = storage.search_nodes(
-            project_id=project_id,
-            query=query,
-            limit=top_k,
-            status="active",
-        )
+        nodes = storage.list_nodes(project_id=project_id, status="active", limit=top_k * 10)
+        if query:
+            q_lower = query.lower()
+            nodes = [
+                n for n in nodes
+                if q_lower in (n.get("summary") or "").lower()
+                or q_lower in (n.get("rationale") or "").lower()
+                or q_lower in (n.get("area") or "").lower()
+            ]
+        nodes = nodes[:top_k]
         return [types.TextContent(
             type="text",
             text=json.dumps(nodes, indent=2, default=str),

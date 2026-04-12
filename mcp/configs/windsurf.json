@@ -1,0 +1,12 @@
+{
+  "_comment": "Place at ~/.codeium/windsurf/mcp_config.json. Use absolute paths.",
+  "mcpServers": {
+    "contextforge": {
+      "command": "python",
+      "args": ["/absolute/path/to/contextforge/mcp/server.py", "--stdio"],
+      "env": {
+        "DB_PATH": "/absolute/path/to/contextforge/data/contextforge.db"
+      }
+    }
+  }
+}

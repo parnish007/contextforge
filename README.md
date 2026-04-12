@@ -8,9 +8,9 @@
   <img src="docs/assets/radar_comparison.png" width="520" alt="Six-Pillar Safety Profile — Stateless RAG vs ContextForge Nexus"/>
 </p>
 
-> **Author:** Trilochan Sharma — Independent Researcher  
+> **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 > **Architecture:** The Nexus Architecture  
-> **Benchmark:** 452-test validation across 9 suites (99 s real execution) · 100.0% pass rate · Φ = 80.7%  
+> **Benchmark:** 450-test validation (375 OMEGA-75 + 75 adversarial boundary, 99 s real execution) · 100.0% pass rate · Φ = 80.7%  
 > **Paper:** [`docs/contextforge_research.tex`](docs/contextforge_research.tex)
 
 ---
@@ -53,7 +53,7 @@ Flagged writes are **quarantined** rather than hard-blocked: they enter a `quara
 
 ```python
 if entropy > 3.5 and order[0] == "groq":
-    asyncio.ensure_future(self._prewarm_gemini())   # fire-and-forget TCP/TLS prewarm
+    asyncio.create_task(self._prewarm_gemini())   # fire-and-forget TCP/TLS prewarm
 ```
 
 This pre-warms the connection, eliminating ~350 ms of cold-start overhead from the failover critical path.
@@ -140,6 +140,49 @@ python main.py
 
 ---
 
+## MCP Plugin — Use in Any IDE
+
+ContextForge runs as a native MCP server in Claude Desktop, Cursor, VS Code, and Windsurf.
+Connect once — persistent memory, rollback, and semantic search become built-in AI tools.
+
+### Quick start (Claude Desktop)
+
+1. `pip install -r requirements.txt`
+2. `cp .env.example .env` — set `DB_PATH` and optionally an API key
+3. Merge `mcp/configs/claude_desktop.json` into your Claude Desktop config (update the `cwd` path)
+4. Restart Claude Desktop
+
+**Full guide with all IDEs, API keys, Ollama setup, and troubleshooting:**
+**[`docs/SETUP.md`](docs/SETUP.md)**
+
+### MCP tools available
+
+| Tool | Purpose |
+|------|---------|
+| `get_knowledge_node` | Query decision graph — WHY decisions were made |
+| `init_project` | Register a project |
+| `capture_decision` | Store decision with rationale + alternatives |
+| `load_context` | L0/L1/L2 hierarchical context assembly |
+| `search_context` | Local-edge semantic file search (zero cloud tokens) |
+| `rollback` | Time-travel undo via append-only ledger |
+| `snapshot` | AES-256-GCM encrypted checkpoint |
+| `replay_sync` | Cross-device context restore from `.forge` file |
+| `list_events` | Full agent activity ledger |
+
+### Fully local mode (zero API keys)
+
+```bash
+# Install Ollama: https://ollama.com/download
+ollama pull llama3.3    # or llama3.2 for smaller machines
+# In .env:
+FALLBACK_CHAIN=ollama
+OLLAMA_URL=http://localhost:11434
+# Launch MCP server:
+python mcp/server.py --stdio
+```
+
+---
+
 ## Python API
 
 ```python
@@ -215,12 +258,27 @@ python -X utf8 benchmark/test_v5/iter_02_ledger.py  # Temporal Integrity  (37.2 
 python -X utf8 benchmark/test_v5/iter_03_poison.py  # Adversarial Guard  (5.7 s)
 python -X utf8 benchmark/test_v5/iter_04_scale.py   # RAG & DCI  (6.8 s)
 python -X utf8 benchmark/test_v5/iter_05_chaos.py   # Heat-Death Chaos  (44.6 s)
+python -X utf8 benchmark/test_v5/iter_06_adversarial_boundary.py  # Adversarial Boundary (75 tests)
 
 # Regenerate publication charts at 300 DPI → docs/assets/
 python -X utf8 benchmark/generate_viz.py
 ```
 
-See [`data/academic_metrics.md`](data/academic_metrics.md) for the mathematical synthesis and [`docs/GUIDE.md`](docs/GUIDE.md) for the full engineering reference.
+See [`data/academic_metrics.md`](data/academic_metrics.md) for the mathematical synthesis and [`docs/ENGINEERING_REFERENCE.md`](docs/ENGINEERING_REFERENCE.md) for the full engineering reference.
+
+---
+
+## Documentation
+
+| Document | Audience | Contents |
+|----------|----------|----------|
+| [`docs/SETUP.md`](docs/SETUP.md) | MCP users | IDE setup, API keys, Ollama, troubleshooting |
+| [`docs/ENGINEERING_REFERENCE.md`](docs/ENGINEERING_REFERENCE.md) | Developers | Full architecture deep-dive, all modules |
+| [`docs/RESEARCH.md`](docs/RESEARCH.md) | Researchers | Formal metrics, algorithms, Φ derivation, 5-iteration log |
+| [`docs/BENCHMARK_RESULTS.md`](docs/BENCHMARK_RESULTS.md) | Evaluators | Per-suite pass/fail tables, novelty claims, safety delta |
+| [`docs/EVOLUTION_LOG.md`](docs/EVOLUTION_LOG.md) | Researchers | Iteration-by-iteration tuning history (iter 1–5) |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Developers | Component diagram, data flow, design decisions |
+| [`docs/contextforge_research.tex`](docs/contextforge_research.tex) | Publishers | Submission-ready LaTeX paper |
 
 ---
 
