@@ -262,6 +262,156 @@ class StorageAdapter:
             ).fetchone()
         return dict(row) if row else None
 
+    def list_projects(self) -> list[dict]:
+        """Return all registered projects ordered by most recently created."""
+        with self._conn() as conn:
+            rows = conn.execute(
+                "SELECT * FROM projects ORDER BY created_at DESC"
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def rename_project(self, project_id: str, new_name: str, new_description: str | None = None) -> bool:
+        """Rename a project and optionally update its description. Returns False if not found."""
+        with self._conn() as conn:
+            exists = conn.execute("SELECT 1 FROM projects WHERE id=?", (project_id,)).fetchone()
+            if not exists:
+                return False
+            if new_description is not None:
+                conn.execute(
+                    "UPDATE projects SET name=?, description=?, updated_at=? WHERE id=?",
+                    (new_name, new_description, _now(), project_id),
+                )
+            else:
+                conn.execute(
+                    "UPDATE projects SET name=?, updated_at=? WHERE id=?",
+                    (new_name, _now(), project_id),
+                )
+        self._audit("StorageAdapter", "rename_project", project_id, detail={"new_name": new_name})
+        return True
+
+    def merge_projects(self, source_id: str, target_id: str) -> dict:
+        """
+        Merge source project INTO target project.
+        All decision_nodes and tasks from source are re-assigned to target.
+        Source project row is deleted. Returns counts of moved items.
+        """
+        with self._conn() as conn:
+            src = conn.execute("SELECT 1 FROM projects WHERE id=?", (source_id,)).fetchone()
+            tgt = conn.execute("SELECT 1 FROM projects WHERE id=?", (target_id,)).fetchone()
+            if not src:
+                raise ValueError(f"Source project '{source_id}' not found")
+            if not tgt:
+                raise ValueError(f"Target project '{target_id}' not found")
+            nodes_moved = conn.execute(
+                "UPDATE decision_nodes SET project_id=?, updated_at=? WHERE project_id=?",
+                (target_id, _now(), source_id),
+            ).rowcount
+            tasks_moved = conn.execute(
+                "UPDATE tasks SET project_id=?, updated_at=? WHERE project_id=?",
+                (target_id, _now(), source_id),
+            ).rowcount
+            conn.execute(
+                "UPDATE historical_nodes SET project_id=? WHERE project_id=?",
+                (target_id, source_id),
+            )
+            conn.execute("DELETE FROM projects WHERE id=?", (source_id,))
+        self._audit("StorageAdapter", "merge_projects", source_id,
+                    detail={"target": target_id, "nodes_moved": nodes_moved, "tasks_moved": tasks_moved})
+        return {"nodes_moved": nodes_moved, "tasks_moved": tasks_moved, "source_deleted": source_id}
+
+    def delete_project(self, project_id: str, archive_nodes: bool = True) -> dict:
+        """
+        Delete a project. If archive_nodes=True, moves all active decision_nodes
+        to historical_nodes before deleting. Returns counts of deleted/archived items.
+        """
+        with self._conn() as conn:
+            exists = conn.execute("SELECT 1 FROM projects WHERE id=?", (project_id,)).fetchone()
+            if not exists:
+                raise ValueError(f"Project '{project_id}' not found")
+            archived = 0
+            if archive_nodes:
+                nodes = conn.execute(
+                    "SELECT * FROM decision_nodes WHERE project_id=? AND tombstone=FALSE",
+                    (project_id,)
+                ).fetchall()
+                for row in nodes:
+                    node = dict(row)
+                    conn.execute(
+                        """INSERT OR IGNORE INTO historical_nodes
+                           (id, original_id, project_id, summary, rationale, area,
+                            confidence, status, created_by_agent, archived_by,
+                            archived_at, archive_reason, original_created_at, type_metadata)
+                           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                        (str(uuid.uuid4()), node["id"], project_id,
+                         node.get("summary"), node.get("rationale"), node.get("area"),
+                         node.get("confidence"), node.get("status"),
+                         node.get("created_by_agent"), "delete_project",
+                         _now(), f"project {project_id} deleted",
+                         node.get("created_at"), node.get("type_metadata", "{}")),
+                    )
+                    archived += 1
+            # Tombstone all nodes so FK is satisfied before delete
+            conn.execute(
+                "UPDATE decision_nodes SET tombstone=TRUE WHERE project_id=?", (project_id,)
+            )
+            # Tasks have ON DELETE CASCADE so deleting project removes them
+            # decision_nodes FK has no CASCADE — delete manually after tombstone
+            conn.execute("DELETE FROM decision_nodes WHERE project_id=?", (project_id,))
+            conn.execute("DELETE FROM projects WHERE id=?", (project_id,))
+        self._audit("StorageAdapter", "delete_project", project_id,
+                    detail={"archived_nodes": archived})
+        return {"deleted_project": project_id, "archived_nodes": archived}
+
+    def get_project_stats(self, project_id: str) -> dict:
+        """Return a statistics summary for a project."""
+        with self._conn() as conn:
+            area_rows = conn.execute(
+                """SELECT area, COUNT(*) as cnt FROM decision_nodes
+                   WHERE project_id=? AND tombstone=FALSE AND status='active'
+                   GROUP BY area ORDER BY cnt DESC""",
+                (project_id,)
+            ).fetchall()
+            total_nodes = conn.execute(
+                "SELECT COUNT(*) FROM decision_nodes WHERE project_id=? AND tombstone=FALSE",
+                (project_id,)
+            ).fetchone()[0]
+            active_nodes = conn.execute(
+                "SELECT COUNT(*) FROM decision_nodes WHERE project_id=? AND tombstone=FALSE AND status='active'",
+                (project_id,)
+            ).fetchone()[0]
+            deprecated_nodes = conn.execute(
+                "SELECT COUNT(*) FROM decision_nodes WHERE project_id=? AND status='deprecated'",
+                (project_id,)
+            ).fetchone()[0]
+            archived_nodes = conn.execute(
+                "SELECT COUNT(*) FROM historical_nodes WHERE project_id=?",
+                (project_id,)
+            ).fetchone()[0]
+            task_rows = conn.execute(
+                "SELECT status, COUNT(*) as cnt FROM tasks WHERE project_id=? GROUP BY status",
+                (project_id,)
+            ).fetchall()
+        task_counts = {r["status"]: r["cnt"] for r in task_rows}
+        total_tasks = sum(task_counts.values())
+        return {
+            "project_id": project_id,
+            "nodes": {
+                "total": total_nodes,
+                "active": active_nodes,
+                "deprecated": deprecated_nodes,
+                "archived_historical": archived_nodes,
+            },
+            "areas": [{"area": r["area"] or "unset", "count": r["cnt"]} for r in area_rows],
+            "tasks": {
+                "total": total_tasks,
+                "pending": task_counts.get("pending", 0),
+                "in_progress": task_counts.get("in_progress", 0),
+                "done": task_counts.get("done", 0),
+                "blocked": task_counts.get("blocked", 0),
+                "pct_complete": round((task_counts.get("done", 0) / total_tasks) * 100) if total_tasks else 0,
+            },
+        }
+
     # ------------------------------------------------------------------
     # Decision nodes
     # ------------------------------------------------------------------
@@ -384,6 +534,51 @@ class StorageAdapter:
                     d[json_field] = json.loads(d[json_field])
             results.append(d)
         return results
+
+    def update_node_fields(self, node_id: str, fields: dict[str, Any]) -> bool:
+        """
+        Update specific fields on a decision_node. Allowed fields:
+        summary, rationale, area, confidence, importance, status, deprecated_reason.
+        Returns False if node not found.
+        """
+        _allowed = {"summary", "rationale", "area", "confidence", "importance",
+                    "status", "deprecated_reason", "validated_by"}
+        updates = {k: v for k, v in fields.items() if k in _allowed}
+        if not updates:
+            return False
+        with self._conn() as conn:
+            exists = conn.execute(
+                "SELECT 1 FROM decision_nodes WHERE id=? AND tombstone=FALSE", (node_id,)
+            ).fetchone()
+            if not exists:
+                return False
+            set_clause = ", ".join(f"{k}=?" for k in updates)
+            values = list(updates.values()) + [_now(), node_id]
+            conn.execute(
+                f"UPDATE decision_nodes SET {set_clause}, updated_at=? WHERE id=?", values
+            )
+        self._audit("StorageAdapter", "update_node", node_id, detail={"fields": list(updates.keys())})
+        return True
+
+    def deprecate_node(self, node_id: str, reason: str, replacement_id: str | None = None) -> bool:
+        """
+        Mark a decision node as deprecated. Optionally point to a replacement node.
+        Returns False if node not found.
+        """
+        with self._conn() as conn:
+            exists = conn.execute(
+                "SELECT 1 FROM decision_nodes WHERE id=? AND tombstone=FALSE", (node_id,)
+            ).fetchone()
+            if not exists:
+                return False
+            conn.execute(
+                """UPDATE decision_nodes
+                   SET status='deprecated', deprecated_reason=?, replacement_id=?, updated_at=?
+                   WHERE id=?""",
+                (reason, replacement_id, _now(), node_id),
+            )
+        self._audit("StorageAdapter", "deprecate_node", node_id, detail={"reason": reason})
+        return True
 
     # ------------------------------------------------------------------
     # Decision edges

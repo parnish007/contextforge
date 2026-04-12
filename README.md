@@ -97,16 +97,35 @@ $$\Phi = w_S \cdot \Delta S + w_L \cdot \Delta L_{\%} + w_{\text{DCI}} \cdot \De
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│              ContextForge — Nexus Architecture           │
-├──────────────┬──────────────────────────────────────────┤
-│  Transport   │  Stdio (Claude Desktop) + SSE/HTTP        │
-│  Router      │  Groq → Gemini → Ollama + Circuit Breaker │
-│  Memory      │  Append-only SQLite ledger + ReviewerGuard│
-│  Retrieval   │  Local-edge RAG + DCI cosine gate θ ≥ 0.75│
-│  Sync        │  AES-256-GCM .forge snapshots + idle CP   │
-└──────────────┴──────────────────────────────────────────┘
+```mermaid
+graph TD
+    IDE["IDE / AI Client<br/>(Claude Desktop · Cursor · VS Code · Windsurf)"]
+
+    subgraph MCP ["MCP Server  —  mcp/server.py"]
+        T["Transport<br/>Stdio + SSE/HTTP"]
+    end
+
+    subgraph Nexus ["Nexus Architecture  —  src/"]
+        R["Router<br/>Groq → Gemini → Ollama<br/>Circuit Breaker + Predictive Failover"]
+        M["Memory<br/>Append-only SQLite Ledger<br/>ReviewerGuard · Entropy Gate · Rollback"]
+        RET["Retrieval<br/>Local-edge DCI RAG<br/>Cosine gate θ ≥ 0.75 · Token budget"]
+        S["Sync<br/>AES-256-GCM .forge snapshots<br/>15-min idle checkpoint"]
+    end
+
+    DB[("SQLite<br/>data/contextforge.db<br/>projects · nodes · tasks · events")]
+    FORGE[(".forge/<br/>Encrypted snapshots")]
+    LLM["LLM Providers<br/>(Groq · Gemini · Ollama)"]
+
+    IDE -->|"JSON-RPC"| T
+    T --> R
+    T --> M
+    T --> RET
+    T --> S
+    R -->|"HTTP"| LLM
+    M --> DB
+    RET --> DB
+    S --> DB
+    S --> FORGE
 ```
 
 | Pillar | Module | Role |
@@ -143,7 +162,7 @@ python main.py
 ## MCP Plugin — Use in Any IDE
 
 ContextForge runs as a native MCP server in Claude Desktop, Cursor, VS Code, and Windsurf.
-Connect once — persistent memory, rollback, and semantic search become built-in AI tools.
+**Set up once — use for unlimited projects.** Each project is identified by a `project_id` string. All data is isolated per project inside a single shared SQLite database. Switch between projects instantly by changing the `project_id` in any tool call.
 
 ### Quick start (Claude Desktop)
 
@@ -155,19 +174,48 @@ Connect once — persistent memory, rollback, and semantic search become built-i
 **Full guide with all IDEs, API keys, Ollama setup, and troubleshooting:**
 **[`docs/SETUP.md`](docs/SETUP.md)**
 
-### MCP tools available
+### MCP tools — 22 total
+
+**Project management**
 
 | Tool | Purpose |
 |------|---------|
-| `get_knowledge_node` | Query decision graph — WHY decisions were made |
-| `init_project` | Register a project |
-| `capture_decision` | Store decision with rationale + alternatives |
+| `list_projects` | List all registered projects |
+| `init_project` | Create or update a project |
+| `rename_project` | Rename a project (keeps `project_id` slug) |
+| `merge_projects` | Merge one project's data into another |
+| `delete_project` | Delete a project (archives nodes first) |
+| `project_stats` | Node/task/area summary for a project |
+
+**Decision graph**
+
+| Tool | Purpose |
+|------|---------|
+| `capture_decision` | Store a decision with rationale + alternatives |
 | `load_context` | L0/L1/L2 hierarchical context assembly |
-| `search_context` | Local-edge semantic file search (zero cloud tokens) |
+| `get_knowledge_node` | Keyword search over decisions |
+| `list_decisions` | List decisions with area/status filters |
+| `update_decision` | Update fields on an existing decision |
+| `deprecate_decision` | Mark a decision as superseded |
+| `link_decisions` | Create a typed edge between two decisions |
+
+**Tasks**
+
+| Tool | Purpose |
+|------|---------|
+| `list_tasks` | List tasks for a project |
+| `create_task` | Create a new task |
+| `update_task` | Update task status |
+
+**Ledger & sync**
+
+| Tool | Purpose |
+|------|---------|
 | `rollback` | Time-travel undo via append-only ledger |
 | `snapshot` | AES-256-GCM encrypted checkpoint |
-| `replay_sync` | Cross-device context restore from `.forge` file |
-| `list_events` | Full agent activity ledger |
+| `list_snapshots` | List all `.forge` snapshot files |
+| `replay_sync` | Cross-device context restore from `.forge` |
+| `list_events` | Inspect the append-only event ledger |
 
 ### Fully local mode (zero API keys)
 
@@ -273,7 +321,7 @@ See [`data/academic_metrics.md`](data/academic_metrics.md) for the mathematical 
 | Document | Audience | Contents |
 |----------|----------|----------|
 | [`docs/SETUP.md`](docs/SETUP.md) | MCP users | IDE setup, API keys, Ollama, troubleshooting |
-| [`docs/HOW_TO_USE.md`](docs/HOW_TO_USE.md) | All users | Readiness checks, tool usage, data location, export/push |
+| [`docs/HOW_TO_USE.md`](docs/HOW_TO_USE.md) | All users | Readiness checks, multi-project workflow, switching, data location, export/push |
 | [`docs/ENGINEERING_REFERENCE.md`](docs/ENGINEERING_REFERENCE.md) | Developers | Full architecture deep-dive, all modules |
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | Researchers | Formal metrics, algorithms, Φ derivation, 5-iteration log |
 | [`docs/BENCHMARK_RESULTS.md`](docs/BENCHMARK_RESULTS.md) | Evaluators | Per-suite pass/fail tables, novelty claims, safety delta |
