@@ -385,7 +385,7 @@ You can also trigger this manually:
 | **Charter guard is keyword-based** | ReviewerGuard catches explicit destructive language. It does not catch subtle semantic drift or multi-step Jailbreaks. The Shadow-Reviewer (agent mode) adds cosine-semantic checking, but this only runs in `python main.py` mode, not the MCP server. |
 | **L1 cache is in-process** | The SHA-256 exact cache lives in Python's dict — it resets every time the MCP server restarts. Long-running servers benefit from it; short-lived CLI invocations don't. |
 | **LLM calls are sequential** | The router tries providers in order (Groq → Gemini → Ollama), not in parallel. Tail latency on failures is cumulative. |
-| **TypeScript server is partial** | `mcp/index.ts` has 12 of 22 tools. If you're using the TypeScript server path, `merge_projects`, `delete_project`, `deprecate_decision`, and others are not yet available. |
+| **Charter guard only in Python server** | The TypeScript server (`mcp/index.ts`) writes directly to SQLite — it has all 22 tools at full parity but does **not** run `ReviewerGuard`. Use the Python server (`mcp/server.py`) if charter enforcement is required. |
 
 ---
 

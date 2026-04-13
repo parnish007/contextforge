@@ -282,7 +282,7 @@ In your IDE, ask the AI assistant:
 
 > "List the ContextForge MCP tools available."
 
-You should see all 9 tools. Then test end-to-end:
+You should see all 22 tools. Then test end-to-end:
 
 > "Use init_project to create a project with id='my-project' and name='My Test Project'."
 > "Use load_context with project_id='my-project' and detail_level='L0'."
@@ -291,7 +291,7 @@ You should see all 9 tools. Then test end-to-end:
 
 ## TypeScript server (alternative to Python)
 
-The TypeScript server exposes 5 tools and connects directly to SQLite:
+The TypeScript server exposes all 22 tools and connects directly to SQLite. It has full parity with the Python server except that `ReviewerGuard` (charter enforcement) does not run — use the Python server if charter compliance checking is required.
 
 ```bash
 cd mcp
@@ -418,7 +418,7 @@ to reduce false positives on legitimate technical content.
 contextforge/
 ├── mcp/
 │   ├── server.py          # Python MCP server — 9 tools, Stdio + SSE
-│   ├── index.ts           # TypeScript MCP server — 5 tools
+│   ├── index.ts           # TypeScript MCP server — 22 tools (full parity)
 │   ├── package.json       # npm package (contextforge-mcp)
 │   ├── tsconfig.json
 │   ├── dist/              # Compiled TypeScript (after npm run build)
