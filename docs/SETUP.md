@@ -445,6 +445,13 @@ contextforge/
 │   ├── historian/system.v1.md
 │   ├── researcher/system.v1.md
 │   └── pm/system.v1.md
+├── research/              # All research assets (paper, figures, benchmarks)
+│   ├── contextforge_v2.tex  # v2 LaTeX paper
+│   ├── refs.bib             # Extended bibliography
+│   ├── RESEARCH.md          # Research assets index
+│   ├── figures/             # 9 matplotlib figure generators + PNGs
+│   ├── benchmark_results/   # Archived benchmark JSON outputs
+│   └── v1_archive/          # v1 paper archive
 ├── data/
 │   └── contextforge.db    # SQLite knowledge graph (created on first run)
 ├── .env.example           # All environment variables documented
@@ -472,6 +479,7 @@ python -X utf8 benchmark/test_v5/run_all.py   # 375 tests, ~2 min
 
 # Re-generate publication charts
 python -X utf8 benchmark/generate_viz.py      # → docs/assets/
+python research/figures/gen_all.py            # → research/figures/ (9 PNGs for v2 paper)
 ```
 
 | Goal | Minimum .env |

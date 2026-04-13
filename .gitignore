@@ -178,3 +178,8 @@ benchmark/metrics_report.json
 
 # ── Papers subfolders (generated images) ─────────────────────
 papers/images/
+
+# ── Research directory ────────────────────────────────────────
+# research/figures/*.png are COMMITTED for paper reproducibility
+# research/benchmark_results/ JSON files are COMMITTED (source of truth)
+# Do NOT add *.png or research/figures/ to this file

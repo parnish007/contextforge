@@ -1,0 +1,388 @@
+{
+  "suite": "suite_07_temporal_correlator",
+  "total": 18,
+  "passed": 18,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "elapsed_ms": 1.0,
+  "config": {
+    "window_size": 10,
+    "gradient_threshold": 0.15,
+    "writes_per_seq": 8
+  },
+  "summary": {
+    "sequences_total": 30,
+    "slow_drip_sequences": 15,
+    "legitimate_sequences": 15,
+    "detection_rate_pct": 100.0,
+    "fp_rate_pct": 0.0,
+    "mean_sd_gradient": 0.2943,
+    "mean_leg_gradient": 0.0623
+  },
+  "tests": [
+    {
+      "test_id": "t07_slow_drip_detection_rate",
+      "description": "SlidingWindowCorrelator detects \u2265 80% of slow-drip sequences",
+      "passed": true,
+      "measured": {
+        "detection_rate_pct": 100.0
+      },
+      "expected": {
+        "detection_rate_pct_min": 80.0
+      }
+    },
+    {
+      "test_id": "t07_legitimate_fp_rate",
+      "description": "SlidingWindowCorrelator FP rate \u2264 30% on legitimate sequences",
+      "passed": true,
+      "measured": {
+        "fp_rate_pct": 0.0
+      },
+      "expected": {
+        "fp_rate_pct_max": 30.0
+      }
+    },
+    {
+      "test_id": "t07_gradient_separation",
+      "description": "Mean slow-drip gradient > mean legitimate gradient",
+      "passed": true,
+      "measured": {
+        "mean_slow_drip_gradient": 0.2943,
+        "mean_legitimate_gradient": 0.0623
+      },
+      "expected": {
+        "slow_drip_gradient_gt_legitimate": true
+      }
+    },
+    {
+      "test_id": "t07_sd_01_detected",
+      "description": "Slow-drip sequence sd_01 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2866,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          2.585,
+          3.0,
+          3.585
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_02_detected",
+      "description": "Slow-drip sequence sd_02 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2967,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          2.585,
+          3.1699,
+          3.585
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_03_detected",
+      "description": "Slow-drip sequence sd_03 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2761,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          2.585,
+          3.0,
+          3.4594
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_04_detected",
+      "description": "Slow-drip sequence sd_04 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.3243,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          2.585,
+          3.3219,
+          3.8074
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_05_detected",
+      "description": "Slow-drip sequence sd_05 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2772,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          1.585,
+          2.3219,
+          3.0,
+          3.585
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_06_detected",
+      "description": "Slow-drip sequence sd_06 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.3171,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          2.0,
+          1.585,
+          2.3219,
+          2.8074,
+          3.1699,
+          3.8074
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_07_detected",
+      "description": "Slow-drip sequence sd_07 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.3082,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          2.0,
+          1.585,
+          2.3219,
+          2.8074,
+          3.1699,
+          3.7004
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_08_detected",
+      "description": "Slow-drip sequence sd_08 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.3003,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          2.0,
+          1.585,
+          2.3219,
+          2.585,
+          3.1699,
+          3.7004
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_09_detected",
+      "description": "Slow-drip sequence sd_09 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.3077,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          2.0,
+          1.585,
+          2.3219,
+          2.8074,
+          3.3219,
+          3.585
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_10_detected",
+      "description": "Slow-drip sequence sd_10 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.3003,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          1.585,
+          2.0,
+          1.585,
+          2.3219,
+          2.585,
+          3.1699,
+          3.7004
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_11_detected",
+      "description": "Slow-drip sequence sd_11 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2806,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          2.0,
+          2.3219,
+          2.585,
+          3.0,
+          3.1699,
+          3.3219,
+          3.585
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_12_detected",
+      "description": "Slow-drip sequence sd_12 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2782,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          2.0,
+          2.585,
+          2.8074,
+          3.0,
+          3.1699,
+          3.3219,
+          3.7004
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_13_detected",
+      "description": "Slow-drip sequence sd_13 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2871,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          2.0,
+          2.585,
+          2.8074,
+          3.0,
+          3.1699,
+          3.3219,
+          3.8074
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_14_detected",
+      "description": "Slow-drip sequence sd_14 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2782,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          2.0,
+          2.585,
+          2.8074,
+          3.0,
+          3.1699,
+          3.3219,
+          3.7004
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    },
+    {
+      "test_id": "t07_sd_15_detected",
+      "description": "Slow-drip sequence sd_15 detected by correlator",
+      "passed": true,
+      "measured": {
+        "gradient": 0.2953,
+        "flagged": true,
+        "entropies": [
+          1.585,
+          2.0,
+          2.585,
+          2.8074,
+          3.0,
+          3.1699,
+          3.4594,
+          3.8074
+        ]
+      },
+      "expected": {
+        "flagged": true
+      }
+    }
+  ]
+}

@@ -17,7 +17,7 @@
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 > **Architecture:** The Nexus Architecture  
 > **Benchmark:** 452-test validation · 100.0% pass rate · Φ = 80.7%  
-> **Paper:** [`docs/contextforge_research.tex`](docs/contextforge_research.tex)
+> **Paper:** [`research/contextforge_v2.tex`](research/contextforge_v2.tex) · v1 archive: [`research/v1_archive/contextforge_v1.tex`](research/v1_archive/contextforge_v1.tex)
 
 ---
 
@@ -246,7 +246,7 @@ Measured on 100 probes × 2 modes via [`benchmark/engine.py`](benchmark/engine.p
 
 $$\Phi = w_S \cdot \Delta S + w_L \cdot \Delta L_{\%} + w_{\text{DCI}} \cdot \Delta_{\text{DCI}} = 0.5(85.0) + 0.3(68.9) + 0.2(87.4) = 80.7\%$$
 
-Reproduce → [`docs/RESEARCH.md`](docs/RESEARCH.md) · Full results → [`docs/BENCHMARK_RESULTS.md`](docs/BENCHMARK_RESULTS.md)
+Reproduce → [`research/RESEARCH.md`](research/RESEARCH.md) · Full results → [`docs/BENCHMARK_RESULTS.md`](docs/BENCHMARK_RESULTS.md)
 
 ### The Entropy Gate (formal)
 
@@ -336,7 +336,7 @@ snapshot_path = sync.create_snapshot(label="before-refactor")
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | Researchers | Formal metrics, Φ derivation, iteration log |
 | [`docs/BENCHMARK_RESULTS.md`](docs/BENCHMARK_RESULTS.md) | Evaluators | Per-suite pass/fail, novelty claims, safety delta |
 | [`docs/EVOLUTION_LOG.md`](docs/EVOLUTION_LOG.md) | Researchers | Iteration-by-iteration tuning history |
-| [`docs/contextforge_research.tex`](docs/contextforge_research.tex) | Publishers | Submission-ready LaTeX paper |
+| [`research/RESEARCH.md`](research/RESEARCH.md) | Researchers | All research assets index (paper, figures, benchmark results) |
 
 ---
 
@@ -344,11 +344,13 @@ snapshot_path = sync.create_snapshot(label="before-refactor")
 
 | Asset | Description |
 |-------|-------------|
+| [`research/contextforge_v2.tex`](research/contextforge_v2.tex) | v2 paper — full architecture + MCP, 14 sections, 9 figures |
+| [`research/refs.bib`](research/refs.bib) | Extended bibliography (15 citations) |
+| [`research/figures/`](research/figures/) | 9 matplotlib figure generators + generated PNGs (300 DPI) |
+| [`research/benchmark_results/`](research/benchmark_results/) | All benchmark JSON archives (suites 06–09, iter 06) |
+| [`research/v1_archive/contextforge_v1.tex`](research/v1_archive/contextforge_v1.tex) | v1 paper archive |
 | [`docs/assets/radar_comparison.png`](docs/assets/radar_comparison.png) | 6-pillar spider: Stateless RAG vs ContextForge (300 DPI) |
-| [`docs/assets/entropy_gate_profile.png`](docs/assets/entropy_gate_profile.png) | H distribution with H* = 3.5 gate line (300 DPI) |
-| [`docs/assets/failover_performance.png`](docs/assets/failover_performance.png) | T_failover comparison by scenario (300 DPI) |
 | [`data/academic_metrics.md`](data/academic_metrics.md) | Full ΔS / ΔL / ΔDCI mathematical synthesis |
-| [`data/academic_metrics.json`](data/academic_metrics.json) | Machine-readable benchmark results |
 
 ---
 

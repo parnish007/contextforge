@@ -1,0 +1,402 @@
+{
+  "suite": "suite_09_voh_multiprocess",
+  "total": 19,
+  "passed": 19,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "elapsed_ms": 2.2,
+  "config": {
+    "h_standard": 3.5,
+    "h_voh": 4.375,
+    "voh_discount": 0.2
+  },
+  "summary": {
+    "spoofed_attempts": 5,
+    "spoofed_accepted": 0,
+    "hmac_authenticated": 5,
+    "hmac_accepted": 5,
+    "adversarial_above_voh": 5,
+    "adversarial_blocked": 5,
+    "spoofed_results": [
+      {
+        "probe_id": "spoof_01",
+        "payload_head": "configure jwt refresh token rotation sliding expiry window s",
+        "entropy": 3.7004,
+        "token_valid": false,
+        "threshold_used": 3.5,
+        "blocked": true
+      },
+      {
+        "probe_id": "spoof_02",
+        "payload_head": "implement postgresql row level security policy multi tenant ",
+        "entropy": 3.8074,
+        "token_valid": false,
+        "threshold_used": 3.5,
+        "blocked": true
+      },
+      {
+        "probe_id": "spoof_03",
+        "payload_head": "design grpc server streaming endpoint real time telemetry in",
+        "entropy": 3.7004,
+        "token_valid": false,
+        "threshold_used": 3.5,
+        "blocked": true
+      },
+      {
+        "probe_id": "spoof_04",
+        "payload_head": "create terraform vpc peering module aws accounts private hos",
+        "entropy": 3.8074,
+        "token_valid": false,
+        "threshold_used": 3.5,
+        "blocked": true
+      },
+      {
+        "probe_id": "spoof_05",
+        "payload_head": "configure redis pubsub cross service event broadcasting at l",
+        "entropy": 3.8074,
+        "token_valid": false,
+        "threshold_used": 3.5,
+        "blocked": true
+      }
+    ],
+    "hmac_results": [
+      {
+        "probe_id": "voh_01",
+        "source_id": "internal_service_1",
+        "entropy": 3.7004,
+        "token_valid": true,
+        "threshold_used": 4.375,
+        "blocked": false
+      },
+      {
+        "probe_id": "voh_02",
+        "source_id": "internal_service_2",
+        "entropy": 3.8074,
+        "token_valid": true,
+        "threshold_used": 4.375,
+        "blocked": false
+      },
+      {
+        "probe_id": "voh_03",
+        "source_id": "internal_service_3",
+        "entropy": 3.7004,
+        "token_valid": true,
+        "threshold_used": 4.375,
+        "blocked": false
+      },
+      {
+        "probe_id": "voh_04",
+        "source_id": "internal_service_4",
+        "entropy": 3.8074,
+        "token_valid": true,
+        "threshold_used": 4.375,
+        "blocked": false
+      },
+      {
+        "probe_id": "voh_05",
+        "source_id": "internal_service_5",
+        "entropy": 3.8074,
+        "token_valid": true,
+        "threshold_used": 4.375,
+        "blocked": false
+      }
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "t09_spoof_01_rejected",
+      "description": "Fabricated VOH token (no HMAC secret) is rejected \u2014 falls back to H* = 3.5",
+      "passed": true,
+      "measured": {
+        "entropy": 3.7004,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "fake_source_0",
+        "blocked": true
+      },
+      "expected": {
+        "voh_valid": false,
+        "threshold": 3.5
+      }
+    },
+    {
+      "test_id": "t09_spoof_02_rejected",
+      "description": "Fabricated VOH token (no HMAC secret) is rejected \u2014 falls back to H* = 3.5",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "fake_source_1",
+        "blocked": true
+      },
+      "expected": {
+        "voh_valid": false,
+        "threshold": 3.5
+      }
+    },
+    {
+      "test_id": "t09_spoof_03_rejected",
+      "description": "Fabricated VOH token (no HMAC secret) is rejected \u2014 falls back to H* = 3.5",
+      "passed": true,
+      "measured": {
+        "entropy": 3.7004,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "fake_source_2",
+        "blocked": true
+      },
+      "expected": {
+        "voh_valid": false,
+        "threshold": 3.5
+      }
+    },
+    {
+      "test_id": "t09_spoof_04_rejected",
+      "description": "Fabricated VOH token (no HMAC secret) is rejected \u2014 falls back to H* = 3.5",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "fake_source_3",
+        "blocked": true
+      },
+      "expected": {
+        "voh_valid": false,
+        "threshold": 3.5
+      }
+    },
+    {
+      "test_id": "t09_spoof_05_rejected",
+      "description": "Fabricated VOH token (no HMAC secret) is rejected \u2014 falls back to H* = 3.5",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "fake_source_4",
+        "blocked": true
+      },
+      "expected": {
+        "voh_valid": false,
+        "threshold": 3.5
+      }
+    },
+    {
+      "test_id": "t09_replay_attack_rejected",
+      "description": "Token valid for payload_A is rejected when replayed against payload_B",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "",
+        "blocked": true
+      },
+      "expected": {
+        "voh_valid": false
+      }
+    },
+    {
+      "test_id": "t09_voh_01_admitted",
+      "description": "Authenticated VOH caller gets H*_VOH threshold \u2248 4.375",
+      "passed": true,
+      "measured": {
+        "entropy": 3.7004,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_1",
+        "blocked": false
+      },
+      "expected": {
+        "voh_valid": true,
+        "threshold_approx": 4.375
+      }
+    },
+    {
+      "test_id": "t09_voh_02_admitted",
+      "description": "Authenticated VOH caller gets H*_VOH threshold \u2248 4.375",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_2",
+        "blocked": false
+      },
+      "expected": {
+        "voh_valid": true,
+        "threshold_approx": 4.375
+      }
+    },
+    {
+      "test_id": "t09_voh_03_admitted",
+      "description": "Authenticated VOH caller gets H*_VOH threshold \u2248 4.375",
+      "passed": true,
+      "measured": {
+        "entropy": 3.7004,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_3",
+        "blocked": false
+      },
+      "expected": {
+        "voh_valid": true,
+        "threshold_approx": 4.375
+      }
+    },
+    {
+      "test_id": "t09_voh_04_admitted",
+      "description": "Authenticated VOH caller gets H*_VOH threshold \u2248 4.375",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_4",
+        "blocked": false
+      },
+      "expected": {
+        "voh_valid": true,
+        "threshold_approx": 4.375
+      }
+    },
+    {
+      "test_id": "t09_voh_05_admitted",
+      "description": "Authenticated VOH caller gets H*_VOH threshold \u2248 4.375",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_5",
+        "blocked": false
+      },
+      "expected": {
+        "voh_valid": true,
+        "threshold_approx": 4.375
+      }
+    },
+    {
+      "test_id": "t09_adv_01_blocked_even_with_voh",
+      "description": "Adversarial payload (H > H*_VOH) blocked even with valid VOH token",
+      "passed": true,
+      "measured": {
+        "entropy": 4.4594,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_1",
+        "blocked": true
+      },
+      "expected": {
+        "blocked": true
+      }
+    },
+    {
+      "test_id": "t09_adv_02_blocked_even_with_voh",
+      "description": "Adversarial payload (H > H*_VOH) blocked even with valid VOH token",
+      "passed": true,
+      "measured": {
+        "entropy": 4.4594,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_2",
+        "blocked": true
+      },
+      "expected": {
+        "blocked": true
+      }
+    },
+    {
+      "test_id": "t09_adv_03_blocked_even_with_voh",
+      "description": "Adversarial payload (H > H*_VOH) blocked even with valid VOH token",
+      "passed": true,
+      "measured": {
+        "entropy": 4.4594,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_3",
+        "blocked": true
+      },
+      "expected": {
+        "blocked": true
+      }
+    },
+    {
+      "test_id": "t09_adv_04_blocked_even_with_voh",
+      "description": "Adversarial payload (H > H*_VOH) blocked even with valid VOH token",
+      "passed": true,
+      "measured": {
+        "entropy": 4.4594,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_4",
+        "blocked": true
+      },
+      "expected": {
+        "blocked": true
+      }
+    },
+    {
+      "test_id": "t09_adv_05_blocked_even_with_voh",
+      "description": "Adversarial payload (H > H*_VOH) blocked even with valid VOH token",
+      "passed": true,
+      "measured": {
+        "entropy": 4.4594,
+        "threshold": 4.375,
+        "voh_valid": true,
+        "source_id": "internal_service_5",
+        "blocked": true
+      },
+      "expected": {
+        "blocked": true
+      }
+    },
+    {
+      "test_id": "t09_unauth_01_standard_threshold",
+      "description": "Unauthenticated caller gets standard H* = 3.5 threshold (not elevated)",
+      "passed": true,
+      "measured": {
+        "entropy": 3.7004,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "",
+        "blocked": true
+      },
+      "expected": {
+        "threshold": 3.5
+      }
+    },
+    {
+      "test_id": "t09_unauth_02_standard_threshold",
+      "description": "Unauthenticated caller gets standard H* = 3.5 threshold (not elevated)",
+      "passed": true,
+      "measured": {
+        "entropy": 3.8074,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "",
+        "blocked": true
+      },
+      "expected": {
+        "threshold": 3.5
+      }
+    },
+    {
+      "test_id": "t09_unauth_03_standard_threshold",
+      "description": "Unauthenticated caller gets standard H* = 3.5 threshold (not elevated)",
+      "passed": true,
+      "measured": {
+        "entropy": 3.7004,
+        "threshold": 3.5,
+        "voh_valid": false,
+        "source_id": "",
+        "blocked": true
+      },
+      "expected": {
+        "threshold": 3.5
+      }
+    }
+  ]
+}

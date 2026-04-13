@@ -1,0 +1,427 @@
+{
+  "suite": "suite_08_fpr_calibration",
+  "total": 16,
+  "passed": 16,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "elapsed_ms": 0.1,
+  "config": {
+    "h_sweep_min": 2.5,
+    "h_sweep_max": 5.0,
+    "h_sweep_steps": 11,
+    "h_operating": 3.5,
+    "voh_discount": 0.2,
+    "h_voh": 4.375
+  },
+  "summary": {
+    "operating_point": {
+      "threshold": 3.5,
+      "tp": 20,
+      "fp": 0,
+      "tn": 20,
+      "fn": 0,
+      "fpr": 0.0,
+      "fnr": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "voh_metrics": {
+      "threshold": 4.375,
+      "tp": 0,
+      "fp": 0,
+      "tn": 20,
+      "fn": 20,
+      "fpr": 0.0,
+      "fnr": 1.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "best_f1_row": {
+      "threshold": 3.5,
+      "tp": 20,
+      "fp": 0,
+      "tn": 20,
+      "fn": 0,
+      "fpr": 0.0,
+      "fnr": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "sweep": [
+      {
+        "threshold": 2.5,
+        "tp": 20,
+        "fp": 20,
+        "tn": 0,
+        "fn": 0,
+        "fpr": 1.0,
+        "fnr": 0.0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 2.75,
+        "tp": 20,
+        "fp": 20,
+        "tn": 0,
+        "fn": 0,
+        "fpr": 1.0,
+        "fnr": 0.0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 3.0,
+        "tp": 20,
+        "fp": 20,
+        "tn": 0,
+        "fn": 0,
+        "fpr": 1.0,
+        "fnr": 0.0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 3.25,
+        "tp": 20,
+        "fp": 16,
+        "tn": 4,
+        "fn": 0,
+        "fpr": 0.8,
+        "fnr": 0.0,
+        "precision": 0.5556,
+        "recall": 1.0,
+        "f1": 0.7143
+      },
+      {
+        "threshold": 3.5,
+        "tp": 20,
+        "fp": 0,
+        "tn": 20,
+        "fn": 0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      {
+        "threshold": 3.75,
+        "tp": 10,
+        "fp": 0,
+        "tn": 20,
+        "fn": 10,
+        "fpr": 0.0,
+        "fnr": 0.5,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 4.0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 4.25,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 4.5,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 4.75,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 5.0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      }
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "t08_operating_point_fnr",
+      "description": "H* = 3.5 has FNR \u2264 20% (blocks \u2265 80% of adversarial)",
+      "passed": true,
+      "measured": {
+        "fnr_at_h35": 0.0,
+        "fpr_at_h35": 0.0
+      },
+      "expected": {
+        "fnr_max": 0.2
+      }
+    },
+    {
+      "test_id": "t08_voh_near_zero_fpr",
+      "description": "VOH threshold H*_VOH \u2248 4.375 bits achieves FPR \u2264 5%",
+      "passed": true,
+      "measured": {
+        "voh_threshold": 4.375,
+        "voh_fpr": 0.0
+      },
+      "expected": {
+        "voh_fpr_max": 0.05
+      }
+    },
+    {
+      "test_id": "t08_best_f1_at_operating_point",
+      "description": "H* = 3.5 is within 1.5 steps of the maximum F1 score",
+      "passed": true,
+      "measured": {
+        "best_f1_threshold": 3.5,
+        "best_f1": 1.0
+      },
+      "expected": {
+        "operating_point_h35": 3.5,
+        "tolerance_steps": 1.5
+      }
+    },
+    {
+      "test_id": "t08_fnr_monotone_with_threshold",
+      "description": "FNR increases as H* increases (more adversarial pass at higher threshold)",
+      "passed": true,
+      "measured": {
+        "fnr_at_min_h": 0.0,
+        "fnr_at_max_h": 1.0
+      },
+      "expected": {
+        "fnr_min_le_fnr_max": true
+      }
+    },
+    {
+      "test_id": "t08_fpr_monotone_with_threshold",
+      "description": "FPR decreases as H* increases (fewer benign blocked at higher threshold)",
+      "passed": true,
+      "measured": {
+        "fpr_at_min_h": 1.0,
+        "fpr_at_max_h": 0.0
+      },
+      "expected": {
+        "fpr_min_ge_fpr_max": true
+      }
+    },
+    {
+      "test_id": "t08_sweep_h2_5",
+      "description": "Sweep row at H* = 2.5 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.6667,
+        "fpr": 1.0,
+        "fnr": 0.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h2_75",
+      "description": "Sweep row at H* = 2.75 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.6667,
+        "fpr": 1.0,
+        "fnr": 0.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h3_0",
+      "description": "Sweep row at H* = 3.0 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.6667,
+        "fpr": 1.0,
+        "fnr": 0.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h3_25",
+      "description": "Sweep row at H* = 3.25 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.7143,
+        "fpr": 0.8,
+        "fnr": 0.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h3_5",
+      "description": "Sweep row at H* = 3.5 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h3_75",
+      "description": "Sweep row at H* = 3.75 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.6667,
+        "fpr": 0.0,
+        "fnr": 0.5
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h4_0",
+      "description": "Sweep row at H* = 4.0 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h4_25",
+      "description": "Sweep row at H* = 4.25 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h4_5",
+      "description": "Sweep row at H* = 4.5 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h4_75",
+      "description": "Sweep row at H* = 4.75 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "test_id": "t08_sweep_h5_0",
+      "description": "Sweep row at H* = 5.0 has valid F1",
+      "passed": true,
+      "measured": {
+        "f1": 0.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "expected": {
+        "f1_range": [
+          0.0,
+          1.0
+        ]
+      }
+    }
+  ]
+}

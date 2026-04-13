@@ -1,0 +1,351 @@
+{
+  "generated_at": "2026-04-05T13:59:54.174852Z",
+  "total": 452,
+  "passed": 452,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "elapsed_ms": 465.2,
+  "omega75": {
+    "total": 375,
+    "passed": 375,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "suites": [
+      {
+        "name": "iter_01_core",
+        "label": "01 \u00b7 Networking & Circuit Breaker",
+        "total": 75,
+        "passed": 75,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 4687.0,
+        "source": "pre-existing log (not re-run)"
+      },
+      {
+        "name": "iter_02_ledger",
+        "label": "02 \u00b7 Temporal Integrity & Hash-Chain",
+        "total": 75,
+        "passed": 75,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 37203.0,
+        "source": "pre-existing log (not re-run)"
+      },
+      {
+        "name": "iter_03_poison",
+        "label": "03 \u00b7 Semantic Poison & Charter Guard",
+        "total": 75,
+        "passed": 75,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 5656.0,
+        "source": "pre-existing log (not re-run)"
+      },
+      {
+        "name": "iter_04_scale",
+        "label": "04 \u00b7 RAG Flooding & Token Efficiency",
+        "total": 75,
+        "passed": 75,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 6750.0,
+        "source": "pre-existing log (not re-run)"
+      },
+      {
+        "name": "iter_05_chaos",
+        "label": "05 \u00b7 Heat-Death Combined Chaos",
+        "total": 75,
+        "passed": 75,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 44625.0,
+        "source": "pre-existing log (not re-run)"
+      }
+    ]
+  },
+  "extended": {
+    "total": 77,
+    "passed": 77,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "suites": [
+      {
+        "name": "suite_06_external_baseline",
+        "label": "06 \u00b7 External Baseline Comparison",
+        "total": 24,
+        "passed": 24,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 418.5
+      },
+      {
+        "name": "suite_07_temporal_correlator",
+        "label": "07 \u00b7 Temporal Correlator (Slow-Drip)",
+        "total": 18,
+        "passed": 18,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 1.2
+      },
+      {
+        "name": "suite_08_fpr_calibration",
+        "label": "08 \u00b7 FPR / FNR Calibration Sweep",
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 0.1
+      },
+      {
+        "name": "suite_09_voh_multiprocess",
+        "label": "09 \u00b7 VOH Cross-Process Authentication",
+        "total": 19,
+        "passed": 19,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "elapsed_ms": 0.3
+      }
+    ]
+  },
+  "all_suites": [
+    {
+      "name": "iter_01_core",
+      "label": "01 \u00b7 Networking & Circuit Breaker",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 4687.0,
+      "source": "pre-existing log (not re-run)"
+    },
+    {
+      "name": "iter_02_ledger",
+      "label": "02 \u00b7 Temporal Integrity & Hash-Chain",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 37203.0,
+      "source": "pre-existing log (not re-run)"
+    },
+    {
+      "name": "iter_03_poison",
+      "label": "03 \u00b7 Semantic Poison & Charter Guard",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 5656.0,
+      "source": "pre-existing log (not re-run)"
+    },
+    {
+      "name": "iter_04_scale",
+      "label": "04 \u00b7 RAG Flooding & Token Efficiency",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 6750.0,
+      "source": "pre-existing log (not re-run)"
+    },
+    {
+      "name": "iter_05_chaos",
+      "label": "05 \u00b7 Heat-Death Combined Chaos",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 44625.0,
+      "source": "pre-existing log (not re-run)"
+    },
+    {
+      "name": "suite_06_external_baseline",
+      "label": "06 \u00b7 External Baseline Comparison",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 418.5
+    },
+    {
+      "name": "suite_07_temporal_correlator",
+      "label": "07 \u00b7 Temporal Correlator (Slow-Drip)",
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 1.2
+    },
+    {
+      "name": "suite_08_fpr_calibration",
+      "label": "08 \u00b7 FPR / FNR Calibration Sweep",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 0.1
+    },
+    {
+      "name": "suite_09_voh_multiprocess",
+      "label": "09 \u00b7 VOH Cross-Process Authentication",
+      "total": 19,
+      "passed": 19,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "elapsed_ms": 0.3
+    }
+  ],
+  "scientific_delta": {
+    "baseline_block_rate_pct": 0.0,
+    "nexus_adv_block_rate_pct": 100.0,
+    "nexus_fp_rate_pct": 45.0,
+    "delta_block_rate_pp": 100.0,
+    "slow_drip_detection_rate_pct": 100.0,
+    "slow_drip_fp_rate_pct": 0.0,
+    "mean_sd_gradient": 0.2943,
+    "mean_leg_gradient": 0.0623,
+    "op_fpr_pct": 0.0,
+    "op_fnr_pct": 0.0,
+    "op_f1": 1.0,
+    "voh_fpr_pct": 0.0,
+    "best_f1_threshold": 3.5,
+    "best_f1": 1.0,
+    "fpr_calibration_sweep": [
+      {
+        "threshold": 2.5,
+        "tp": 20,
+        "fp": 20,
+        "tn": 0,
+        "fn": 0,
+        "fpr": 1.0,
+        "fnr": 0.0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 2.75,
+        "tp": 20,
+        "fp": 20,
+        "tn": 0,
+        "fn": 0,
+        "fpr": 1.0,
+        "fnr": 0.0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 3.0,
+        "tp": 20,
+        "fp": 20,
+        "tn": 0,
+        "fn": 0,
+        "fpr": 1.0,
+        "fnr": 0.0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 3.25,
+        "tp": 20,
+        "fp": 16,
+        "tn": 4,
+        "fn": 0,
+        "fpr": 0.8,
+        "fnr": 0.0,
+        "precision": 0.5556,
+        "recall": 1.0,
+        "f1": 0.7143
+      },
+      {
+        "threshold": 3.5,
+        "tp": 20,
+        "fp": 0,
+        "tn": 20,
+        "fn": 0,
+        "fpr": 0.0,
+        "fnr": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      {
+        "threshold": 3.75,
+        "tp": 10,
+        "fp": 0,
+        "tn": 20,
+        "fn": 10,
+        "fpr": 0.0,
+        "fnr": 0.5,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6667
+      },
+      {
+        "threshold": 4.0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 4.25,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 4.5,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 4.75,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "threshold": 5.0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "fpr": 0.0,
+        "fnr": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      }
+    ],
+    "voh_spoofed_accepted": 0,
+    "voh_hmac_accepted": 5,
+    "voh_adversarial_blocked": 5
+  }
+}

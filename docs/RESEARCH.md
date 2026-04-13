@@ -7,6 +7,10 @@
 
 ← [README](../README.md) · [Engineering Reference](ENGINEERING_REFERENCE.md) · [Benchmark Results](BENCHMARK_RESULTS.md)
 
+> **v2 paper, figures, and all benchmark archives have moved to [`research/`](../research/).
+> See [`research/RESEARCH.md`](../research/RESEARCH.md) for the full index.**
+> This file retains the formal mathematical definitions for reference.
+
 ---
 
 ## Contents

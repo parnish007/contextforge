@@ -106,4 +106,5 @@ python mcp/server.py --stdio
 ## Full documentation
 
 → [`docs/WHAT_IS_THIS.md`](../docs/WHAT_IS_THIS.md) — what ContextForge is, data flow, worked example  
-→ [`docs/SETUP.md`](../docs/SETUP.md) — complete guide: all IDEs, API keys, Ollama, SSE remote, troubleshooting
+→ [`docs/SETUP.md`](../docs/SETUP.md) — complete guide: all IDEs, API keys, Ollama, SSE remote, troubleshooting  
+→ [`research/RESEARCH.md`](../research/RESEARCH.md) — v2 paper, figures, benchmark archives

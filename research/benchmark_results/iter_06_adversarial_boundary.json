@@ -1,0 +1,970 @@
+{
+  "summary": {
+    "total": 75,
+    "passed": 75,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "mean_latency": 0.0,
+    "p95_latency": 0.0,
+    "max_latency": 0.0
+  },
+  "results": [
+    {
+      "test_id": "bfcd701c",
+      "name": "test_entropy_8_unique_words_below_threshold",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 3.0,
+        "below": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "47db7cca",
+      "name": "test_entropy_16_unique_words_above_threshold",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 4.0,
+        "above": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "5ac0421f",
+      "name": "test_entropy_just_below_35",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 3.4183
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "559e9682",
+      "name": "test_entropy_just_above_35",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 3.585
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "3e45f1c9",
+      "name": "test_entropy_compute_fn_matches_helper",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h_helper": 3.0,
+        "h_router": 3.0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "c96df2f4",
+      "name": "test_entropy_technical_sentence_level",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 4.0374,
+        "exceeds_gate": true,
+        "note": "Technical sentences often exceed H*=3.5 \u2014 entropy prewarm fires on legitimate prompts"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "696846e1",
+      "name": "test_entropy_empty_string",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 0.0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "4a4007fa",
+      "name": "test_entropy_single_word",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": -0.0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "480dd434",
+      "name": "test_entropy_repetitive_text_low",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": -0.0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "9a58c989",
+      "name": "test_entropy_adversarial_obfuscated_high",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 5.6439,
+        "blocked_by_gate": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "d788ace0",
+      "name": "test_entropy_ledger_guard_low_entropy_passes",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id": "3dc416d3-42c0-473c-992e-ea28dbc7840a",
+        "blocked": false
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "d236da67",
+      "name": "test_entropy_ledger_guard_destructive_blocked",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "blocked": true,
+        "reason": "Destructive operation targeting protected entity \"sentry agent\": content contain"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "b8ea4b33",
+      "name": "test_entropy_skip_guard_allows_destructive",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id": "4da04be5-6068-4e2d-ac99-21486cd5c599",
+        "skip_guard_bypasses": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "da7a1780",
+      "name": "test_entropy_threshold_constant_is_35",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "threshold_in_source": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "cec16fc8",
+      "name": "test_entropy_boundary_operator_check",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "strict_gt": true,
+        "gte": false,
+        "note": "strict >"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "d590d142",
+      "name": "test_lz_density_repetitive_is_low",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.0682
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "5fc6267e",
+      "name": "test_lz_density_random_is_high",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.5688
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "e0bf2708",
+      "name": "test_lz_density_empty_string",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 1.0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "fbe1dba7",
+      "name": "test_lz_density_single_word",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 2.6
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "464c1f83",
+      "name": "test_lz_gate_implementation_audit",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "lz_in_router": false,
+        "lz_in_ledger": true,
+        "implemented": true,
+        "finding": "LZ density OR-gate is implemented"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "55779b0c",
+      "name": "test_lz_bypass_low_h_high_density",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "h": 3.2503,
+        "rho": 0.3617,
+        "blocked_by_h": false,
+        "blocked_by_lz": false,
+        "or_gate_would_block": false,
+        "note": "Payload passes both gates"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "3c678fb3",
+      "name": "test_lz_density_above_threshold",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.5684,
+        "above_lz_threshold": false
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "308c6dd0",
+      "name": "test_lz_density_below_threshold",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.02,
+        "below_lz_threshold": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "818b2f14",
+      "name": "test_lz_unicode_content",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 1.0909
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "dc203a7c",
+      "name": "test_lz_code_snippet_density",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.8342,
+        "h": 4.0875,
+        "note": "code snippet gate behaviour"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "b233f1d7",
+      "name": "test_lz_adversarial_b64_prefix",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "b64_fallback_exists": true,
+        "finding": "B64 plaintext fallback exists \u2014 bypasses AES-GCM auth on crafted input"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "3a3dc0e9",
+      "name": "test_lz_density_technical_docs",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.8031,
+        "h": 4.585,
+        "lz_would_block": true,
+        "h_would_block": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "862cf824",
+      "name": "test_lz_very_long_repetition",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.004923
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "e2d5610e",
+      "name": "test_lz_mixed_short_long_tokens",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "rho": 0.1816,
+        "h": 2.585
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "4e6ae3f4",
+      "name": "test_lz_or_gate_summary",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "total_payloads": 20,
+        "caught_by_h_gate": 10,
+        "caught_by_lz_gate": 10,
+        "or_gate_would_catch": 10,
+        "note": "or_gate_would_catch assumes both legs implemented"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "dd47d63c",
+      "name": "test_cb_initial_state_closed",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state": "closed"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "bf1c5367",
+      "name": "test_cb_trips_at_exact_threshold",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state": "open"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "f85a9ddf",
+      "name": "test_cb_does_not_trip_below_threshold",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state": "closed",
+        "failures": 4
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "64e2be0e",
+      "name": "test_cb_transitions_half_open_after_timeout",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state": "half_open",
+        "available": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "1cc297ad",
+      "name": "test_cb_closes_on_success_from_half_open",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state": "closed"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "2c7168fc",
+      "name": "test_cb_retrips_to_open_from_half_open",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state": "open"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "81cff4bc",
+      "name": "test_cb_no_immediate_re_probe_after_retrip",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "available_immediately": false
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:28Z"
+    },
+    {
+      "test_id": "e5aedc29",
+      "name": "test_cb_full_recovery_cycle",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "recovery_cycle": "CLOSED\u2192OPEN\u2192HALF_OPEN\u2192CLOSED passed"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "b58b88cc",
+      "name": "test_cb_success_resets_failure_counter",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state_after_success_then_2_failures": "closed",
+        "failures_reset": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "b04bb344",
+      "name": "test_cb_threshold_one",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state": "open"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "5fcaf19e",
+      "name": "test_cb_is_available_returns_bool",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "is_available": true,
+        "type": "bool"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "cc46ebc0",
+      "name": "test_cb_record_failure_returns_none",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "returns_none": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "47c6cd04",
+      "name": "test_cb_state_attribute_is_string",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state_type": "str",
+        "value": "closed"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "86e8f473",
+      "name": "test_cb_multiple_providers_independent",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "groq": "open",
+        "gemini": "closed"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "7226c22b",
+      "name": "test_cb_long_open_stays_open_until_timeout",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "state_at_half_timeout": "open"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "b4376f08",
+      "name": "test_ledger_fresh_create",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id": "fbb95c29-067a-43a8-a785-e1973e8f776a"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "775e692d",
+      "name": "test_ledger_10_sequential_unique_ids",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "unique_ids": 10
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:29Z"
+    },
+    {
+      "test_id": "e9120bcf",
+      "name": "test_ledger_50_concurrent_writes_no_collision",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "unique_ids": 50,
+        "errors": 0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "4bff2987",
+      "name": "test_ledger_list_events_respects_last_n",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "returned": 10
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "951ad6d7",
+      "name": "test_ledger_skip_guard_is_keyword_only",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "kind": "KEYWORD_ONLY",
+        "default": false
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "acaab623",
+      "name": "test_ledger_rollback_marks_events_inactive",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "active_after_rollback": 4
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "a8e56905",
+      "name": "test_ledger_concurrent_write_rollback_no_crash",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "errors": 0,
+        "db_errors": 0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "ce75b428",
+      "name": "test_ledger_hash_chain_first_event_genesis",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "first_prev_hash": "aeebad4a796f\u2026"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "2356ed39",
+      "name": "test_ledger_consecutive_hashes_chain",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "chain_valid": true,
+        "events": 3
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "546bf4bb",
+      "name": "test_ledger_event_id_is_uuid_format",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id_is_uuid": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "473f99a0",
+      "name": "test_ledger_wal_mode_enabled",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "journal_mode": "wal"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:30Z"
+    },
+    {
+      "test_id": "03dffd15",
+      "name": "test_ledger_100_writes_all_retrievable",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "retrieved": 100
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "46fe5256",
+      "name": "test_ledger_conflict_error_is_raised",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "is_exception_subclass": true,
+        "required_init_args": 2
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "0739e8c4",
+      "name": "test_ledger_append_returns_string_not_int",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "type": "str"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "bac863dc",
+      "name": "test_ledger_empty_content_appends",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id": "027e1f42-ccb3-41ec-96fc-36a30bf89bd4",
+        "empty_content_ok": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "312d2e55",
+      "name": "test_skip_guard_keyword_only",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "kind": "KEYWORD_ONLY"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "bfd845a5",
+      "name": "test_skip_guard_default_false",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "default": false
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "4581b886",
+      "name": "test_skip_guard_positional_raises_type_error",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "positional_raises_type_error": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "305c7cb0",
+      "name": "test_skip_guard_in_content_dict_does_not_bypass",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "guard_bypassed_via_content": false,
+        "guard_ran": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "f5cf77ab",
+      "name": "test_skip_guard_true_allows_through",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id": "13c8e2cd-0d1c-466a-af05-53954f5bd3d2",
+        "bypass_confirmed": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "8070bc6f",
+      "name": "test_mcp_capture_decision_skip_guard_audit",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "capture_decision_skip_guard_true": false,
+        "capture_decision_skip_guard_false": false,
+        "finding": "capture_decision runs ReviewerGuard (skip_guard=False)"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "b12be801",
+      "name": "test_mcp_tool_description_accuracy_audit",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "description_mentions_reviewer_guard": true,
+        "actually_uses_skip_guard_true": false,
+        "description_accurate": true,
+        "finding": "Description consistent with implementation"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "e891bd03",
+      "name": "test_skip_guard_param_exists",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "param_exists": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "a84f3e94",
+      "name": "test_benign_content_passes_guard",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id": "65d0d0eb-fd5f-473f-9a9c-7d3b930e6f62",
+        "benign_passes": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "0a74edde",
+      "name": "test_injection_marker_blocked",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "blocked": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "e4cdf99e",
+      "name": "test_reviewer_guard_loaded",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "ledger_created": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "057cbc3b",
+      "name": "test_skip_guard_false_runs_guard",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "event_id": "d171c86c-5143-41b1-b60e-bfa54d82c95f"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "1c4effbf",
+      "name": "test_multiple_safe_appends_without_skip_guard",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "appended": 8,
+        "all_passed": false
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "7abc4e61",
+      "name": "test_skip_guard_audit_all_callers",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "callers_with_skip_true": [],
+        "callers_with_skip_false": [],
+        "finding": "0 callers bypass ReviewerGuard via skip_guard=True"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    },
+    {
+      "test_id": "fe140bd5",
+      "name": "test_entropy_boundary_operator_check",
+      "category": "adversarial_boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "strict_gt": true,
+        "gte": false,
+        "note": "strict >"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T11:34:31Z"
+    }
+  ]
+}
