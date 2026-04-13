@@ -2,6 +2,8 @@
 
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)
 
+← [README](../README.md) · [Research](RESEARCH.md) · [Engineering Reference](ENGINEERING_REFERENCE.md)
+
 **Version:** 5.0.0  
 **Report Date:** 2026-04-05  
 **Benchmark Suite:** OMEGA-75 × 5 (375 tests, 5 iterations) + Suite 06 Adversarial Boundary (75 tests)  

@@ -2,6 +2,8 @@
 
 > **Author:** Trilochan Sharma — [parnish007](https://github.com/parnish007)
 
+← [README](../README.md) · [Setup](SETUP.md) · [How to Use](HOW_TO_USE.md) · [Architecture](ARCHITECTURE.md)
+
 ContextForge is a **local-first memory server for AI agents**. It speaks the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), which means any MCP-compatible AI client — Claude Desktop, Cursor, VS Code Copilot — can call its tools to save decisions, retrieve context, manage tasks, and take encrypted snapshots across sessions and projects.
 
 ---

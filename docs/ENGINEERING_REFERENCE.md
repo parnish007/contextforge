@@ -4,6 +4,8 @@
 **Version:** Nexus Architecture  
 **Last Updated:** 2026-04-05
 
+← [README](../README.md) · [Architecture](ARCHITECTURE.md) · [Research](RESEARCH.md) · [Benchmark Results](BENCHMARK_RESULTS.md)
+
 ---
 
 ## Table of Contents

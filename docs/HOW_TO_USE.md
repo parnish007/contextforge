@@ -2,7 +2,9 @@
 
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)
 
-Complete guide for using ContextForge after installation: verifying readiness, managing multiple projects, using all 21 MCP tools, understanding what is stored where, and exporting your data.
+← [README](../README.md) · [Setup](SETUP.md) · [What is this?](WHAT_IS_THIS.md) · [Architecture](ARCHITECTURE.md) · [Engineering Reference](ENGINEERING_REFERENCE.md)
+
+Complete guide for using ContextForge after installation: verifying readiness, managing multiple projects, using all 22 MCP tools, understanding what is stored where, and exporting your data.
 
 ---
 
@@ -17,7 +19,7 @@ Complete guide for using ContextForge after installation: verifying readiness, m
 7. [What Is and Is Not Project-Scoped](#7-scoping-reference)
 8. [Where Your Data Lives](#8-where-your-data-lives)
 9. [Export and Push Data](#9-export-and-push-data)
-10. [All 21 MCP Tools — Complete Reference](#10-complete-tool-reference)
+10. [All 22 MCP Tools — Complete Reference](#10-complete-tool-reference)
 11. [Honest Gaps](#11-honest-gaps)
 
 ---
@@ -616,7 +618,7 @@ httpx.post(
 
 ---
 
-## 10. Complete Tool Reference
+## 10. Complete Tool Reference (22 tools)
 
 ### Project management
 

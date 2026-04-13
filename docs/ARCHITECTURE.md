@@ -3,6 +3,8 @@
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 > **RAT + Nexus**: Reasoning · Auditing · Tracking · Transport · Router · Memory · Retrieval · Sync
 
+← [README](../README.md) · [What is this?](WHAT_IS_THIS.md) · [Setup](SETUP.md) · [Engineering Reference](ENGINEERING_REFERENCE.md) · [Research](RESEARCH.md)
+
 ---
 
 ## 1. Design Principles

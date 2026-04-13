@@ -3,6 +3,8 @@
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 > Five-iteration recursive self-improvement audit — from baseline to 100% pass rate
 
+← [README](../README.md) · [Research](RESEARCH.md) · [Benchmark Results](BENCHMARK_RESULTS.md)
+
 ---
 
 ## Summary Table

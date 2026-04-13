@@ -2,6 +2,8 @@
 
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)
 
+← [README](../README.md) · [What is this?](WHAT_IS_THIS.md) · [How to Use](HOW_TO_USE.md) · [Architecture](ARCHITECTURE.md)
+
 ContextForge exposes its five-pillar agentic memory architecture as a native MCP
 (Model Context Protocol) server. Any MCP-compatible IDE connects to it and uses
 persistent memory, rollback, semantic search, and encrypted snapshots as built-in

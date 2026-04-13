@@ -5,6 +5,8 @@
 > For measured results and pass/fail tables, see [`BENCHMARK_RESULTS.md`](BENCHMARK_RESULTS.md).  
 > For the 5-iteration tuning history, see [`EVOLUTION_LOG.md`](EVOLUTION_LOG.md).
 
+← [README](../README.md) · [Engineering Reference](ENGINEERING_REFERENCE.md) · [Benchmark Results](BENCHMARK_RESULTS.md)
+
 ---
 
 ## Contents
