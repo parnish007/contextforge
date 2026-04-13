@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/banner.png" alt="ContextForge — Agentic Memory for AI-Assisted Development" width="100%"/>
+  <img src="images/banner.png" alt="ContextForge — Agentic Memory for AI-Assisted Development" width="90%"/>
 </p>
 
 <p align="center">
