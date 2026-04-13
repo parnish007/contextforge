@@ -1,5 +1,5 @@
 /**
- * ContextForge Nexus — TypeScript MCP Server v5.0.0
+ * ContextForge Nexus — TypeScript MCP Server v5.1.0
  *
  * Tools:
  *   get_knowledge_node   Retrieve a decision node by ID (L0/L1/L2)
@@ -7,6 +7,13 @@
  *   capture_decision     Append a decision node to the graph
  *   load_context         Hierarchical context assembly (L0/L1/L2)
  *   list_events          Inspect the event ledger
+ *   list_projects        List all registered projects
+ *   rename_project       Rename a project display name
+ *   list_decisions       List decision nodes with optional filters
+ *   project_stats        Return statistics for a project
+ *   list_tasks           List tasks for a project
+ *   create_task          Create a new task in a project
+ *   update_task          Update the status of an existing task
  *
  * Usage:
  *   npm run dev    # tsx watch (no compile)
@@ -40,7 +47,7 @@ function nowIso(): string {
   return new Date().toISOString().replace("T", " ").split(".")[0];
 }
 
-const server = new McpServer({ name: "contextforge-nexus", version: "5.0.0" });
+const server = new McpServer({ name: "contextforge-nexus", version: "5.1.0" });
 
 // ── get_knowledge_node ──────────────────────────────────────────────────────
 
@@ -280,12 +287,208 @@ server.tool(
   }
 );
 
+// ── list_projects ───────────────────────────────────────────────────────────
+
+server.tool(
+  "list_projects",
+  "List all registered projects in this ContextForge instance.",
+  {},
+  async () => {
+    const db = openDb(true);
+    try {
+      const rows = db.prepare(
+        "SELECT id, name, project_type, description, created_at FROM projects ORDER BY created_at DESC"
+      ).all() as Record<string, unknown>[];
+      return { content: [{ type: "text" as const, text: JSON.stringify({ projects: rows, count: rows.length }, null, 2) }] };
+    } finally {
+      db.close();
+    }
+  }
+);
+
+// ── rename_project ──────────────────────────────────────────────────────────
+
+server.tool(
+  "rename_project",
+  "Rename a project display name. The project_id slug does not change.",
+  {
+    project_id:      z.string().min(2).describe("Project ID to rename"),
+    new_name:        z.string().min(1).describe("New display name"),
+    new_description: z.string().optional().describe("New description (omit to keep existing)"),
+  },
+  async ({ project_id, new_name, new_description }) => {
+    const db = openDb(false);
+    try {
+      const exists = db.prepare("SELECT 1 FROM projects WHERE id = ?").get(project_id);
+      if (!exists) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: `Project '${project_id}' not found` }) }] };
+      }
+      if (new_description !== undefined) {
+        db.prepare("UPDATE projects SET name = ?, description = ?, updated_at = ? WHERE id = ?")
+          .run(new_name, new_description, nowIso(), project_id);
+      } else {
+        db.prepare("UPDATE projects SET name = ?, updated_at = ? WHERE id = ?")
+          .run(new_name, nowIso(), project_id);
+      }
+      return { content: [{ type: "text" as const, text: JSON.stringify({ status: "renamed", project_id, new_name }) }] };
+    } finally {
+      db.close();
+    }
+  }
+);
+
+// ── list_decisions ──────────────────────────────────────────────────────────
+
+server.tool(
+  "list_decisions",
+  "List decision nodes for a project with optional area and status filters.",
+  {
+    project_id: z.string().min(2).describe("Project ID"),
+    area:       z.string().optional().describe("Filter by area (e.g. 'auth', 'database')"),
+    status:     z.enum(["active","deprecated","quarantined","pending"]).default("active"),
+    limit:      z.number().int().default(20),
+  },
+  async ({ project_id, area, status, limit }) => {
+    const db = openDb(true);
+    try {
+      let rows: Record<string, unknown>[];
+      if (area) {
+        rows = db.prepare(
+          "SELECT id, area, summary, rationale, confidence, status, created_at FROM decision_nodes WHERE project_id = ? AND area = ? AND tombstone = 0 AND status = ? ORDER BY importance DESC LIMIT ?"
+        ).all(project_id, area, status, limit) as Record<string, unknown>[];
+      } else {
+        rows = db.prepare(
+          "SELECT id, area, summary, rationale, confidence, status, created_at FROM decision_nodes WHERE project_id = ? AND tombstone = 0 AND status = ? ORDER BY importance DESC LIMIT ?"
+        ).all(project_id, status, limit) as Record<string, unknown>[];
+      }
+      return { content: [{ type: "text" as const, text: JSON.stringify({ project_id, count: rows.length, decisions: rows }, null, 2) }] };
+    } finally {
+      db.close();
+    }
+  }
+);
+
+// ── project_stats ───────────────────────────────────────────────────────────
+
+server.tool(
+  "project_stats",
+  "Return statistics for a project: node counts by area and status, task completion.",
+  {
+    project_id: z.string().min(2).describe("Project ID"),
+  },
+  async ({ project_id }) => {
+    const db = openDb(true);
+    try {
+      const proj = db.prepare("SELECT * FROM projects WHERE id = ?").get(project_id) as Record<string, unknown> | undefined;
+      if (!proj) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: `Project '${project_id}' not found` }) }] };
+      }
+      const activeNodes = (db.prepare("SELECT COUNT(*) as cnt FROM decision_nodes WHERE project_id = ? AND tombstone = 0 AND status = 'active'").get(project_id) as Record<string,number>).cnt;
+      const totalNodes  = (db.prepare("SELECT COUNT(*) as cnt FROM decision_nodes WHERE project_id = ? AND tombstone = 0").get(project_id) as Record<string,number>).cnt;
+      const areaRows    = db.prepare("SELECT area, COUNT(*) as cnt FROM decision_nodes WHERE project_id = ? AND tombstone = 0 AND status = 'active' GROUP BY area ORDER BY cnt DESC").all(project_id) as Record<string, unknown>[];
+      const taskRows    = db.prepare("SELECT status, COUNT(*) as cnt FROM tasks WHERE project_id = ? GROUP BY status").all(project_id) as Record<string, unknown>[];
+      const taskCounts  = Object.fromEntries(taskRows.map(r => [r.status as string, r.cnt as number]));
+      const totalTasks  = taskRows.reduce((s, r) => s + (r.cnt as number), 0);
+      return { content: [{ type: "text" as const, text: JSON.stringify({
+        project_id, name: proj.name, project_type: proj.project_type,
+        nodes: { total: totalNodes, active: activeNodes },
+        areas: areaRows,
+        tasks: { ...taskCounts, total: totalTasks, pct_complete: totalTasks ? Math.round(((taskCounts.done ?? 0) / totalTasks) * 100) : 0 },
+      }, null, 2) }] };
+    } finally {
+      db.close();
+    }
+  }
+);
+
+// ── list_tasks ──────────────────────────────────────────────────────────────
+
+server.tool(
+  "list_tasks",
+  "List tasks for a project with optional status filter.",
+  {
+    project_id: z.string().min(2).describe("Project ID"),
+    status:     z.enum(["pending","in_progress","done","blocked"]).optional(),
+    limit:      z.number().int().default(20),
+  },
+  async ({ project_id, status, limit }) => {
+    const db = openDb(true);
+    try {
+      let rows: Record<string, unknown>[];
+      if (status) {
+        rows = db.prepare("SELECT * FROM tasks WHERE project_id = ? AND status = ? ORDER BY priority ASC, created_at ASC LIMIT ?").all(project_id, status, limit) as Record<string, unknown>[];
+      } else {
+        rows = db.prepare("SELECT * FROM tasks WHERE project_id = ? ORDER BY priority ASC, created_at ASC LIMIT ?").all(project_id, limit) as Record<string, unknown>[];
+      }
+      return { content: [{ type: "text" as const, text: JSON.stringify({ project_id, count: rows.length, tasks: rows }, null, 2) }] };
+    } finally {
+      db.close();
+    }
+  }
+);
+
+// ── create_task ─────────────────────────────────────────────────────────────
+
+server.tool(
+  "create_task",
+  "Create a new task in a project.",
+  {
+    project_id:  z.string().min(2).describe("Project ID"),
+    title:       z.string().min(1).describe("Task title"),
+    description: z.string().default(""),
+    priority:    z.number().int().min(1).max(5).default(3).describe("1=highest, 5=lowest"),
+    sprint:      z.string().default(""),
+    assigned_to: z.string().default(""),
+  },
+  async ({ project_id, title, description, priority, sprint, assigned_to }) => {
+    const db = openDb(false);
+    try {
+      const proj = db.prepare("SELECT 1 FROM projects WHERE id = ?").get(project_id);
+      if (!proj) {
+        // Auto-create stub project
+        db.prepare("INSERT OR IGNORE INTO projects (id, name, project_type) VALUES (?, ?, 'general')").run(project_id, project_id);
+      }
+      const taskId = crypto.randomUUID();
+      const now = nowIso();
+      db.prepare(
+        "INSERT INTO tasks (id, project_id, title, description, status, priority, sprint, assigned_to, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)"
+      ).run(taskId, project_id, title, description, "pending", priority, sprint, assigned_to, now, now);
+      return { content: [{ type: "text" as const, text: JSON.stringify({ status: "created", task_id: taskId, title }) }] };
+    } finally {
+      db.close();
+    }
+  }
+);
+
+// ── update_task ─────────────────────────────────────────────────────────────
+
+server.tool(
+  "update_task",
+  "Update the status of an existing task.",
+  {
+    task_id: z.string().describe("Task ID"),
+    status:  z.enum(["pending","in_progress","done","blocked"]),
+  },
+  async ({ task_id, status }) => {
+    const db = openDb(false);
+    try {
+      const result = db.prepare("UPDATE tasks SET status = ?, updated_at = ? WHERE id = ?").run(status, nowIso(), task_id);
+      if (result.changes === 0) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: `Task '${task_id}' not found` }) }] };
+      }
+      return { content: [{ type: "text" as const, text: JSON.stringify({ status: "updated", task_id, new_status: status }) }] };
+    } finally {
+      db.close();
+    }
+  }
+);
+
 // ── Start ───────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  process.stderr.write(`ContextForge Nexus MCP v5.0.0 (TypeScript) — db=${DB_PATH}\n`);
+  process.stderr.write(`ContextForge Nexus MCP v5.1.0 (TypeScript) — db=${DB_PATH}\n`);
 }
 
 main().catch(err => { process.stderr.write(`Fatal: ${err}\n`); process.exit(1); });

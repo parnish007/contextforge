@@ -160,11 +160,13 @@ return "⚠️ System Overloaded"
 
 **`CircuitBreaker` state machine:**
 
-```
-         failure × N                       success
-CLOSED ─────────────▶ OPEN ─── timeout ─▶ HALF_OPEN ─────▶ CLOSED
-                        ▲                     │ failure
-                        └─────────────────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> CLOSED
+    CLOSED --> OPEN : failure × N threshold
+    OPEN --> HALF_OPEN : timeout elapsed
+    HALF_OPEN --> CLOSED : success
+    HALF_OPEN --> OPEN : failure
 ```
 
 | Provider | Threshold | Reset timeout |
@@ -290,35 +292,56 @@ CLOSED ─────────────▶ OPEN ─── timeout ─▶ 
 
 ### 4.1 Agent Interaction Diagram
 
-```
-File System
-    │ inotify/watchdog
-    ▼
-┌─────────┐  SignalBatch   ┌────────────┐  candidate node   ┌──────────────────┐
-│  Sentry │ ─────────────▶ │ GhostCoder │ ────────────────▶ │ Shadow-Reviewer  │
-│(Watchdog)│               │(Distiller) │                   │  Check 0: regex  │
-└─────────┘               └────────────┘                   │  Check 1: cosine │
-                                                            │  Check 2: contra │
-┌─────────┐  @pm goal      ┌────────────┐                   └────────┬─────────┘
-│   PM    │ ─────────────▶ │ Researcher │         APPROVED  │  BLOCKED│  REVISION
-│(Planner)│               │(Web Search)│                   ▼         ▼         ▼
-└─────────┘               └────────────┘             ┌──────────┐ reject   pending
-    │ tasks                     │ node               │ Librarian│
-    ▼                           ▼                   │  L1/L2/L3│
-┌─────────┐  ContextRAG   ┌────────────┐            └────┬─────┘
-│  Coder  │◀──────────────│ Librarian  │                 │
-│(Builder)│               │  (Read)    │                 ▼
-└────┬────┘               └────────────┘         ┌───────────────┐
-     │ candidate node                             │   SQLite DB   │
-     └─────────────────────────────────▶ Reviewer │ decision_nodes│
-                                                  └───────┬───────┘
-                                                          │
-                                                  ┌───────▼───────┐
-                                                  │   Historian   │
-                                                  │ Jaccard GC    │
-                                                  │ → historical_ │
-                                                  │   nodes       │
-                                                  └───────────────┘
+```mermaid
+flowchart TD
+    FS[("File System\ninotify / watchdog")]
+
+    subgraph Phase1["Phase 1 — Capture Pipeline"]
+        SENTRY["Sentry\nWatchdog + 2s debounce\nSHA-256 dedup"]
+        GC["GhostCoder\nSemanticDistiller\nLLM → rule fallback"]
+        REV["Shadow-Reviewer\nCheck 0: regex injection\nCheck 1: cosine 0.78\nCheck 2: contradiction"]
+    end
+
+    subgraph Phase2["Phase 2 — Command Layer"]
+        PM["PM\nGoal decomposition\n@pm <goal>"]
+        RES["Researcher\nWeb search → synthesis\nTavily → Serper → DDG"]
+    end
+
+    subgraph Phase3["Phase 3 — Build Layer"]
+        CODER["Coder\nContextRAG → Plan-and-Execute\n# RATIONALE: prefix enforced"]
+    end
+
+    subgraph Storage["Knowledge Graph (SQLite)"]
+        LIB["Librarian\nL1: SHA-256 cache\nL2: BM25 SQLite\nL3: research nodes"]
+        DB[("decision_nodes\nhistorical_nodes\ntasks · audit_log")]
+        HIST["Historian\nJaccard GC\narchive duplicates"]
+    end
+
+    REJECT[/"rejected"/]
+    PEND[/"revision_needed"/]
+
+    FS -->|"SignalBatch"| SENTRY
+    SENTRY -->|"SignalBatch dict"| GC
+    GC -->|"candidate node"| REV
+    REV -->|"APPROVED"| LIB
+    REV -->|"BLOCKED"| REJECT
+    REV -->|"REVISION_NEEDED"| PEND
+
+    PM -->|"@pm goal"| RES
+    PM -->|"task_id"| CODER
+    RES -->|"research node"| LIB
+    CODER -->|"ContextRAG query"| LIB
+    CODER -->|"candidate node"| REV
+
+    LIB --> DB
+    HIST -->|"GC archive"| DB
+
+    style REV fill:#7B2D8B,color:#fff
+    style LIB fill:#2166AC,color:#fff
+    style HIST fill:#1B7837,color:#fff
+    style DB fill:#333,color:#fff
+    style REJECT fill:#C0392B,color:#fff
+    style PEND fill:#E67E22,color:#fff
 ```
 
 ### 4.2 Agent Specifications
@@ -378,23 +401,25 @@ File System
 
 ## 5. Three-Tier H-RAG Cache
 
-```
-Query
-  │
-  ├─ L1 Exact Cache ──────────── SHA-256(query) → cached_response
-  │   Hit rate: ~5%              Latency: 0 ms
-  │   MISS ↓
-  │
-  ├─ L2 BM25 SQLite ──────────── BM25 term overlap against decision_nodes
-  │   Hit rate: ~93.7%           Latency: < 5 ms · Cap: 1,500 tokens
-  │   MISS ↓
-  │
-  ├─ L3 Research Nodes ────────── area='research' · recency-ranked
-  │   Hit rate: ~0%              Latency: < 5 ms · Cap: 800 tokens
-  │   MISS ↓
-  │
-  └─ L0 Stub ─────────────────── "" (model generates from context alone)
-      Fallback rate: ~1.3%
+```mermaid
+flowchart TD
+    Q["Query"] --> L1
+
+    L1["L1 — Exact Cache\nSHA-256 hash lookup\nHit rate ~5% · Latency 0 ms"]
+    L2["L2 — BM25 SQLite\nTerm overlap on decision_nodes\nHit rate ~93.7% · &lt;5 ms · Cap 1500 tokens"]
+    L3["L3 — Research Nodes\narea='research' · recency-ranked\nHit rate ~1% · &lt;5 ms · Cap 800 tokens"]
+    L0["L0 — Empty Stub\nModel generates from context alone\nFallback rate ~1.3%"]
+    HIT["Cache Hit\nReturn cached content"]
+
+    L1 -->|"HIT"| HIT
+    L1 -->|"MISS"| L2
+    L2 -->|"HIT"| HIT
+    L2 -->|"MISS"| L3
+    L3 -->|"HIT"| HIT
+    L3 -->|"MISS"| L0
+
+    style HIT fill:#1B7837,color:#fff
+    style L0 fill:#7f8c8d,color:#fff
 ```
 
 **Pre-retrieval (Pillar 4):** Before querying H-RAG, `LocalIndexer.search()` fetches file-level chunks (cosine ≥ 0.75). These are prepended to the context bundle — the LLM sees precise diffs, not entire files.

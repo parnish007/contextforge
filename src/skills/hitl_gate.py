@@ -42,7 +42,7 @@ except ImportError:
 # Constants (overridable via env)
 # ---------------------------------------------------------------------------
 
-_DEFAULT_THRESHOLD = float(os.getenv("HITL_CONFIDENCE_THRESHOLD", "0.70"))
+_DEFAULT_THRESHOLD = float(os.getenv("HITL_CONFIDENCE_THRESHOLD", "0.85"))
 _AUTO_APPROVE = os.getenv("HITL_AUTO_APPROVE", "false").lower() == "true"
 
 
@@ -72,7 +72,7 @@ class HITLGate:
     confidence_threshold : float
         Nodes with confidence < this value are routed to human review.
         Nodes ≥ this value are auto-approved.
-        Defaults to HITL_CONFIDENCE_THRESHOLD env var (0.70).
+        Defaults to HITL_CONFIDENCE_THRESHOLD env var (0.85).
     auto_approve : bool
         If True, bypass all human prompts and approve everything.
         Useful for batch testing or CI.  Defaults to HITL_AUTO_APPROVE env var.

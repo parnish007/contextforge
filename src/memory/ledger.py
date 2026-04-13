@@ -52,6 +52,7 @@ import re
 import sqlite3
 import tempfile
 import uuid
+import zlib
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from enum import Enum
@@ -176,6 +177,28 @@ class ReviewerGuard:
         "api", "key", "keys", "token", "tokens", "secret", "credential",
     })
 
+    # Dual-signal entropy + LZ density gate thresholds
+    _H_THRESHOLD: float = 3.5    # bits — Shannon entropy gate
+    _LZ_MIN_DENSITY: float = 0.60  # LZ compression density — below = repetition attack
+
+    @staticmethod
+    def _compute_entropy(text: str) -> float:
+        from collections import Counter
+        import math
+        words = text.split()
+        if not words:
+            return 0.0
+        counts = Counter(words)
+        total = len(words)
+        return -sum((c / total) * math.log2(c / total) for c in counts.values())
+
+    @staticmethod
+    def _compute_lz_density(text: str) -> float:
+        raw = text.encode("utf-8", errors="replace")
+        if not raw:
+            return 1.0
+        return len(zlib.compress(raw, level=6)) / len(raw)
+
     def check(self, event_type: EventType, content: dict[str, Any]) -> None:
         """
         Raise ConflictError if content contradicts a charter constraint.
@@ -199,6 +222,20 @@ class ReviewerGuard:
 
         text_blob = json.dumps(content, ensure_ascii=False).lower()
 
+        # ── Pass 0: Dual-signal entropy + LZ density gate ───────────────
+        H   = self._compute_entropy(text_blob)
+        rho = self._compute_lz_density(text_blob)
+        if H > self._H_THRESHOLD:
+            raise ConflictError(
+                detail=f"Shannon entropy H={H:.2f} > {self._H_THRESHOLD} — high-entropy/obfuscated payload",
+                contradicted_rule="entropy_gate",
+            )
+        if rho < self._LZ_MIN_DENSITY:
+            raise ConflictError(
+                detail=f"LZ density ρ={rho:.3f} < {self._LZ_MIN_DENSITY} — repetition/compression attack",
+                contradicted_rule="lz_density_gate",
+            )
+
         # ── Pass 1: Entity-centric fast path ────────────────────────────
         if self._DESTRUCTIVE.search(text_blob):
             # Build entity set from hardcoded core + charter-extracted names
@@ -207,8 +244,11 @@ class ReviewerGuard:
                 if len(e) >= 4
             }
             for entity in entities:
-                # Use word-boundary search to avoid partial matches
-                if re.search(r"\b" + re.escape(entity) + r"\b", text_blob):
+                # Use alphanumeric-only boundaries so that compound identifiers
+                # like "project_charter.md" still match the entity "charter"
+                # (standard \b treats _ as a word char, causing misses).
+                pat = r"(?<![a-zA-Z0-9])" + re.escape(entity) + r"(?![a-zA-Z0-9])"
+                if re.search(pat, text_blob):
                     raise ConflictError(
                         detail=(
                             f"Destructive operation targeting protected entity "
@@ -226,8 +266,10 @@ class ReviewerGuard:
             if not keywords:
                 continue
             hits = sum(1 for kw in keywords if kw in text_blob)
-            # Relaxed from // 3 → // 5 so that 1/5 of keywords is sufficient
-            if hits >= max(1, len(keywords) // 5):
+            # Relaxed from // 3 → // 5, floor raised to 2 to avoid false-positive
+            # triggers on single common words (e.g. "event", "remove") appearing
+            # in benign short payloads unrelated to the constraint.
+            if hits >= max(2, len(keywords) // 5):
                 raise ConflictError(
                     detail=(
                         f"Event content may contradict charter constraint: "
@@ -251,12 +293,14 @@ CREATE TABLE IF NOT EXISTS events (
     status     TEXT DEFAULT 'active'
                 CHECK(status IN ('active', 'rolled_back', 'conflict')),
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-    prev_hash  TEXT
+    prev_hash  TEXT,
+    project_id TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_events_created  ON events (created_at);
-CREATE INDEX IF NOT EXISTS idx_events_type     ON events (event_type);
-CREATE INDEX IF NOT EXISTS idx_events_status   ON events (status);
+CREATE INDEX IF NOT EXISTS idx_events_created    ON events (created_at);
+CREATE INDEX IF NOT EXISTS idx_events_type       ON events (event_type);
+CREATE INDEX IF NOT EXISTS idx_events_status     ON events (status);
+CREATE INDEX IF NOT EXISTS idx_events_project_id ON events (project_id);
 """
 
 
@@ -325,6 +369,12 @@ class EventLedger:
     def _init_db(self) -> None:
         with self._conn() as conn:
             conn.executescript(_DDL)
+            # Safe migration — add project_id column if not already present
+            try:
+                conn.execute("ALTER TABLE events ADD COLUMN project_id TEXT")
+                logger.debug("[Ledger] Migrated: added project_id to events table")
+            except Exception:
+                pass  # Column already exists
 
     # ------------------------------------------------------------------
     # Core: append
@@ -338,6 +388,7 @@ class EventLedger:
         parent_id:  str | None       = None,
         metadata:   dict[str, Any]  | None = None,
         skip_guard: bool             = False,
+        project_id: str | None       = None,
     ) -> str:
         """
         Append a new event to the ledger.
@@ -369,8 +420,8 @@ class EventLedger:
         with self._conn() as conn:
             conn.execute(
                 """INSERT INTO events
-                   (event_id, parent_id, event_type, content, metadata, status, prev_hash, created_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                   (event_id, parent_id, event_type, content, metadata, status, prev_hash, created_at, project_id)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     event_id,
                     parent_id,
@@ -380,6 +431,7 @@ class EventLedger:
                     status,
                     prev_hash,
                     _now_iso(),
+                    project_id,
                 ),
             )
 
@@ -396,9 +448,10 @@ class EventLedger:
 
     def rollback(
         self,
-        event_id:  str | None = None,
+        event_id:   str | None = None,
         *,
-        timestamp: str | None = None,
+        timestamp:  str | None = None,
+        project_id: str | None = None,
     ) -> int:
         """
         Mark all events AFTER the target as 'rolled_back'.
@@ -406,6 +459,9 @@ class EventLedger:
         Accepts either:
           event_id  — UUID of the target event (that event stays active)
           timestamp — ISO 8601 string; all events after this time are pruned
+
+        When project_id is provided, only events belonging to that project
+        are rolled back — events from other projects are left untouched.
 
         Returns the number of events pruned.
         """
@@ -442,27 +498,36 @@ class EventLedger:
             # share an identical timestamp string.
             # ROLLBACK events themselves are excluded from being re-pruned
             # (prevents idempotency failure on repeated rollback calls).
-            cur = conn.execute(
-                "UPDATE events SET status = 'rolled_back' "
-                "WHERE rowid > ? AND status = 'active' AND event_type != ?",
-                (anchor_rowid, EventType.ROLLBACK.value),
-            )
+            if project_id is not None:
+                cur = conn.execute(
+                    "UPDATE events SET status = 'rolled_back' "
+                    "WHERE rowid > ? AND status = 'active' AND event_type != ? "
+                    "AND (project_id = ? OR project_id IS NULL)",
+                    (anchor_rowid, EventType.ROLLBACK.value, project_id),
+                )
+            else:
+                cur = conn.execute(
+                    "UPDATE events SET status = 'rolled_back' "
+                    "WHERE rowid > ? AND status = 'active' AND event_type != ?",
+                    (anchor_rowid, EventType.ROLLBACK.value),
+                )
             pruned = cur.rowcount
 
             # Record the rollback itself as a ROLLBACK event (skip guard)
             rollback_id = str(uuid.uuid4())
             conn.execute(
                 """INSERT INTO events
-                   (event_id, event_type, content, metadata, status, prev_hash, created_at)
-                   VALUES (?, ?, ?, ?, 'active', ?, ?)""",
+                   (event_id, event_type, content, metadata, status, prev_hash, created_at, project_id)
+                   VALUES (?, ?, ?, ?, 'active', ?, ?, ?)""",
                 (
                     rollback_id,
                     EventType.ROLLBACK.value,
                     json.dumps({"target_event_id": event_id, "target_timestamp": timestamp,
-                                "pruned_count": pruned}),
+                                "pruned_count": pruned, "project_id": project_id}),
                     json.dumps({"auto": True}),
                     _inline_latest_hash(conn),
                     _now_iso(),
+                    project_id,
                 ),
             )
 
@@ -514,6 +579,7 @@ class EventLedger:
         last_n:     int         = 20,
         event_type: str | None  = None,
         status:     str | None  = None,
+        project_id: str | None  = None,
     ) -> list[dict[str, Any]]:
         """Return up to *last_n* events, newest first."""
         query  = "SELECT * FROM events WHERE 1=1"
@@ -525,6 +591,9 @@ class EventLedger:
         if status:
             query += " AND status = ?"
             params.append(status)
+        if project_id:
+            query += " AND project_id = ?"
+            params.append(project_id)
 
         query += " ORDER BY created_at DESC LIMIT ?"
         params.append(last_n)

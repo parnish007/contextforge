@@ -320,6 +320,7 @@ See [`data/academic_metrics.md`](data/academic_metrics.md) for the mathematical 
 
 | Document | Audience | Contents |
 |----------|----------|----------|
+| [`docs/WHAT_IS_THIS.md`](docs/WHAT_IS_THIS.md) | Everyone | What ContextForge is, data flow, with/without API keys, pros/cons, worked example |
 | [`docs/SETUP.md`](docs/SETUP.md) | MCP users | IDE setup, API keys, Ollama, troubleshooting |
 | [`docs/HOW_TO_USE.md`](docs/HOW_TO_USE.md) | All users | Readiness checks, multi-project workflow, switching, data location, export/push |
 | [`docs/ENGINEERING_REFERENCE.md`](docs/ENGINEERING_REFERENCE.md) | Developers | Full architecture deep-dive, all modules |

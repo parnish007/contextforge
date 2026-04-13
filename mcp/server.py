@@ -9,7 +9,7 @@ Run (Stdio — Claude Desktop / Cursor / VS Code):
 Run (SSE/HTTP — remote, cloud):
     python mcp/server.py --sse --host 0.0.0.0 --port 8765
 
-Tools (18 total):
+Tools (22 total):
   Project management:
     list_projects        List all registered projects
     init_project         Create / update a project
@@ -95,6 +95,25 @@ def build_server() -> "Server":
     indexer = LocalIndexer(project_root=str(_ROOT))
     fluid   = FluidSync(ledger=ledger, charter_path=str(_CHARTER_PATH))
     storage = StorageAdapter(db_path=str(_DB_PATH))
+
+    # ------------------------------------------------------------------
+    # Helpers (local)
+    # ------------------------------------------------------------------
+
+    import re as _re
+    _SLUG_RE = _re.compile(r'^[a-z0-9][a-z0-9_-]{1,63}$')
+
+    def _validate_project_id(pid: str) -> "str | None":
+        """Returns None if valid, error message if invalid."""
+        if not pid:
+            return "project_id cannot be empty"
+        if not _SLUG_RE.match(pid):
+            return (
+                f"Invalid project_id '{pid}'. "
+                "Must be 2–64 chars, lowercase alphanumeric/hyphen/underscore, "
+                "starting with a letter or digit. Example: 'my-saas-app'"
+            )
+        return None
 
     # ------------------------------------------------------------------
     # Tool definitions
@@ -412,10 +431,9 @@ def build_server() -> "Server":
             types.Tool(
                 name="search_context",
                 description=(
-                    "Semantic search over ContextForge's local source files (src/, mcp/, prompts/). "
-                    "Zero cloud tokens — all computation is local. Useful when building on top of "
-                    "ContextForge or exploring its implementation. For project decision retrieval, "
-                    "use get_knowledge_node or load_context instead."
+                    "Search local files. Pass 'directory' to search your own project's files "
+                    "(any absolute path). Without 'directory', searches ContextForge source files "
+                    "(src/, mcp/, prompts/). Zero cloud tokens — all computation is local."
                 ),
                 inputSchema={
                     "type": "object",
@@ -423,6 +441,7 @@ def build_server() -> "Server":
                         "query":     {"type": "string"},
                         "top_k":     {"type": "integer", "default": 5},
                         "threshold": {"type": "number",  "default": 0.75},
+                        "directory": {"type": "string", "description": "Absolute path to directory to search. Omit to search ContextForge source files (src/, mcp/, prompts/)."},
                     },
                     "required": ["query"],
                 },
@@ -435,6 +454,9 @@ def build_server() -> "Server":
 
     @server.call_tool()
     async def call_tool(name: str, arguments: dict[str, Any]) -> list[types.TextContent]:
+        # Reset idle checkpoint timer on every tool call
+        fluid.ping()
+
         def ok(data):
             return [types.TextContent(type="text", text=json.dumps(data, indent=2, default=str))]
         def err(msg):
@@ -451,6 +473,9 @@ def build_server() -> "Server":
             name_val     = arguments.get("name", "")
             if not project_id or not name_val:
                 return err("project_id and name are required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             pid = storage.upsert_project({
                 "id":           project_id,
                 "name":         name_val,
@@ -467,6 +492,9 @@ def build_server() -> "Server":
             new_name   = arguments.get("new_name", "")
             if not project_id or not new_name:
                 return err("project_id and new_name are required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             new_desc = arguments.get("new_description")
             found = storage.rename_project(project_id, new_name, new_desc)
             if not found:
@@ -478,6 +506,10 @@ def build_server() -> "Server":
             target = arguments.get("target_project_id", "")
             if not source or not target:
                 return err("source_project_id and target_project_id are required")
+            for pid in [source, target]:
+                pid_err = _validate_project_id(pid)
+                if pid_err:
+                    return err(pid_err)
             if source == target:
                 return err("source and target must be different projects")
             try:
@@ -491,6 +523,9 @@ def build_server() -> "Server":
             archive_nodes = arguments.get("archive_nodes", True)
             if not project_id:
                 return err("project_id is required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             try:
                 result = storage.delete_project(project_id, archive_nodes=archive_nodes)
                 return ok({"status": "deleted", **result})
@@ -501,6 +536,9 @@ def build_server() -> "Server":
             project_id = arguments.get("project_id", "")
             if not project_id:
                 return err("project_id is required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             proj = storage.get_project(project_id)
             if not proj:
                 return err(f"Project '{project_id}' not found")
@@ -519,6 +557,9 @@ def build_server() -> "Server":
             alternatives = arguments.get("alternatives", [])
             confidence   = float(arguments.get("confidence", 0.8))
             file_refs    = arguments.get("file_refs", [])
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             if not summary:
                 return err("summary is required")
             payload = {
@@ -558,6 +599,9 @@ def build_server() -> "Server":
             detail_level = arguments.get("detail_level", "L1")
             top_k        = int(arguments.get("top_k", 10))
             area_filter  = arguments.get("area")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             proj = storage.get_project(project_id)
             if not proj:
                 return err(f"Project '{project_id}' not found. Call init_project first.")
@@ -616,6 +660,9 @@ def build_server() -> "Server":
             top_k      = int(arguments.get("top_k", 5))
             if not project_id:
                 return err("project_id is required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             nodes = storage.list_nodes(project_id=project_id, status="active", limit=top_k * 10)
             if query:
                 q = query.lower()
@@ -631,6 +678,9 @@ def build_server() -> "Server":
             project_id = arguments.get("project_id", "")
             if not project_id:
                 return err("project_id is required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             nodes = storage.list_nodes(
                 project_id=project_id,
                 area=arguments.get("area"),
@@ -679,6 +729,9 @@ def build_server() -> "Server":
             project_id = arguments.get("project_id", "")
             if not project_id:
                 return err("project_id is required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             tasks = storage.list_tasks(
                 project_id=project_id,
                 status=arguments.get("status"),
@@ -691,6 +744,9 @@ def build_server() -> "Server":
             title      = arguments.get("title", "")
             if not project_id or not title:
                 return err("project_id and title are required")
+            pid_err = _validate_project_id(project_id)
+            if pid_err:
+                return err(pid_err)
             tid = storage.upsert_task({
                 "project_id":  project_id,
                 "title":       title,
@@ -748,7 +804,13 @@ def build_server() -> "Server":
             query     = arguments.get("query", "")
             top_k     = int(arguments.get("top_k", 5))
             threshold = float(arguments.get("threshold", 0.75))
-            results   = indexer.search(query=query, top_k=top_k, threshold=threshold)
+            directory = arguments.get("directory")
+            if directory:
+                from src.retrieval.local_indexer import LocalIndexer as _LocalIndexer
+                _idx = _LocalIndexer(project_root=directory)
+                results = _idx.search(query=query, top_k=top_k, threshold=threshold)
+            else:
+                results = indexer.search(query=query, top_k=top_k, threshold=threshold)
             return ok(results)
 
         else:

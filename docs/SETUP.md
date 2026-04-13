@@ -447,7 +447,7 @@ contextforge/
 │   └── contextforge.db    # SQLite knowledge graph (created on first run)
 ├── .env.example           # All environment variables documented
 └── docs/
-    └── MCP_SETUP.md       # This guide
+    └── SETUP.md           # This guide
 ```
 
 ---

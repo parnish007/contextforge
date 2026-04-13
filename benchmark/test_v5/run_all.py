@@ -2,14 +2,14 @@
 ContextForge Nexus Architecture — Master Test Suite Runner
 ===================================================
 
-Runs all five iteration suites sequentially (375 total tests) and
+Runs all six iteration suites sequentially (450 total tests) and
 produces a unified pass/fail report with per-suite breakdown.
 
 Usage:
     python -X utf8 benchmark/test_v5/run_all.py
     python -X utf8 benchmark/test_v5/run_all.py --suite iter_01_core
     python -X utf8 benchmark/test_v5/run_all.py --suite iter_04_scale iter_05_chaos
-    python -X utf8 benchmark/test_v5/run_all.py --fast   # skip slow scale/chaos suites
+    python -X utf8 benchmark/test_v5/run_all.py --fast   # skip slow scale/chaos suites (runs 01-03, 06)
 """
 
 from __future__ import annotations
@@ -66,6 +66,13 @@ SUITES = [
         "category": "heat_death",
         "label":    "05 · Heat-Death Combined Chaos",
         "fast":     False,
+    },
+    {
+        "name":     "iter_06_adversarial_boundary",
+        "module":   "benchmark.test_v5.iter_06_adversarial_boundary",
+        "category": "adversarial_boundary",
+        "label":    "06 · Adversarial Boundary & Entropy Gate",
+        "fast":     True,
     },
 ]
 
