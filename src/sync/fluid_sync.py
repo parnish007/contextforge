@@ -48,6 +48,7 @@ from typing import Any
 from loguru import logger
 
 from src.memory.ledger import EventLedger, EventType
+from src.sync.crdt_sync import ORSetSync, ConflictPolicy, CRDT_SYNC_MODE
 
 
 # ---------------------------------------------------------------------------
@@ -113,6 +114,7 @@ class FluidSync:
         charter_path: str = "PROJECT_CHARTER.md",
         snapshot_dir: str = ".forge",
         idle_minutes: float = 15.0,
+        replica_id:   str | None = None,
     ) -> None:
         self._ledger       = ledger
         self._charter_path = Path(charter_path)
@@ -120,6 +122,11 @@ class FluidSync:
         self._snap_dir.mkdir(parents=True, exist_ok=True)
         self._idle_minutes  = idle_minutes
         self._last_activity = time.monotonic()
+
+        # CRDT OR-Set engine (opt-in via CRDT_SYNC_MODE env)
+        import socket
+        _replica = replica_id or f"{socket.gethostname()}-{os.getpid()}"
+        self._crdt = ORSetSync(replica_id=_replica)
 
         self._idle_thread: threading.Thread | None = None
         self._stop_event  = threading.Event()
@@ -146,12 +153,16 @@ class FluidSync:
         if self._charter_path.exists():
             charter_text = self._charter_path.read_bytes()
 
+        # Vector-clock / CRDT metadata for causal-replay ordering
+        crdt_meta = self._crdt.create_snapshot_metadata()
+
         manifest = {
-            "version":     "5.0",
+            "version":     "5.1",
             "label":       label,
             "created_at":  ts,
             "event_count": len(events),
             "checksum":    hashlib.sha256(events_json).hexdigest(),
+            "crdt":        crdt_meta,
         }
         manifest_json = json.dumps(manifest, indent=2).encode("utf-8")
 
@@ -199,6 +210,17 @@ class FluidSync:
             if charter_bytes and not self._charter_path.exists():
                 self._charter_path.write_bytes(charter_bytes)
                 logger.info(f"[FluidSync] Restored PROJECT_CHARTER.md from snapshot")
+
+        crdt_meta = manifest.get("crdt", {})
+        if crdt_meta:
+            from src.sync.crdt_sync import VectorClock
+            remote_vc = VectorClock.from_dict(crdt_meta.get("vector_clock", {}))
+            self._crdt._clock = self._crdt._clock.merge(remote_vc)
+            logger.info(
+                f"[FluidSync] CRDT clock merged from snapshot: "
+                f"replica={crdt_meta.get('replica_id','?')}  "
+                f"clock={self._crdt._clock}"
+            )
 
         logger.info(
             f"[FluidSync] Replaying {len(events)} events from "

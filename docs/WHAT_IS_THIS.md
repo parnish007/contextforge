@@ -1057,7 +1057,7 @@ flowchart LR
 | **Audit trail** | ❌ | ❌ | Partial | ❌ | ✅ hash chain |
 | **Rollback** | Manual git | ❌ | ❌ | ❌ | ✅ by event_id |
 | **Charter / safety guard** | ❌ | ❌ | ❌ | ❌ | ✅ 6-layer defense |
-| **Adversarial block rate** | 0% | ~0% | ~0% | 0% | **85%** (measured) |
+| **Adversarial block rate** | 0% | ~0% | ~0% | 0% | **90%** (multi-seed, $n=10$) |
 | **Works without cloud** | ✅ | Partial | ✅ | Ollama only | ✅ |
 | **MCP-native** | N/A | ❌ | ❌ | ❌ | ✅ |
 | **Multi-project** | ❌ | Manual | ❌ | Namespaces | ✅ project_id |

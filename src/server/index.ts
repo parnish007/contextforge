@@ -205,8 +205,18 @@ server.tool(
     project_id: z.string().describe("Project to load context for"),
     query: z.string().optional().describe("Specific topic or area to focus on"),
     detail_level: z.enum(["L0", "L1", "L2"]).default("L1"),
+    model_context_window: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe(
+        "Model context window in tokens (e.g. 128000 for GPT-4o, 1000000 for Gemini 1.5 Pro). " +
+        "When provided with CONTEXT_BUDGET_MODE=model_aware or adaptive, the DCI token budget " +
+        "is set to min(0.25 × model_context_window, 8000) instead of the fixed default B=1500."
+      ),
   },
-  async ({ project_id, query, detail_level }) => {
+  async ({ project_id, query, detail_level, model_context_window }) => {
     return {
       content: [
         {
@@ -218,6 +228,13 @@ server.tool(
             project_id,
             query,
             detail_level,
+            model_context_window: model_context_window ?? null,
+            dci_note:
+              model_context_window != null
+                ? `DCI budget will be min(0.25 × ${model_context_window}, 8000) = ` +
+                  `${Math.min(Math.floor(0.25 * model_context_window), 8000)} tokens ` +
+                  `when CONTEXT_BUDGET_MODE=adaptive or model_aware`
+                : "Using default B=1500 (fixed mode). Set CONTEXT_BUDGET_MODE=adaptive to scale with model.",
           }),
         },
       ],

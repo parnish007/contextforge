@@ -59,6 +59,19 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Generator
 
+# Perplexity gate (optional third signal — imported lazily to keep startup fast)
+_perplexity_gate = None
+
+def _get_perplexity_gate():
+    global _perplexity_gate
+    if _perplexity_gate is None:
+        try:
+            from src.security.perplexity_gate import get_perplexity_gate
+            _perplexity_gate = get_perplexity_gate()
+        except Exception:
+            pass
+    return _perplexity_gate
+
 def _now_iso() -> str:
     """Microsecond-precision UTC timestamp (ISO 8601).
 
@@ -235,6 +248,28 @@ class ReviewerGuard:
                 detail=f"LZ density ρ={rho:.3f} < {self._LZ_MIN_DENSITY} — repetition/compression attack",
                 contradicted_rule="lz_density_gate",
             )
+
+        # ── Pass 0.5: Perplexity gate (optional third signal) ────────────
+        # Enabled only when ENABLE_PERPLEXITY_GATE=true.  Catches entropy-
+        # mimicry attacks whose H and ρ look benign but whose word-sequence
+        # statistics are anomalous.
+        try:
+            gate = _get_perplexity_gate()
+            if gate is not None and gate.enabled:
+                p_result = gate.check(text_blob)
+                if p_result.flagged:
+                    raise ConflictError(
+                        detail=(
+                            f"Perplexity P={p_result.perplexity:.1f} > P*={p_result.threshold:.1f} "
+                            f"— anomalous language pattern (entropy-mimicry indicator); "
+                            f"backend={p_result.backend}  latency={p_result.latency_ms:.1f}ms"
+                        ),
+                        contradicted_rule="perplexity_gate",
+                    )
+        except ConflictError:
+            raise
+        except Exception:
+            pass  # gate errors are non-fatal — degrade gracefully
 
         # ── Pass 1: Entity-centric fast path ────────────────────────────
         if self._DESTRUCTIVE.search(text_blob):

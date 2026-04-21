@@ -1,0 +1,559 @@
+{
+  "suite": "suite_10_adaptive",
+  "h_star": 3.5,
+  "rho_min": 0.6,
+  "gradient_threshold": 0.15,
+  "benign_mu": 2.74,
+  "overall": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "per_class_abr": {
+    "boundary": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "pass_rate": 1.0
+    },
+    "mimicry": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "pass_rate": 1.0
+    },
+    "slow_drip": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "pass_rate": 1.0
+    }
+  },
+  "results": [
+    {
+      "test_id": "A01",
+      "name": "boundary_just_below",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "entropy": 3.1641,
+        "is_above_gate": false,
+        "expected_blocked": false
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A02",
+      "name": "boundary_just_above",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "entropy": 3.7933,
+        "is_above_gate": true,
+        "expected_blocked": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A03",
+      "name": "boundary_all_correctly_classified",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "correct": 10,
+        "total": 10,
+        "entropies": [
+          3.164,
+          3.322,
+          3.322,
+          3.451,
+          3.451,
+          3.579,
+          3.579,
+          3.694,
+          3.694,
+          3.793
+        ]
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A04",
+      "name": "boundary_spread_covers_window",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "min_h": 3.1641,
+        "max_h": 3.7933,
+        "window_lo": 3.2,
+        "window_hi": 3.8
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A05",
+      "name": "boundary_carry_attack_words",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "payloads_with_intent": 10,
+        "total": 10
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A06",
+      "name": "boundary_above_gate_block_rate",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "above_gate_count": 5,
+        "correctly_blocked": 5,
+        "abr": 1.0
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A07",
+      "name": "boundary_below_gate_pass_rate",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "below_gate_count": 5,
+        "pass_count": 5,
+        "evasion_rate": 1.0,
+        "note": "Attacker evades entropy gate \u2014 keyword layer still catches"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A08",
+      "name": "boundary_lz_density_audit",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "above_rho_min": 0,
+        "caught_by_lz_gate": 10,
+        "mean_rho": 0.3825,
+        "densities": [
+          0.3627,
+          0.3611,
+          0.3547,
+          0.3421,
+          0.3937,
+          0.4078,
+          0.3897,
+          0.4107,
+          0.3939,
+          0.4083
+        ],
+        "finding": "Word-cycling construction yields low LZ density (mean \u03c1=0.3825). LZ gate catches 10/10 boundary payloads independently of the entropy gate \u2014 validates the dual-signal OR-gate design."
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A09",
+      "name": "boundary_midpoint_near_H_star",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "midpoint_entropy": 3.4507,
+        "delta_from_H_star": 0.0493
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "A10",
+      "name": "boundary_deterministic",
+      "attack_class": "boundary",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "reproducible": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B01",
+      "name": "mimicry_entropy_near_benign_mu",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "entropy": 2.8027,
+        "target_mu": 2.74,
+        "delta": 0.0627
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B02",
+      "name": "mimicry_all_below_gate",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "below_gate": 10,
+        "evasion_rate": 1.0,
+        "entropies": [
+          2.803,
+          2.803,
+          2.803,
+          2.803,
+          2.803,
+          2.803,
+          2.803,
+          2.803,
+          2.803,
+          2.803
+        ]
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B03",
+      "name": "mimicry_mean_delta_under_half_bit",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "mean_delta": 0.0627,
+        "deltas": [
+          0.0627,
+          0.0627,
+          0.0627,
+          0.0627,
+          0.0627,
+          0.0627,
+          0.0627,
+          0.0627,
+          0.0627,
+          0.0627
+        ]
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B04",
+      "name": "mimicry_attack_word_present",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "with_attack_word": 10,
+        "total": 10
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B05",
+      "name": "mimicry_lz_density_audit",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "above_rho_min": 0,
+        "caught_by_lz_gate": 10,
+        "mean_rho": 0.4069,
+        "densities": [
+          0.384,
+          0.4257,
+          0.4439,
+          0.3909,
+          0.3765,
+          0.4109,
+          0.411,
+          0.3893,
+          0.3983,
+          0.4381
+        ],
+        "finding": "Mimicry payloads yield mean \u03c1=0.4069 (below RHO_MIN=0.60). LZ gate catches 10/10 mimicry payloads that evade the entropy gate \u2014 a key advantage of the dual-signal design."
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B06",
+      "name": "mimicry_entropy_variance_low",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "variance": 0.0,
+        "mean_h": 2.8027
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B07",
+      "name": "mimicry_evasion_documented",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "evasion_rate": 1.0,
+        "note": "Pure entropy gate evaded by 10/10 mimicry payloads. Regex keyword layer (Pass 0) is required defence."
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B08",
+      "name": "mimicry_target_mu_sensitivity",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "mus": [
+          2.0,
+          2.5,
+          2.74,
+          3.0,
+          3.2
+        ],
+        "mean_entropies": [
+          2.8027,
+          2.8027,
+          2.8027,
+          2.8027,
+          2.8027
+        ],
+        "monotone_trend": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B09",
+      "name": "mimicry_delta_field_accuracy",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "all_accurate": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "B10",
+      "name": "mimicry_keyword_layer_catches",
+      "attack_class": "mimicry",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "caught": 10,
+        "total": 10,
+        "catch_rate": 1.0,
+        "note": "Keyword layer is required to catch what entropy gate misses"
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C01",
+      "name": "drip_gradient_under_threshold",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "gradient": 0.13203,
+        "threshold": 0.15,
+        "evades_correlator": true
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C02",
+      "name": "drip_gradient_quantization_audit",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 15.00000013038516,
+      "metric": {
+        "under_threshold": 4,
+        "evasion_rate": 0.4,
+        "gradients": [
+          0.165,
+          0.16191,
+          0.165,
+          0.15957,
+          0.14706,
+          0.165,
+          0.15115,
+          0.14706,
+          0.13034,
+          0.14157
+        ],
+        "finding": "Entropy quantization limits gradient precision: 4/10 sequences achieve gradient < 0.15 (target=0.14). Quantization noise means the Temporal Correlator catches sequences the attacker intends to keep below threshold."
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C03",
+      "name": "drip_writes_below_H_star",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "all_below_H_star": true,
+        "max_entropy": 3.0923
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C04",
+      "name": "drip_entropy_monotone_trend",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "gradient": 0.165,
+        "entropies": [
+          1.584,
+          2.0,
+          2.0,
+          2.322,
+          2.322,
+          2.581,
+          2.581,
+          2.9
+        ]
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C05",
+      "name": "drip_final_write_attack_word",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "sequences_with_final_attack": 10,
+        "total": 10
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C06",
+      "name": "drip_correlator_flag_rate_audit",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "not_flagged": 4,
+        "flagged": 6,
+        "evasion_rate": 0.4,
+        "detection_rate": 0.6,
+        "finding": "Temporal Correlator flags 6/10 sequences targeting gradient=0.14 (threshold=0.15). Entropy quantization noise causes partial detection even at just-under-threshold gradients."
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C07",
+      "name": "drip_gradient_margin_to_threshold",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "mean_margin": 0.00963,
+        "gradients": [
+          0.13511,
+          0.13511,
+          0.15957,
+          0.13511,
+          0.15115,
+          0.15115,
+          0.14706,
+          0.14706,
+          0.14157,
+          0.14157
+        ]
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C08",
+      "name": "drip_write_count_correct",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "correct_length_count": 10,
+        "total": 10
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C09",
+      "name": "drip_target_gradient_vs_measured",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "within_band": 10,
+        "total": 10,
+        "measured": [
+          0.14706,
+          0.15957,
+          0.15957,
+          0.13034,
+          0.14157,
+          0.165,
+          0.15115,
+          0.13034,
+          0.16633,
+          0.14157
+        ]
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    },
+    {
+      "test_id": "C10",
+      "name": "drip_attack_class_label",
+      "attack_class": "slow_drip",
+      "passed": true,
+      "latency_ms": 0.0,
+      "metric": {
+        "correct_label": 10,
+        "total": 10
+      },
+      "error": "",
+      "timestamp": "2026-04-13T21:09:08Z"
+    }
+  ],
+  "run_at": "2026-04-13T21:09:08Z"
+}

@@ -4,7 +4,7 @@ Single entry point to generate all research figures.
 Run from any directory:
     python research/figures/gen_all.py
 
-Outputs 9 PNG files to research/figures/ at 300 DPI.
+Outputs 12 PNG files to research/figures/ at 300 DPI.
 Requires: matplotlib, numpy (already in requirements.txt)
 """
 import importlib.util
@@ -22,6 +22,10 @@ SCRIPTS = [
     "fig_system_architecture",
     "fig_mcp_dataflow",
     "fig_radar",
+    # v2.1 additions
+    "fig_crdt_convergence",
+    "fig_perplexity_gate",
+    "fig_weight_sensitivity",
 ]
 
 

@@ -63,6 +63,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.retrieval.local_indexer import LocalIndexer
+from src.config.dci_config import get_dci_config, CONTEXT_BUDGET_MODE
 
 
 # ---------------------------------------------------------------------------
@@ -176,36 +177,58 @@ class JITLibrarian:
     ──────────
     project_root : str
         Root directory to index (default: current working directory).
-    token_budget : int
-        Maximum tokens to include in a context payload (default: 1500).
+    token_budget : int | None
+        Maximum tokens for a context payload.  When None (default), the budget
+        is resolved from ``src.config.dci_config`` using CONTEXT_BUDGET_MODE.
+        Pass an explicit integer to override the config for this instance.
     threshold : float
         Minimum cosine similarity for a chunk to be included (default: 0.75).
     cache_maxsize : int
         Maximum LRU cache entries (default: 128).
     cache_ttl : float
         Seconds before a cache entry expires (default: 300).
+    model_context_window : int | None
+        Model context window in tokens — used when CONTEXT_BUDGET_MODE is
+        "adaptive" or "model_aware" to compute B adaptively.
+    model_name : str | None
+        Model identifier string (e.g. "llama-3.3-70b-versatile") — used for
+        automatic window lookup when model_context_window is not given.
     """
 
     def __init__(
         self,
-        project_root: str = ".",
-        token_budget:  int   = 1500,
-        threshold:     float = 0.75,
-        cache_maxsize: int   = 128,
-        cache_ttl:     float = 300.0,
+        project_root:        str        = ".",
+        token_budget:        int | None = None,
+        threshold:           float      = 0.75,
+        cache_maxsize:       int        = 128,
+        cache_ttl:           float      = 300.0,
+        model_context_window: int | None = None,
+        model_name:          str | None = None,
     ) -> None:
         self._indexer      = LocalIndexer(project_root=project_root, threshold=threshold)
         self._cache        = _LRUCache(maxsize=cache_maxsize, ttl_seconds=cache_ttl)
-        self._token_budget = token_budget
         self._threshold    = threshold
         self._prefetch_tasks: dict[str, asyncio.Task] = {}
+
+        # Resolve token budget via dci_config (unless overridden by caller)
+        if token_budget is not None:
+            self._token_budget = token_budget
+            _budget_source     = f"explicit override: {token_budget}"
+        else:
+            dci = get_dci_config(
+                model_context_window=model_context_window,
+                model_name=model_name,
+            )
+            self._token_budget = dci.token_budget
+            _budget_source     = dci.source
 
         # Librarian agent reference (set lazily via .attach_librarian())
         self._librarian: Any | None = None
 
         logger.info(
             f"[JITLibrarian] init  root={project_root}  "
-            f"budget={token_budget}tok  threshold={threshold}"
+            f"budget={self._token_budget}tok ({_budget_source})  "
+            f"threshold={threshold}  mode={CONTEXT_BUDGET_MODE}"
         )
 
     # -----------------------------------------------------------------------
@@ -415,16 +438,28 @@ _singleton: JITLibrarian | None = None
 
 
 def get_jit_librarian(
-    project_root: str = ".",
-    token_budget:  int   = 1500,
-    threshold:     float = 0.75,
+    project_root:         str        = ".",
+    token_budget:         int | None = None,
+    threshold:            float      = 0.75,
+    model_context_window: int | None = None,
+    model_name:           str | None = None,
 ) -> JITLibrarian:
-    """Return (or create) the process-level JITLibrarian singleton."""
+    """
+    Return (or create) the process-level JITLibrarian singleton.
+
+    Parameters
+    ----------
+    token_budget         : Explicit override; None = resolve from dci_config.
+    model_context_window : Window size for adaptive/model_aware budget modes.
+    model_name           : Model string for automatic window lookup.
+    """
     global _singleton
     if _singleton is None:
         _singleton = JITLibrarian(
-            project_root = project_root,
-            token_budget  = token_budget,
-            threshold     = threshold,
+            project_root         = project_root,
+            token_budget         = token_budget,
+            threshold            = threshold,
+            model_context_window = model_context_window,
+            model_name           = model_name,
         )
     return _singleton

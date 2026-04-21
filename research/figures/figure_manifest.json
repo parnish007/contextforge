@@ -1,0 +1,56 @@
+{
+  "version": "2.1",
+  "generated_at": "2026-04-15T18:12:06Z",
+  "output_dir": "research/figures/output/",
+  "figures": [
+    {
+      "id": "fig03",
+      "filename": "figure_03_entropy_distributions",
+      "caption": "Entropy Distributions by Attack Class",
+      "section": "\u00a77.2",
+      "data_source": "research/benchmark_results/adaptive_abr.json"
+    },
+    {
+      "id": "fig05",
+      "filename": "figure_05_temporal_correlator",
+      "caption": "Temporal Correlator: Slow-Drip Gradient Detection",
+      "section": "\u00a77.2",
+      "data_source": "research/benchmark_results/adaptive_abr.json"
+    },
+    {
+      "id": "fig07",
+      "filename": "figure_07_token_cost_scaling",
+      "caption": "DCI Token Budget Scaling (Suite 11)",
+      "section": "\u00a77.3",
+      "data_source": "research/benchmark_results/suite_11_dci_scaling.json"
+    },
+    {
+      "id": "fig08",
+      "filename": "figure_08_safety_radar",
+      "caption": "System Safety Radar \u2014 5-baseline comparison",
+      "section": "\u00a77.1",
+      "data_source": "results/comparison_table.json"
+    },
+    {
+      "id": "fig10",
+      "filename": "figure_10_weight_sensitivity",
+      "caption": "Weight Sensitivity: Nexus \u03a6 Advantage over StatelessRAG",
+      "section": "\u00a77.4",
+      "data_source": "results/comparison_table.json"
+    },
+    {
+      "id": "fig11",
+      "filename": "figure_11_adaptive_abr",
+      "caption": "Adaptive ABR by Attack Class (Suite 10)",
+      "section": "\u00a77.5",
+      "data_source": "research/benchmark_results/adaptive_abr.json"
+    },
+    {
+      "id": "fig12",
+      "filename": "figure_12_external_validation",
+      "caption": "External Validation: Internal vs. deepset/prompt-injections",
+      "section": "\u00a77.4",
+      "data_source": "research/benchmark_results/external_abr.json"
+    }
+  ]
+}

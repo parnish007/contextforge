@@ -16,8 +16,8 @@
 
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
 > **Architecture:** The Nexus Architecture  
-> **Benchmark:** 452-test validation · 100.0% pass rate · Φ = 80.7%  
-> **Paper:** [`research/contextforge_v2.tex`](research/contextforge_v2.tex) · v1 archive: [`research/v1_archive/contextforge_v1.tex`](research/v1_archive/contextforge_v1.tex)
+> **Benchmark:** 530-test validation · 100.0% pass rate · Φ = 79.7%  
+> **Paper:** [`research/contextforge_v2.tex`](research/contextforge_v2.tex) (v2.1) · v1 archive: [`research/v1_archive/contextforge_v1.tex`](research/v1_archive/contextforge_v1.tex)
 
 ---
 
@@ -37,9 +37,9 @@ ContextForge solves this with a **persistent, queryable knowledge graph** that l
 
 | Failure Mode | Stateless RAG | ContextForge | Delta |
 |:-------------|:-------------:|:------------:|:-----:|
-| **Adversarial injection** | 0% block rate | **85% blocked** | +85 pp |
+| **Adversarial injection** | 0% block rate | **90% blocked** | +90 pp |
 | **Provider failover latency** | 480 ms | **149 ms** | −68.9% |
-| **Context token noise** | inject all chunks | **87.4% filtered** | +87.4 pp |
+| **Context token noise** | inject all chunks | **70.2% filtered** | +70.2 pp |
 
 ```mermaid
 graph LR
@@ -126,7 +126,7 @@ flowchart LR
     style OK fill:#1B7837,color:#fff
 ```
 
-**Measured result:** +85.0 pp adversarial block rate vs. the Stateless RAG baseline (0% → 85%). Zero false positives on 10 benign technical probes.
+**Measured result:** +90.0 pp adversarial block rate vs. the Stateless RAG baseline (0% → 90%, multi-seed, $n=10$). External validation: 91.4% recall on `deepset/prompt-injections` ($n=120$).
 
 Engineering details → [`docs/ENGINEERING_REFERENCE.md`](docs/ENGINEERING_REFERENCE.md)
 
@@ -149,7 +149,7 @@ xychart-beta
 | 100 | 8,000 | 1,050 | 87% |
 | 200 | 14,000 | 1,050 | 93% |
 
-The token budget is **capped at 1,500** regardless of how many decisions exist — CLAUDE.md grows forever. Full comparison → [`docs/WHAT_IS_THIS.md`](docs/WHAT_IS_THIS.md#contextforge-vs-traditional-approaches--why-this-is-different)
+The token budget is **configurable** (`CONTEXT_BUDGET_MODE`: `fixed`/`adaptive`/`model_aware`). The default `fixed` budget is 1,500 tokens; `adaptive` mode auto-scales to `min(0.25×W, 8000)` tokens for the model's context window `W`. CLAUDE.md grows forever — ContextForge doesn't. Full comparison → [`docs/WHAT_IS_THIS.md`](docs/WHAT_IS_THIS.md#contextforge-vs-traditional-approaches--why-this-is-different)
 
 ---
 
@@ -340,16 +340,29 @@ snapshot_path = sync.create_snapshot(label="before-refactor")
 
 ---
 
+## New in v2.1
+
+- **OR-Set CRDT Sync** — deployed in `src/sync/crdt_sync.py`. 100% convergence rate across 3 concurrent-IDE scenarios including split-brain reconnect. Opt-in via `CRDT_SYNC_MODE=or_set`.
+- **Perplexity Gate (Pass 0.5)** — trigram LM gate ($P^*=231.8$) catches entropy-mimicry payloads that evade the Shannon gate. No external dependencies via Laplace-smoothed fallback.
+- **Configurable DCI Budget** — `CONTEXT_BUDGET_MODE`: `fixed` / `adaptive` / `model_aware`. Adaptive mode: $B = \min(0.25W, 8000)$ tokens.
+- **External Validation** — 91.4% adversarial recall on `deepset/prompt-injections` ($n=120$).
+- **5-baseline comparison** — StatelessRAG, MemGPT-style, LangChain-Buffer, Hardened-RAG, ContextForge-Nexus. ABR 90% (up from 85% in v2.0 with multi-seed evaluation).
+- **530 benchmark tests** — up from 452. All passing.
+
+---
+
 ## Publication Outputs
 
 | Asset | Description |
 |-------|-------------|
-| [`research/contextforge_v2.tex`](research/contextforge_v2.tex) | v2 paper — full architecture + MCP, 14 sections, 9 figures |
-| [`research/refs.bib`](research/refs.bib) | Extended bibliography (15 citations) |
-| [`research/figures/`](research/figures/) | 9 matplotlib figure generators + generated PNGs (300 DPI) |
-| [`research/benchmark_results/`](research/benchmark_results/) | All benchmark JSON archives (suites 06–09, iter 06) |
+| [`research/contextforge_v2.tex`](research/contextforge_v2.tex) | v2.1 paper — full architecture + MCP + CRDT + perplexity gate, 14 sections, 12 figures |
+| [`research/refs.bib`](research/refs.bib) | Extended bibliography (22 citations) |
+| [`research/figures/`](research/figures/) | 12 matplotlib figure generators + generated PNGs (300 DPI) |
+| [`research/figures/output/`](research/figures/output/) | 7 new data-driven figures (figures 03/05/07/08/10/11/12) |
+| [`research/figures/figure_manifest.json`](research/figures/figure_manifest.json) | Figure manifest with section mappings and data sources |
+| [`research/benchmark_results/`](research/benchmark_results/) | All benchmark JSON archives (suites 06–12, iter 06) |
+| [`results/comparison_table.json`](results/comparison_table.json) | 5-system multi-baseline comparison (10 seeds each) |
 | [`research/v1_archive/contextforge_v1.tex`](research/v1_archive/contextforge_v1.tex) | v1 paper archive |
-| [`docs/assets/radar_comparison.png`](docs/assets/radar_comparison.png) | 6-pillar spider: Stateless RAG vs ContextForge (300 DPI) |
 | [`data/academic_metrics.md`](data/academic_metrics.md) | Full ΔS / ΔL / ΔDCI mathematical synthesis |
 
 ---

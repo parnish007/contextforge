@@ -622,6 +622,31 @@ ALL_TESTS = [
 assert len(ALL_TESTS) == 75, f"Expected 75, got {len(ALL_TESTS)}"
 
 
+# ── Baseline comparison (all 5 systems) ──────────────────────────────────────
+
+def _run_baseline_comparison() -> None:
+    """
+    Run all 5 systems on security probes (adversarial + benign) and print the
+    ABR / FPR / CSS table.
+
+    Context: iter_03 is the semantic poison / charter violation suite.  The
+    baseline comparison puts ContextForge Nexus's dual-signal gate (entropy + LZ
+    + charter) head-to-head against systems that use only regex filtering or no
+    filtering at all.  ABR delta vs Nexus is the primary differentiator.
+    """
+    print(f"\n{'─'*60}")
+    print("  BASELINE COMPARISON — Semantic Poison / ABR (iter_03)")
+    print(f"{'─'*60}")
+    try:
+        from benchmark.runner import run, print_comparison_table
+        # fast=True: security probes only — directly relevant to this iter's domain.
+        metrics_list, _ = run(fast=True)
+        print_comparison_table(metrics_list)
+    except Exception as exc:
+        print(f"  [baseline comparison skipped: {exc}]")
+    print(f"{'─'*60}\n")
+
+
 async def main() -> None:
     logger.info(f"[{ITER_NAME}] Starting 75-test semantic poison suite …")
     collector = MetricsCollector()
@@ -643,6 +668,8 @@ async def main() -> None:
     print(f"  Mean latency:      {summary['mean_latency']} ms")
     print(f"  Log:               {log_path}")
     print(f"{'='*60}\n")
+
+    _run_baseline_comparison()
 
 
 if __name__ == "__main__":

@@ -406,7 +406,7 @@ ContextForge protects the memory ledger with a dual-signal entropy gate:
 | Tiered Clearance Logic (VOH) | H*_VOH ≈ 4.38 bits | Internal system traffic (elevated threshold) |
 | ReviewerGuard | PROJECT_CHARTER.md | Destructive operations |
 
-Benchmark result: **+85.0 pp adversarial block rate** vs. Stateless RAG baseline (0% → 85%).
+Benchmark result: **+90.0 pp adversarial block rate** vs. Stateless RAG baseline (0% → 90%, multi-seed $n=10$). External validation: 91.4% recall on `deepset/prompt-injections` ($n=120$).
 
 External writes (user content, retrieved chunks, tool outputs) always traverse the
 standard H* = 3.5 threshold. Internal system writes use the elevated VOH threshold

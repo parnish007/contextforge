@@ -157,9 +157,9 @@ $$\Phi = w_S \cdot \Delta S + w_L \cdot \Delta L_{\%} + w_\text{DCI} \cdot \Delt
 | $w_L = 0.3$ | Failover latency reduction ΔL% | Availability is critical but recoverable |
 | $w_\text{DCI} = 0.2$ | Token noise reduction ΔDCI | Efficiency improves UX but is not safety-critical |
 
-**Measured value:** Φ = 0.5(85.0) + 0.3(68.9) + 0.2(87.4) = **80.7%**
+**Measured value:** Φ = 0.5(90.0) + 0.3(68.9) + 0.2(70.2) = **79.7%** (multi-seed, $n=10$; source: `results/comparison_table.json`)
 
-**Weight sensitivity:** Across $w_S \in [0.3, 0.7]$, Φ ∈ [79.3%, 82.0%] — the result is robust to calibration choices.
+**Weight sensitivity:** All feasible weight combinations show positive Nexus advantage over StatelessRAG. See `research/figures/output/figure_10_weight_sensitivity.png` for the full heatmap.
 
 To adjust weights for your deployment risk profile:
 
@@ -430,12 +430,14 @@ Produces three 300 DPI dark-theme PNGs in `docs/assets/`:
 
 | Benchmark | Expected Result |
 |:---------|:---------------|
-| Security block rate | 85.0% (adversarial) |
+| Security block rate | 90.0% (adversarial, multi-seed $n=10$) |
+| External validation ABR | 91.4% recall on deepset/prompt-injections ($n=120$) |
 | False positives — VOH traffic | 0% (zero on 10 benign probes) |
 | Failover latency | 149.5 ms (Nexus) vs 480.0 ms (baseline) |
-| Token noise reduction | 100% (TF-IDF) / 87.4% (sentence-transformers) |
-| OMEGA-75 pass rate | 375/375 = 100.0% |
-| Weighted Φ index | 80.7% (range 79.3–82.0% across weight perturbations) |
+| Token noise reduction (TNR) | 70.2% (multi-seed benchmark) |
+| OMEGA-530 pass rate | 530/530 = 100.0% |
+| Weighted Φ index | 79.7% (ABR=90%, ΔL=68.9%, TNR=70.2%) |
+| CRDT convergence | 100% (3/3 Suite 12 scenarios, OR-Set deployed) |
 
 ### 6.5 Chaos Suite — Concurrent Stress Results
 

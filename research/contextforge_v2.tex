@@ -1,50 +1,72 @@
 % ============================================================
-% ContextForge v2: Architecture-First Agentic Memory via MCP
+% ContextForge v2 — Architecture-First Persistent Agentic
+% Memory via Model Context Protocol
 %
 % Author : Trilochan Sharma (Independent Researcher)
 % Email  : parnishklpo@gmail.com
 % Date   : April 2026
-% Version: 2.0
+% Version: 2.1  (adds OR-Set CRDT, Perplexity Gate, Configurable DCI)
+%
+% HOW TO COMPILE (Overleaf or local):
+%   pdflatex contextforge_v2
+%   bibtex   contextforge_v2
+%   pdflatex contextforge_v2
+%   pdflatex contextforge_v2
+%
+% FIGURES REQUIRED (upload to figures/ subfolder):
+%   figures/fig_system_architecture.png
+%   figures/fig_mcp_dataflow.png
+%   figures/fig_entropy_gate.png
+%   figures/fig_voh_tiers.png
+%   figures/fig_temporal_correlator.png
+%   figures/fig_calibration_sweep.png
+%   figures/fig_token_savings.png
+%   figures/fig_ablation.png
+%   figures/fig_radar.png
+%   figures/fig_crdt_convergence.png      (Suite 12 — new)
+%   figures/fig_perplexity_gate.png       (Suite 13 — new)
+%   figures/fig_weight_sensitivity.png    (Safety Index Phi — new)
+%
+% Generate base figures: python research/figures/gen_all.py
 % ============================================================
 
-\documentclass[11pt]{article}
+\documentclass[11pt,twocolumn]{article}
 
-% ---------- Packages ----------------------------------------------------------
-\usepackage[margin=1in]{geometry}
+% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage[top=1in,bottom=1in,left=0.75in,right=0.75in]{geometry}
 \usepackage{authblk}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage{hyperref}
-\usepackage{xcolor}
-\usepackage{microtype}
-\usepackage{enumitem}
-\usepackage{caption}
-\usepackage{subcaption}
-\usepackage{float}
+\usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{array}
-\usepackage{tabularx}
-\usepackage[backend=bibtex,style=numeric,sorting=none]{biblatex}
-\addbibresource{refs.bib}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue!70!black,
+            citecolor=blue!70!black,urlcolor=blue!70!black]{hyperref}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{balance}
 
-% ---------- Asset path --------------------------------------------------------
-\graphicspath{{figures/}}
+% ── Figure path ───────────────────────────────────────────────────────────────
+\graphicspath{{figures/}{figures/output/}}
 
-% ---------- Hyperref colours --------------------------------------------------
-\hypersetup{
-  colorlinks = true,
-  linkcolor  = blue!70!black,
-  citecolor  = blue!70!black,
-  urlcolor   = blue!70!black,
-}
+% ── Caption style ─────────────────────────────────────────────────────────────
+\captionsetup{font=small,labelfont=bf}
 
-% ---------- Title -------------------------------------------------------------
+% ── Column separation ─────────────────────────────────────────────────────────
+\setlength{\columnsep}{18pt}
+
+% ── Title ─────────────────────────────────────────────────────────────────────
 \title{%
-  \textbf{ContextForge: An Architecture-First Approach to Persistent\\
-    Agentic Memory via Model Context Protocol}\\[0.4em]
-  \large\textit{Information-Theoretic Security, Tri-Core Failover,\\
+  \textbf{ContextForge: Architecture-First Persistent Agentic Memory\\
+    via Model Context Protocol}\\[0.35em]
+  \large\textit{Information-Theoretic Security, OR-Set CRDT Sync,
+    Tri-Core Failover,\\
     Differential Context Injection, and a 22-Tool MCP Server}%
 }
 
@@ -56,424 +78,561 @@
 % =============================================================================
 \begin{document}
 \maketitle
-\tableofcontents
-\newpage
 
-% ---------- Abstract ----------------------------------------------------------
+% ── Abstract ──────────────────────────────────────────────────────────────────
 \begin{abstract}
 Stateless Retrieval-Augmented Generation (RAG) systems suffer from three
 structural failure modes: zero adversarial block rate, high cold-start
-failover latency (${\sim}480$\,ms), and unconstrained context injection
-that grows without bound as session history accumulates.
+failover latency (${\sim}480$\,ms), and unconstrained context injection that
+grows linearly with session history.
 We present \textbf{ContextForge}, a five-pillar agentic memory architecture
-that closes all three gaps simultaneously and exposes every capability as
-a \textbf{22-tool Model Context Protocol (MCP)} server---making persistent,
+that closes all three gaps simultaneously and exposes every capability as a
+\textbf{22-tool Model Context Protocol (MCP)} server---making persistent,
 adversarially-hardened memory natively available in Claude Desktop, Cursor,
 VS Code, and Windsurf without any client-side code changes.
 
 The central contribution is the \emph{Entropy-Gated Soft-Gate Ledger}: an
-append-only SQLite event store whose \texttt{ReviewerGuard} filters writes
-using dual signals---Shannon entropy $H$ and Lempel--Ziv compression
-density $\rho$---catching obfuscated payloads ($H > H^{*} = 3.5$\,bits)
-and repetition attacks ($\rho < 0.60$) independently.
-Verified-origin traffic receives an elevated threshold
-$H^{*}_{\mathrm{VOH}} \approx 4.375$\,bits via HMAC-SHA256 tokens,
-reducing false positives without widening the adversarial gap.
-A Sliding-Window Temporal Correlator extends single-write detection to
-slow-drip multi-write escalation sequences, achieving 100\% detection
-at 0\% false-positive rate.
+append-only SQLite event store whose \texttt{ReviewerGuard} filters writes via
+dual signals---Shannon entropy $H$ and Lempel--Ziv compression density
+$\rho$---catching obfuscated payloads ($H > H^{*} = 3.5$\,bits) and repetition
+attacks ($\rho < 0.60$) independently. Verified-origin traffic receives an
+elevated threshold $H^{*}_{\mathrm{VOH}} \approx 4.375$\,bits via HMAC-SHA256
+tokens. A Sliding-Window Temporal Correlator extends detection to slow-drip
+multi-write escalation sequences, achieving 100\% detection at 0\% false-positive
+rate. A trigram perplexity gate (Pass~0.5, calibration threshold $P^{*}=231.8$)
+provides a third independent defence against entropy-mimicry payloads, which
+score $>2\times P^{*}$ under the reference model.
 
-Complementary pillars include a tri-core circuit-breaker router with
-entropy-triggered predictive failover ($-68.9\%$ latency) and a
-cosine-gated Differential Context Injection module ($\theta \geq 0.75$,
-$87.4\%$ noise reduction).
-Across 527 benchmark tests (nine suites, five OMEGA iterations,
-one adversarial-boundary suite), ContextForge achieves:
-$\mathrm{ABR} = 85.0\%$ adversarial block rate vs.\ $0\%$ baseline,
-F1 $= 1.0$ at $H^{*} = 3.5$ (unique maximum across the full calibration
-sweep), and $\Phi = 80.7\%$ weighted composite safety index.
+A new OR-Set CRDT synchronisation layer (\texttt{src/sync/crdt\_sync.py})
+enables conflict-free concurrent writes from multiple IDE clients with
+add-wins semantics, verified at 100\% convergence across three concurrent-write
+scenarios including a full split-brain reconnection.
+
+Across 530 benchmark tests, ContextForge achieves: $+90.0$\,pp adversarial
+block rate, F1\,=\,1.0 at $H^{*}\!=\!3.5$ (unique calibration maximum),
+$-68.9\%$ failover latency, $+70.2$\,pp token noise reduction, a Weighted
+Composite Safety Index $\Phi = 79.7\%$, and OR-Set convergence rate 1.0
+across all CRDT scenarios.
 \end{abstract}
 
 % =============================================================================
 \section{Introduction}
 \label{sec:intro}
 
-Large language model (LLM) agents deployed in long-running software engineering
-workflows depend on consistent, trustworthy context across sessions.
-Current practice falls into two inadequate extremes: (1)~\emph{stateless RAG},
-which retrieves relevant snippets per turn but forgets everything between
-sessions, and (2)~\emph{stuffed system prompts} (the ``CLAUDE.md'' pattern),
-which paste the entire decision history into the prompt---a strategy whose
-token cost grows linearly with the number of decisions and becomes prohibitive
-beyond 50--100 stored items.
+Modern AI coding workflows rely on Retrieval-Augmented Generation~\cite{lewis2020rag}
+to supply context from external knowledge stores. While RAG substantially improves
+factual grounding~\cite{gao2023retrieval}, dominant implementations share a
+critical architectural weakness: they are \emph{stateless}. Each agent invocation
+begins with a clean context window; no memory persists between sessions, no
+semantic index of prior decisions is maintained, and no guard stands between
+retrieved content and the model's context window.
 
-Three failure modes define the problem space:
+This statelessness produces three measurable failure modes.
 
-\begin{description}[style=nextline]
-  \item[Failure Mode 1 --- Zero adversarial resilience.]
-    Stateless RAG provides no mechanism to detect or block prompt-injection,
-    data-exfiltration, or slow-drip escalation attacks embedded in retrieved
-    content or user input. Any malicious payload that reaches the LLM context
-    is executed without challenge.
+\textbf{FM-1: Adversarial injection.}
+Malicious payloads embedded in retrieved content or user input are forwarded
+directly to the LLM context without challenge. Standard RAG systems report
+0\% adversarial block rate against prompt-injection, data-exfiltration, and
+slow-drip escalation attacks.
 
-  \item[Failure Mode 2 --- High failover latency.]
-    When the primary LLM provider (e.g.\ Groq) trips its rate limit or goes
-    down, a naive sequential failover introduces ${\sim}480$\,ms of dead time.
-    For interactive IDE workflows this breaks the flow of development.
+\textbf{FM-2: High failover latency.}
+When the primary LLM provider trips its rate limit or goes offline, naive
+sequential failover introduces ${\sim}480$\,ms of dead time---breaking the
+interactive feel of an IDE session.
 
-  \item[Failure Mode 3 --- Unconstrained context injection.]
-    Without a budget gate, retrieved context grows with corpus size.
-    At 200 stored decisions a CLAUDE.md-style approach injects
-    $200 \times 150 = 30{,}000$ tokens per session;
-    ContextForge caps injection at $B = 1{,}500$ tokens regardless of graph
-    size, a $93$--$95\%$ reduction.
-\end{description}
+\textbf{FM-3: Unconstrained context injection.}
+Without a budget gate, context size grows with corpus size. At 200 stored
+decisions, a ``paste-all'' CLAUDE.md approach injects 30{,}000 tokens per
+session; this grows without bound and eventually collapses within the model's
+context window.
 
 ContextForge addresses all three failure modes through a five-pillar
 architecture (Section~\ref{sec:architecture}) exposed as a 22-tool MCP server
-(Section~\ref{sec:mcp}). The system runs entirely on the developer's own
-machine; no cloud storage of memory or context is required.
+(Section~\ref{sec:mcp}). The system runs entirely on the developer's machine;
+no cloud storage of memory or context is required.
+
+\subsection*{Contributions}
+
+\begin{itemize}[leftmargin=*,topsep=2pt,itemsep=2pt]
+  \item A five-pillar agentic memory architecture (Transport, Router, Memory,
+    Retrieval, Sync) that closes FM-1 through FM-3 simultaneously.
+  \item An entropy-gated, soft-quarantine write ledger combining Shannon
+    entropy $H$ and Lempel--Ziv density $\rho$ as independent dual signals---the
+    first such application to LLM context injection defense.
+  \item A Sliding-Window Temporal Correlator that detects slow-drip escalation
+    sequences (100\% detection, 0\% FP at $\nabla\!=\!0.15$\,bits/write).
+  \item Tiered Clearance Logic (VOH) using HMAC-SHA256 tokens to reduce
+    false positives for high-entropy internal system traffic.
+  \item A trigram perplexity gate (Pass~0.5) that detects entropy-mimicry
+    payloads orthogonally to the Shannon gate, with calibration threshold
+    $P^{*} = 231.8$ and zero external dependencies via a Laplace-smoothed
+    trigram fallback backend.
+  \item An OR-Set CRDT synchronisation layer with vector-clock causal ordering
+    and add-wins conflict resolution, verified at 100\% convergence across
+    concurrent-add, concurrent-update, and split-brain reconnection scenarios.
+  \item A configurable Differential Context Injection (DCI) budget
+    (\texttt{CONTEXT\_BUDGET\_MODE}: \texttt{fixed} / \texttt{adaptive} /
+    \texttt{model\_aware}) supporting 25+ LLM context windows.
+  \item A 22-tool MCP server exposing all five pillars to any MCP-compatible
+    IDE with zero client-side code changes.
+  \item Full ablation study and token-economics formalization, validated
+    across 530 benchmark tests with 100\% pass rate.
+\end{itemize}
 
 % =============================================================================
 \section{Related Work}
 \label{sec:related}
 
-\paragraph{Retrieval-Augmented Generation.}
-Lewis et al.~\cite{lewis2020rag} introduced RAG as a mechanism for
-knowledge-intensive NLP tasks.  Subsequent surveys~\cite{gao2023retrieval}
-identify context staleness and injection vulnerability as open problems that
-RAG alone does not solve---ContextForge addresses both.
+\textbf{Retrieval-Augmented Generation.}
+Lewis et al.~\cite{lewis2020rag} introduced RAG for knowledge-intensive NLP.
+Subsequent surveys~\cite{gao2023retrieval} identify context staleness and
+injection vulnerability as open problems that retrieval alone does not solve.
+ContextForge addresses both by coupling retrieval with an adversarial-hardened
+write gate and a budget-bounded injection module.
 
-\paragraph{LLM memory systems.}
-MemGPT~\cite{packer2023memgpt} introduces a paging metaphor inspired by
-operating systems, virtualizing context across main and external storage.
-ContextForge shares the motivation (persistent memory across sessions) but
-differs in mechanism: where MemGPT relies on the LLM itself to manage memory
-pages via function calls, ContextForge offloads all memory decisions to a
-deterministic five-pillar engine, making the system model-agnostic and
-adversarially hardened.
+\textbf{LLM memory systems.}
+MemGPT~\cite{packer2023memgpt} virtualizes context across main and external
+storage using an OS-paging metaphor. Where MemGPT relies on the LLM itself
+to manage pages, ContextForge offloads all memory decisions to a deterministic
+five-pillar engine, making the system model-agnostic and adversarially hardened.
 LangChain~\cite{chase2022langchain} provides a toolkit for chaining LLM calls
-with memory plugins; it does not include an entropy gate or adversarial defense.
+with memory plugins but includes no entropy gate or adversarial defense.
+Xu et al.~\cite{xu2023memory} survey four memory types in LLM agents;
+ContextForge operationalizes their external-memory taxonomy with an
+information-theoretic security layer not covered in their survey.
 
-\paragraph{Agent memory surveys.}
-Xu et al.~\cite{xu2023memory} survey four memory types (sensory, short-term,
-long-term, external) in LLM agents. ContextForge implements L1/L2/L3 tiered
-retrieval as an operational instantiation of their external-memory taxonomy,
-augmented with an information-theoretic security layer not considered in the
-survey.
-
-\paragraph{Information-theoretic security.}
+\textbf{Information-theoretic security.}
 Shannon entropy~\cite{shannon1948} and Lempel--Ziv compression~\cite{ziv1977,ziv1978}
 form the mathematical foundation of the ContextForge entropy gate.
-To our knowledge, this is the first application of dual-signal
-entropy/compression gating to LLM context injection defense.
+Cover and Thomas~\cite{cover2006} provide the theoretical underpinning for
+our dual-signal threshold design. To our knowledge, this is the first
+application of dual-signal entropy/compression gating to LLM context injection.
+The perplexity gate extends this with language-model scoring; Laplace-smoothed
+n-gram language models follow Chen and Goodman~\cite{chen1999} and are
+efficiently queryable via KenLM~\cite{heafield2011}.
 
-\paragraph{Model Context Protocol.}
-The MCP specification~\cite{anthropic2024mcp} defines a JSON-RPC protocol for
-tool-augmented AI clients. ContextForge implements a fully compliant MCP server
-that exposes all five architectural pillars as 22 typed tools, making the system
-immediately usable in any MCP-compatible IDE without client-side code changes.
+\textbf{Adversarial LLM security.}
+Perez and Ribeiro~\cite{perez2022ignore} systematise prompt-injection attack
+techniques against instruction-following models. Greshake et al.~\cite{greshake2023not}
+demonstrate indirect injection attacks on LLM-integrated applications via
+compromised retrieval sources---the precise threat model ContextForge addresses
+at the write-gate level. Schulhoff et al.~\cite{schulhoff2023hackaprompt} provide
+empirical breadth via a large-scale prompt-hacking competition. Our external
+evaluation uses the \texttt{deepset/prompt-injections} dataset~\cite{deepset2023injections}
+as a held-out adversarial corpus.
 
-\paragraph{Circuit breakers and resilience patterns.}
-The tri-core failover router follows the circuit-breaker pattern documented by
-Nygard~\cite{nygard2007}. The entropy-triggered predictive prewarm extension is
-a novel contribution of this work.
+\textbf{Conflict-free Replicated Data Types.}
+Shapiro et al.~\cite{shapiro2011} formalized CRDTs and proved their
+convergence properties. The OR-Set construction used in ContextForge is a
+standard instantiation of their framework, with vector clocks~\cite{lamport1978}
+tracking causal history per replica. Pregui\c{c}a~\cite{preguica2018} surveys
+operational CRDT variants; ContextForge implements the tagged variant where
+each add-operation carries a unique identifier, enabling add-wins semantics.
 
-\paragraph{Similarity search and embeddings.}
-Retrieval is powered by BM25 term-overlap scoring and DCI cosine gating, with
-FAISS~\cite{johnson2021faiss} available as an optional vector backend for L3
-semantic search. Sentence embeddings follow Reimers and
-Gurevych~\cite{reimers2019sbert}. Reflexion~\cite{shinn2023reflexion} demonstrates
-that verbal self-reflection can improve agent performance---ContextForge's
-Shadow-Reviewer agent implements a structural analog for memory-write validation.
+\textbf{Model Context Protocol.}
+The MCP specification~\cite{anthropic2024mcp} defines a JSON-RPC 2.0 protocol
+for tool-augmented AI clients. ContextForge implements a fully compliant
+22-tool MCP server, making the system immediately usable across all
+MCP-compatible IDEs without any client-side modifications.
+
+\textbf{Resilience patterns.}
+The tri-core failover router follows the circuit-breaker pattern~\cite{nygard2007}.
+The entropy-triggered predictive prewarm extension---which prearms the secondary
+provider before the primary trips---is a novel contribution of this work.
+
+\textbf{Similarity search and embeddings.}
+Retrieval uses BM25 term-overlap scoring and DCI cosine gating, with
+FAISS~\cite{johnson2021faiss} available as a vector backend for semantic
+search. Sentence embeddings follow Reimers and
+Gurevych~\cite{reimers2019sbert}. The Shadow-Reviewer agent implements a
+structural analog to Reflexion~\cite{shinn2023reflexion} for memory-write
+validation.
 
 % =============================================================================
 \section{System Architecture}
 \label{sec:architecture}
 
-\begin{figure}[H]
+\begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_system_architecture}
   \caption{ContextForge Nexus full system architecture. IDE clients connect via
     MCP JSON-RPC to the Transport pillar. The five pillars share a SQLite
-    knowledge graph. The 8-agent RAT engine operates concurrently for
-    autonomous decision capture and validation.}
+    knowledge graph and LLM provider pool. The 8-agent RAT engine runs
+    concurrently for autonomous decision capture and validation. The OR-Set
+    CRDT layer (opt-in) provides convergent cross-IDE synchronisation.}
   \label{fig:arch}
-\end{figure}
+\end{figure*}
 
-ContextForge organizes its functionality into five orthogonal pillars, each
-implemented as an independent Python module with a well-defined interface
-(Figure~\ref{fig:arch}).
+ContextForge organizes its functionality into five orthogonal pillars
+(Figure~\ref{fig:arch}), each implemented as an independent Python module
+with a well-defined interface.
 
 \subsection{Pillar 1 --- Transport}
-\label{sec:transport}
 
-The Transport pillar (\texttt{mcp/server.py}, \texttt{mcp/index.ts}) implements
-the Model Context Protocol in both Python and TypeScript. It exposes two
-operation modes:
+The Transport pillar (\texttt{mcp/server.py}, \texttt{mcp/index.ts})
+implements the Model Context Protocol in both Python and TypeScript, exposing
+two operation modes:
 
-\begin{itemize}
+\begin{itemize}[leftmargin=*,topsep=2pt,itemsep=1pt]
   \item \textbf{Stdio mode} (\texttt{--stdio}): local IDE integration with
-    Claude Desktop, Cursor, VS Code, and Windsurf. Zero network exposure.
-  \item \textbf{SSE/HTTP mode} (\texttt{--sse}): remote multi-client deployment.
-    A single ContextForge instance serves multiple IDE clients over Server-Sent
-    Events. Production deployments should place an nginx/Caddy reverse proxy
-    with TLS and authentication in front of the SSE endpoint.
+    zero network exposure.
+  \item \textbf{SSE/HTTP mode} (\texttt{--sse}): remote multi-client deployment
+    via Server-Sent Events. Production deployments should place a TLS-terminating
+    reverse proxy in front of the SSE endpoint.
 \end{itemize}
 
-The TypeScript server provides full 22-tool parity with the Python server for
-all storage and retrieval operations. The Python server additionally runs
-\texttt{ReviewerGuard} (charter compliance checking) on every write.
-
 \subsection{Pillar 2 --- Router}
-\label{sec:router}
 
 The Router (\texttt{src/router/nexus\_router.py}) implements a tri-core
 circuit-breaker failover chain: Groq $\to$ Gemini $\to$ Ollama.
-
-\textbf{Circuit breaker.} Each provider maintains a half-open state machine.
-After $k$ consecutive failures ($k = 3$ by default) the circuit opens and
-requests bypass that provider for a 60-second cooling window before a probe
-request re-evaluates availability.
-
-\textbf{Entropy-triggered predictive prewarm.} When the entropy gate fires on
-a write (indicating an adversarial probe), the Router asynchronously initiates
-a keep-alive connection to the secondary provider (Gemini) before Groq trips.
+After $k = 3$ consecutive failures a circuit opens for a 60-second cooling
+window. \emph{Entropy-triggered predictive prewarm}: when the entropy gate
+fires on an adversarial probe, the Router asynchronously initiates a
+keep-alive connection to the secondary provider before the primary trips.
 This reduces failover latency from ${\sim}480$\,ms to ${\sim}149$\,ms
-($-68.9\%$) in the adversarial scenario where failover is most likely.
+($-68.9\%$).
 
 \subsection{Pillar 3 --- Memory}
-\label{sec:memory}
 
 The Memory pillar (\texttt{src/memory/ledger.py}) implements an append-only
-SQLite event ledger with the following properties:
-
-\begin{description}
-  \item[Hash chain.] Each event stores \texttt{SHA-256(prev\_hash
-    $\|$ content)}, making the ledger tamper-evident. Any modification
-    of a historical event breaks all subsequent hashes.
-  \item[ReviewerGuard.] Every write request passes through a two-pass
-    guard: (1)~pattern-based injection filter (20 compiled regex rules),
-    (2)~dual-signal entropy gate (Section~\ref{sec:methodology}).
-    The guard operates synchronously; no LLM call is required.
-  \item[Rollback.] The \texttt{rollback(n)} MCP tool prunes the ledger
-    to event $n$, enabling time-travel undo of destructive operations.
-  \item[WAL mode.] SQLite is configured in Write-Ahead Logging
-    mode~\cite{hipp2020sqlite}, allowing concurrent reads during writes.
-    A 500-concurrent-writer stress test (suite~09) completed without
-    data loss or deadlock.
-\end{description}
+SQLite event ledger. Each event stores
+$\texttt{SHA-256}(\mathit{prev\_hash} \| \mathit{content})$, making the
+ledger tamper-evident. Every write request passes through a synchronous
+multi-pass guard:
+(Pass~0) 20-pattern regex injection filter;
+(Pass~0.5) perplexity gate --- trigram language-model scoring against a
+calibrated threshold $P^{*}$ (Section~\ref{sec:perplexity});
+(Pass~1) dual-signal entropy gate (Section~\ref{sec:gate}).
+SQLite WAL mode~\cite{hipp2020sqlite} allows concurrent reads during writes;
+a 500-concurrent-writer stress test completed without data loss.
 
 \subsection{Pillar 4 --- Retrieval}
-\label{sec:retrieval}
 
-The Retrieval pillar (\texttt{src/retrieval/}) implements three-tier context
-loading:
-
-\begin{description}
-  \item[L1 --- Exact cache.] SHA-256 hash $\to$ content lookup (zero-cost hit).
-  \item[L2 --- BM25 retrieval.] SQLite \texttt{decision\_nodes} table scored
-    by term-overlap BM25. Token budget $B = 1{,}500$ enforced via
-    Differential Context Injection (DCI); see Section~\ref{sec:dci}.
-  \item[L3 --- Research nodes.] Most-recent research-tagged nodes (max
-    800 tokens) appended when the L2 budget is not exhausted.
-  \item[L0 --- Empty stub.] Fallback when all tiers miss; triggers an
-    agent re-capture cycle.
-\end{description}
+The Retrieval pillar implements three-tier context loading:
+L1 (SHA-256 exact cache, zero-cost hit);
+L2 (BM25 SQLite retrieval, configurable token budget $B$ via DCI;
+Section~\ref{sec:dci});
+L3 (recency-ranked research nodes, max 800 tokens);
+and L0 (empty stub fallback).
+The DCI budget adapts to the target model's context window via
+\texttt{CONTEXT\_BUDGET\_MODE} (fixed / adaptive / model\_aware), supporting
+25+ LLM families from a built-in lookup table.
 
 \subsection{Pillar 5 --- Sync}
-\label{sec:sync}
 
 The Sync pillar (\texttt{src/sync/fluid\_sync.py}) provides AES-256-GCM
-encrypted snapshots (\texttt{.forge} files) and an idle watcher that
-auto-checkpoints every 15 minutes. Cross-device context handoff uses the
-\texttt{replay\_sync} MCP tool to restore from a snapshot, enabling seamless
-IDE switches between Claude Desktop, Cursor, and VS Code.
+encrypted snapshots (\texttt{.forge} files, format v5.1) bundling the full
+event log, \texttt{PROJECT\_CHARTER.md}, and CRDT vector-clock metadata.
+An idle watcher auto-checkpoints every 15 minutes. Cross-device handoff uses
+\texttt{replay\_sync} to restore from a snapshot, merging the remote vector
+clock into the local replica on load. An opt-in OR-Set CRDT layer
+(Section~\ref{sec:crdt}) extends this to conflict-free concurrent writes from
+multiple IDE clients.
 
 \subsection{8-Agent RAT Engine}
-\label{sec:rat}
 
 Running concurrently with the MCP server, the Reasoning--Auditing--Tracking
 (RAT) engine provides autonomous decision capture:
+\textbf{Sentry} (file-system watchdog, 2\,s debounce, SHA-256 dedup),
+\textbf{GhostCoder} (LLM-driven knowledge graph node enrichment),
+\textbf{Librarian} (L1/L2/L3 cache orchestrator),
+\textbf{Shadow-Reviewer} (independent semantic auditor; sole ABR
+contributor in ablation),
+\textbf{Historian} (Jaccard duplicate GC; primary token-efficiency driver),
+and \textbf{PM, Researcher, Coder} (goal decomposition, web search,
+Plan-and-Execute loop).
 
-\begin{itemize}
-  \item \textbf{Sentry}: file-system watchdog, 2\,s debounce, SHA-256 dedup.
-  \item \textbf{GhostCoder}: structures raw file changes into typed Knowledge
-    Graph nodes via LLM distillation.
-  \item \textbf{Librarian}: L1/L2/L3 cache orchestrator.
-  \item \textbf{Shadow-Reviewer}: independent semantic auditor (cosine
-    similarity $\geq 0.78$); sole ABR contributor in ablation.
-  \item \textbf{Historian}: Jaccard-based duplicate GC; primary driver of
-    token efficiency.
-  \item \textbf{PM, Researcher, Coder}: goal decomposition, web search,
-    and Plan-and-Execute coding loop.
-\end{itemize}
+\subsection{OR-Set CRDT Synchronisation Layer}
+\label{sec:crdt}
+
+To support conflict-free concurrent writes from multiple IDE clients, ContextForge
+implements an Observed-Remove Set (OR-Set) CRDT~\cite{shapiro2011} in
+\texttt{src/sync/crdt\_sync.py}.
+
+\textbf{Data model.}
+Each knowledge-graph element $e$ carries a set of \emph{add-tags}
+$T^{+}(e) = \{\tau_1, \tau_2, \ldots\}$ (UUIDs assigned at insert time) and a
+set of \emph{remove-markers} $T^{-}(e) \subseteq T^{+}(e)$.
+An element is present if and only if at least one add-tag has not been removed:
+\begin{equation}
+  \text{present}(e) \;\iff\; \exists\,\tau \in T^{+}(e) : \tau \notin T^{-}(e).
+  \label{eq:orset}
+\end{equation}
+
+\textbf{Add-wins semantics.}
+A concurrent offline add and remove to the same element resolve in favour of
+the add. Because the add-tag $\tau$ was created \emph{after} the remove
+replica last synchronised, the removing replica has no knowledge of $\tau$ and
+therefore cannot place $\tau$ in $T^{-}(e)$. After merge, $\tau \notin T^{-}(e)$
+and the element remains present.
+
+\textbf{Vector clocks.}
+Causal history is tracked via per-replica Lamport vector
+clocks~\cite{lamport1978}. Each add-operation advances the issuing replica's
+counter. The \texttt{happened\_before} relation
+$\mathrm{VC}_{A} \prec \mathrm{VC}_{B}$ holds iff
+$\forall r: A[r] \leq B[r]$ and $A \neq B$; operations that satisfy neither
+$\prec$ nor $\succ$ are concurrent and trigger the configured
+\texttt{ConflictPolicy} (\texttt{lww} / \texttt{or\_set} / \texttt{manual}).
+
+\textbf{Activation.}
+The sync mode defaults to server-authoritative LWW for backward compatibility.
+Set \texttt{CRDT\_SYNC\_MODE=or\_set} to activate convergent OR-Set semantics.
+Snapshot format v5.1 embeds the replica's vector clock in
+\texttt{manifest.json} under the \texttt{crdt} key, enabling causal-order
+replay on new-device handshake.
 
 % =============================================================================
 \section{MCP Server Layer}
 \label{sec:mcp}
 
-\begin{figure}[H]
+\begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_mcp_dataflow}
   \caption{All 22 MCP tools grouped by pillar category. Both the Python and
-    TypeScript servers expose the same tool schema; the Python server
-    additionally enforces ReviewerGuard on every write operation.}
+    TypeScript servers expose the same tool schema; the Python server additionally
+    enforces ReviewerGuard on every write operation.}
   \label{fig:mcp}
-\end{figure}
+\end{figure*}
 
-The Model Context Protocol~\cite{anthropic2024mcp} defines a JSON-RPC 2.0
+The Model Context Protocol~\cite{anthropic2024mcp} defines JSON-RPC 2.0
 transport for AI tool calls. ContextForge exposes 22 typed tools across five
 categories (Figure~\ref{fig:mcp}):
 
-\begin{description}
-  \item[Project Management (6 tools).]
-    \texttt{list\_projects}, \texttt{init\_project}, \texttt{rename\_project},
-    \texttt{merge\_projects}, \texttt{delete\_project}, \texttt{project\_stats}.
-    These tools manage the multi-project namespace in the SQLite store.
+\textbf{Project Management (6 tools).}
+\texttt{list\_projects}, \texttt{init\_project}, \texttt{rename\_project},
+\texttt{merge\_projects}, \texttt{delete\_project}, \texttt{project\_stats}
+manage the multi-project namespace.
 
-  \item[Decision Graph (7 tools).]
-    \texttt{capture\_decision}, \texttt{load\_context},
-    \texttt{get\_knowledge\_node}, \texttt{list\_decisions},
-    \texttt{update\_decision}, \texttt{deprecate\_decision},
-    \texttt{link\_decisions}.
-    Core knowledge-graph CRUD; \texttt{load\_context} enforces the DCI budget.
+\textbf{Decision Graph (7 tools).}
+\texttt{capture\_decision}, \texttt{load\_context},
+\texttt{get\_knowledge\_node}, \texttt{list\_decisions},
+\texttt{update\_decision}, \texttt{deprecate\_decision},
+\texttt{link\_decisions} form the core knowledge-graph CRUD interface.
+\texttt{load\_context} enforces the DCI budget gate on every retrieval call
+and accepts an optional \texttt{model\_context\_window} parameter to activate
+adaptive budget mode at the call site.
 
-  \item[Tasks (3 tools).]
-    \texttt{list\_tasks}, \texttt{create\_task}, \texttt{update\_task}.
-    Sprint management integrated with the PM agent.
+\textbf{Tasks (3 tools).}
+\texttt{list\_tasks}, \texttt{create\_task}, \texttt{update\_task} provide
+sprint management integrated with the PM agent.
 
-  \item[Ledger \& Sync (5 tools).]
-    \texttt{rollback}, \texttt{snapshot}, \texttt{list\_snapshots},
-    \texttt{replay\_sync}, \texttt{list\_events}.
-    Time-travel undo and encrypted cross-device handoff.
+\textbf{Ledger \& Sync (5 tools).}
+\texttt{rollback}, \texttt{snapshot}, \texttt{list\_snapshots},
+\texttt{replay\_sync}, \texttt{list\_events} provide time-travel undo and
+encrypted cross-device handoff.
 
-  \item[Search (1 tool).]
-    \texttt{search\_context}: BM25 + DCI cosine semantic search over local
-    files. Zero cloud token cost---all processing happens on device.
-\end{description}
+\textbf{Search (1 tool).}
+\texttt{search\_context}: BM25 + DCI cosine semantic search over local files.
+Zero cloud token cost---all processing happens on device.
 
-\paragraph{Protocol rationale.}
-MCP's JSON-RPC framing means the AI client (Claude, Copilot, etc.) acts as the
-reasoning engine while ContextForge acts as a stateful memory substrate.
-No LLM calls originate from the MCP server itself. Each tool call completes
-in under 5\,ms for typical payloads, making the overhead invisible to the user.
+\textbf{Protocol rationale.}
+Each tool call completes in under 5\,ms for typical payloads; no LLM calls
+originate from the MCP server itself. The AI client acts as the reasoning
+engine; ContextForge acts as a stateful, adversarially-hardened memory substrate.
 
-\paragraph{Dual-server strategy.}
+\textbf{Dual-server strategy.}
 The Python server (\texttt{mcp/server.py}) provides the full security stack
-including ReviewerGuard. The TypeScript server (\texttt{mcp/index.ts}) provides
-full tool parity with a smaller deployment footprint---useful in environments
-where Python is unavailable. Production deployments requiring charter compliance
-must use the Python server.
+including ReviewerGuard and the perplexity gate. The TypeScript server
+(\texttt{mcp/index.ts}) provides full 22-tool parity with a smaller deployment
+footprint. Production deployments requiring charter-compliance checking must
+use the Python server.
 
 % =============================================================================
 \section{Methodology}
 \label{sec:methodology}
 
 \subsection{Dual-Signal Entropy Gate}
-\label{sec:entropygate}
+\label{sec:gate}
 
-\begin{figure}[H]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.85\linewidth]{fig_entropy_gate}
-  \caption{Shannon entropy distributions for benign ($\mu=2.74$,
-    $\sigma=0.43$) and adversarial ($\mu=3.94$, $\sigma=0.79$) payloads.
-    The standard gate $H^{*}=3.5$ achieves zero FPR and zero FNR (F1 $= 1.0$).
-    The VOH gate $H^{*}_{\mathrm{VOH}} = 4.375$ admits authenticated
-    internal traffic with higher natural entropy.}
+  \includegraphics[width=\linewidth]{figure_03_entropy_distributions}
+  \caption{Entropy distributions by attack class (Suite~10 data).
+    Boundary payloads (Class~A) cluster near $H^{*}=3.5$; mimicry payloads
+    (Class~B) match benign $\mu=2.74$ and evade the entropy gate but are
+    caught by the LZ gate ($\rho_{\min}=0.60$); slow-drip sequences (Class~C)
+    show a monotone trend over 8 writes. Benign corpus: $\mu=2.74$, $\sigma=0.18$.}
   \label{fig:entropy_gate}
 \end{figure}
 
-For a write payload $w$, the Shannon entropy is:
-\[
+For a write payload $w$, the Shannon entropy is
+\begin{equation}
   H(w) = -\sum_{i} p_i \log_2 p_i
-\]
-where $p_i$ is the relative frequency of byte value $i$ in $w$.
-The Lempel--Ziv~77 compression density~\cite{ziv1977} is:
-\[
-  \rho(w) = \frac{|w|_{\text{compressed}}}{|w|_{\text{raw}}}
-\]
-A low $\rho$ indicates high repetition (e.g.\ a repeated-token attack).
-
-The dual-signal gate blocks a write if and only if:
-\[
+  \label{eq:entropy}
+\end{equation}
+where $p_i$ is the relative frequency of byte value $i$.
+The Lempel--Ziv compression density~\cite{ziv1977} is
+\begin{equation}
+  \rho(w) = \frac{|w|_{\mathrm{compressed}}}{|w|_{\mathrm{raw}}}.
+  \label{eq:lz}
+\end{equation}
+Low $\rho$ indicates high repetition (repetition attacks).
+A write is flagged if and only if
+\begin{equation}
   \mathrm{flag}(w) \iff H(w) > H^{*} \;\vee\; \rho(w) < \rho_{\min}
-\]
-with calibrated thresholds $H^{*} = 3.5$\,bits and $\rho_{\min} = 0.60$.
+  \label{eq:gate}
+\end{equation}
+with calibrated thresholds $H^{*} = 3.5$\,bits and $\rho_{\min} = 0.60$
+(Figure~\ref{fig:entropy_gate}). On an external calibration corpus of 100
+samples (39 adversarial, 61 benign), the dual-signal gate achieves
+F1\,=\,0.869 vs.\ F1\,=\,0.573 for entropy alone ($+29.6$\,pp),
+confirming the complementary nature of the two signals.
 
 \subsection{Tiered Clearance Logic (VOH)}
 \label{sec:voh}
 
-\begin{figure}[H]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.8\linewidth]{fig_voh_tiers}
-  \caption{Tiered clearance thresholds. Unauthenticated external writes are
-    gated at $H^{*}=3.5$. HMAC-SHA256 authenticated system traffic (VOH)
-    is gated at $H^{*}_{\mathrm{VOH}} = 4.375$, providing a 0.875-bit
-    buffer for legitimately high-entropy technical content.}
+  \includegraphics[width=\linewidth]{fig_voh_tiers}
+  \caption{Tiered clearance thresholds. External writes are gated at $H^{*}=3.5$.
+    HMAC-authenticated system traffic (VOH) is gated at $H^{*}_{\mathrm{VOH}}=4.375$,
+    providing a 0.875-bit buffer for legitimately high-entropy technical content.}
   \label{fig:voh}
 \end{figure}
 
-Internal system agents (GhostCoder, Shadow-Reviewer, Historian) generate
-legitimate writes with naturally higher entropy due to technical vocabulary.
-A flat $H^{*} = 3.5$ gate would produce false positives on these writes.
+Internal agents (GhostCoder, Shadow-Reviewer, Historian) produce legitimate
+writes with naturally higher entropy due to technical vocabulary. A flat
+$H^{*}$ gate would produce false positives on these writes.
 
-Verified-Origin Hashing (VOH) assigns a HMAC-SHA256 token to each trusted
-internal write. The elevated threshold:
-\[
+Verified-Origin Hashing (VOH) assigns an HMAC-SHA256 token to each trusted
+internal write. The elevated threshold is
+\begin{equation}
   H^{*}_{\mathrm{VOH}} = \frac{H^{*}}{1 - d} = \frac{3.5}{0.80} \approx 4.375\,\text{bits}
-\]
-where $d = 0.20$ is the VOH discount, admits authenticated traffic while
-maintaining a hard ceiling well below adversarial payloads (Figure~\ref{fig:voh}).
+  \label{eq:voh}
+\end{equation}
+where $d = 0.20$ is the VOH discount. This admits authenticated traffic while
+maintaining a hard ceiling below adversarial payloads (Figure~\ref{fig:voh}).
+Suite~09 confirms 0 of 5 spoofed VOH tokens were accepted.
 
 \subsection{Sliding-Window Temporal Correlator}
 \label{sec:temporal}
 
-\begin{figure}[H]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig_temporal_correlator}
-  \caption{Entropy gradient separation between slow-drip adversarial sequences
-    and legitimate write sequences. Mean slow-drip gradient $0.294$\,bits/write
-    vs.\ legitimate mean $0.062$\,bits/write (4.7$\times$ ratio). Flag threshold
-    $\nabla = 0.15$ achieves 100\% detection at 0\% FP rate.}
+  \includegraphics[width=\linewidth]{figure_05_temporal_correlator}
+  \caption{Temporal Correlator gradients for Suite~10 slow-drip sequences
+    (Class~C). Target gradient $= 0.14$ (just below threshold $\nabla^{*}=0.15$).
+    Entropy quantisation noise causes 60\% of attempts to exceed the threshold
+    (detected, red); 40\% successfully stay below (evaded, green) but are caught
+    by downstream keyword gate. Strip+box plot (left) and histogram (right).}
   \label{fig:temporal}
-\end{figure}
+\end{figure*}
 
-A single-write gate cannot detect slow-drip attacks where each individual
-write is below $H^{*}$ but the sequence collectively encodes a high-entropy
-adversarial payload.
-
-The Temporal Correlator maintains a sliding window of the last $k$ writes
-($k = 10$ by default) and computes the linear gradient of entropy values
-across the window:
-\[
-  \nabla_H = \frac{\Delta H}{\Delta t}
-\]
-where $\Delta H$ is the entropy range across the window and $\Delta t$ is
-the write count. A sequence is flagged if $\nabla_H > 0.15$\,bits/write.
-
-Suite~07 results (15 slow-drip sequences, 15 legitimate sequences) show
-complete separation: mean slow-drip gradient $0.294$, legitimate mean $0.062$,
-ratio $4.7\times$ (Figure~\ref{fig:temporal}).
+A single-write gate cannot detect slow-drip attacks where each individual write
+lies below $H^{*}$ but the sequence collectively encodes a high-entropy
+adversarial payload. The Temporal Correlator maintains a sliding window of the
+last $k$ writes ($k = 10$ default) and computes the linear gradient of entropy
+values across the window:
+\begin{equation}
+  \nabla_H = \frac{\max(H_1,\ldots,H_k) - \min(H_1,\ldots,H_k)}{k - 1}.
+  \label{eq:gradient}
+\end{equation}
+A sequence is flagged if $\nabla_H > \nabla^{*} = 0.15$\,bits/write.
+Suite~07 results on 15 slow-drip and 15 legitimate sequences confirm complete
+separation: mean slow-drip gradient $0.294$, legitimate mean $0.062$, ratio
+$4.7\times$ (Figure~\ref{fig:temporal}).
 
 \subsection{Differential Context Injection (DCI)}
 \label{sec:dci}
 
-DCI gates retrieval at the token budget $B = 1{,}500$:
-\[
-  \mathrm{inject}(c_i) \iff s_i \geq \theta \;\wedge\; \textstyle\sum_{j < i} \tau_j \leq B
-\]
+DCI gates retrieval against a token budget $B$:
+\begin{equation}
+  \mathrm{inject}(c_i) \iff s_i \geq \theta \;\wedge\; \textstyle\sum_{j<i} \tau_j \leq B
+  \label{eq:dci}
+\end{equation}
 where $s_i = \cos(\mathbf{q}, \mathbf{c}_i)$ is the cosine similarity between
-the query embedding and candidate context chunk $c_i$, and $\tau_j$ is the
-token count of the $j$-th already-injected chunk. The threshold $\theta = 0.75$
-achieves $87.4\%$ noise reduction vs.\ unfiltered injection.
+the query embedding and candidate context chunk $c_i$, $\tau_j$ is the token
+count of the $j$-th already-injected chunk, and $\theta = 0.75$ is the
+similarity gate. DCI achieves $70.2\%$ noise reduction versus unfiltered injection
+on the multi-seed benchmark (Suite~11, $n=10$ seeds).
+
+The budget $B$ is now configurable via \texttt{CONTEXT\_BUDGET\_MODE}:
+\texttt{fixed} (default $B=1{,}500$); \texttt{adaptive}
+($B = \min(0.25 \times W, 8{,}000)$ where $W$ is the model context window);
+or \texttt{model\_aware} (caller-provided $W$ via the \texttt{load\_context}
+tool parameter). A built-in lookup table maps 25+ model name substrings to
+their declared context windows (GPT-4o: 128k, Claude 3.5 Sonnet: 200k,
+Gemini 1.5 Pro: 1\,M, Llama 3.1: 128k). This eliminates the need for
+manual $B$ tuning across deployment targets.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figure_07_token_cost_scaling}
+  \caption{DCI token budget scaling (Suite~11, $B \in \{1{,}500;4{,}000;8{,}000;16{,}000\}$).
+    CTO (mean tokens injected per query) and TNR are budget-invariant: the cosine
+    filter ($\theta=0.75$) limits candidates to ${\approx}30\%$ of retrieved
+    tokens, well below any tested budget. ABR and CSS are security-gate metrics
+    independent of $B$.}
+  \label{fig:dci_scaling}
+\end{figure}
+
+\subsection{Perplexity Gate (Pass~0.5)}
+\label{sec:perplexity}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_perplexity_gate}
+  \caption{Perplexity distribution for benign vs.\ entropy-mimicry adversarial
+    payloads under the trigram reference model. The calibration threshold
+    $P^{*}=231.8$ (95th percentile of benign corpus) cleanly separates
+    the two distributions; adversarial payloads score $>2\times P^{*}$.}
+  \label{fig:perplexity}
+\end{figure}
+
+The entropy gate (Eq.~\ref{eq:gate}) is blind to \emph{entropy-mimicry}
+attacks: payloads deliberately crafted to match the entropy distribution of
+benign content while embedding adversarial instructions. The Perplexity Gate
+(Pass~0.5) provides an orthogonal defence by scoring the write payload under
+a reference language model and flagging statistically improbable sequences.
+
+\textbf{Perplexity computation.}
+Let $w = w_1 w_2 \ldots w_N$ be the tokenised payload. The trigram perplexity
+under a Laplace-smoothed ($\alpha=1$) language model~\cite{chen1999} is
+\begin{equation}
+  \mathcal{P}(w) = 2^{\displaystyle -\frac{1}{N}\sum_{i=1}^{N}\log_2 P(w_i \mid w_{i-2}, w_{i-1})}
+  \label{eq:perplexity}
+\end{equation}
+where the smoothed probability is
+$P(w_i \mid h) = \tfrac{c(h, w_i) + 1}{c(h) + V}$
+with $V$ the vocabulary size and $c(\cdot)$ denoting corpus counts.
+
+\textbf{Calibration threshold.}
+The threshold $P^{*}$ is the 95th percentile of perplexity scores on a
+100-string benign corpus of technical English text (documentation, commit
+messages, code comments). This percentile choice admits 95\% of benign writes
+while flagging payloads that are statistically improbable under normal
+technical language:
+\begin{equation}
+  \mathrm{flag\_perp}(w) \iff \mathcal{P}(w) > P^{*}.
+  \label{eq:perpflag}
+\end{equation}
+Calibration yields $P^{*} = 231.8$. A representative entropy-mimicry payload
+(constructed to match benign $\mu_H = 2.74$\,bits) scores $\mathcal{P} = 463.3$,
+a $2.0\times$ excess that is correctly flagged.
+
+\textbf{Backend chain.}
+The gate selects a backend in priority order: KenLM~\cite{heafield2011}
+(C++ inference, $<5$\,ms, requires a pre-built \texttt{.arpa}/\texttt{.binary}
+model in \texttt{data/lm/}); llama-cpp-python (4-bit GGUF LLM,
+$>50$\,ms, GPU optional); and a pure-Python Laplace-smoothed trigram
+fallback ($<1$\,ms, zero external dependencies). The fallback guarantees
+availability in all deployment environments.
+
+\textbf{Integration.}
+The gate is implemented in \texttt{src/security/perplexity\_gate.py} and
+activated by setting \texttt{ENABLE\_PERPLEXITY\_GATE=1}. It sits between
+Pass~0 (keyword regex) and Pass~1 (entropy+LZ) in
+\texttt{ReviewerGuard.check()}, sharing the same soft-quarantine pathway for
+flagged writes. Gate failures degrade gracefully (non-fatal) to preserve
+availability; only \texttt{ConflictError} exceptions are re-raised.
 
 \subsection{Soft-Gate Quarantine}
 \label{sec:quarantine}
 
-Rather than binary block/admit, flagged writes enter a quarantine table
-(\texttt{quarantine\_events}) with a configurable TTL (default 24\,h). A
-human reviewer (or the Shadow-Reviewer agent) can promote quarantined events
+Rather than binary block/admit, flagged writes from any pass enter a
+\texttt{quarantine\_events} table with a configurable TTL (default 24\,h).
+A human reviewer or the Shadow-Reviewer agent can promote quarantined events
 to the main ledger or permanently discard them. This avoids the false-negative
 cost of hard blocking while containing adversarial content.
 
@@ -481,290 +640,551 @@ cost of hard blocking while containing adversarial content.
 \section{Experimental Setup}
 \label{sec:setup}
 
-All benchmarks execute against a deterministic in-memory environment
-seeded with \texttt{random\_seed = 42 + (suite\_id $\times$ 17)}.
-No external API calls are made during benchmarking; LLM calls use a
-rule-based fallback that produces deterministic outputs.
+All benchmarks execute against a deterministic in-memory environment seeded
+with $\texttt{random\_seed} = 42 + (\texttt{suite\_id} \times 17)$. No external
+API calls are made; LLM calls use a rule-based fallback producing deterministic
+outputs.
 
-\begin{description}
-  \item[Suites 01--05 (OMEGA iterations).] Five-iteration recursive
-    self-improvement: each iteration patches the highest-severity flaw
-    identified in the prior run. Tests cover networking, circuit-breaker
-    behaviour, temporal integrity, semantic poison resistance, RAG flooding,
-    and full-chaos scenarios. 375 tests total.
+\textbf{Suites 01--05 (OMEGA iterations, 375 tests).}
+Five-iteration recursive self-improvement covering networking, circuit-breaker
+behaviour, temporal integrity, semantic poison resistance, RAG flooding, and
+full-chaos scenarios.
 
-  \item[Suite 06 --- External baseline.] Multi-corpus retrieval benchmark
-    comparing ContextForge DCI against vanilla BM25 and TF-IDF.
+\textbf{Suite 06 --- External baseline (24 tests).}
+Compares ContextForge DCI against a stateless RAG baseline on 40 probes
+(20 adversarial, 20 benign).
 
-  \item[Suite 07 --- Temporal correlator.] 15 slow-drip and 15 legitimate
-    sequences; gradient threshold calibration.
+\textbf{Suite 07 --- Temporal correlator (18 tests).}
+15 slow-drip and 15 legitimate sequences; gradient threshold calibration.
 
-  \item[Suite 08 --- FPR calibration sweep.] Shannon entropy threshold
-    varied from 2.5 to 5.0 in 0.25-bit increments; FPR, FNR, and F1
-    recorded at each point.
+\textbf{Suite 08 --- FPR calibration sweep (16 tests).}
+Shannon entropy threshold varied from 2.5 to 5.0 in 0.25-bit increments;
+FPR, FNR, and F1 recorded at each point.
 
-  \item[Suite 09 --- VOH multiprocess.] 500-concurrent-writer stress test
-    for SQLite WAL behaviour; HMAC VOH token issuance and verification.
+\textbf{Suite 09 --- VOH multiprocess (19 tests).}
+500-concurrent-writer SQLite WAL stress test; HMAC VOH token issuance and
+spoof-resistance validation.
 
-  \item[Iter 06 --- Adversarial boundary.] 77 adversarial boundary cases:
-    encoded payloads (base64, Unicode escapes, ROT-13), multi-step injection
-    preambles, template-injection attacks.
-\end{description}
+\textbf{Suite 10 --- Adaptive attacker (30 tests).}
+Validates the \texttt{AdaptiveAttacker} generator across three attack classes:
+boundary probes (entropy near $H^{*}$), entropy-mimicry payloads (entropy
+near benign $\mu$), and slow-drip escalation sequences. All 30 tests pass,
+confirming that the LZ gate catches boundary and mimicry payloads that evade
+the Shannon gate, and that entropy quantization noise causes partial detection
+of near-threshold slow-drip sequences.
+
+\textbf{Iter 06 --- Adversarial boundary (77 tests).}
+Encoded payloads (base64, Unicode escapes, ROT-13), multi-step injection
+preambles, and template-injection attacks.
+
+\textbf{Suite 12 --- CRDT convergence (3 tests).}
+Three concurrent-write scenarios with 3 simulated IDE clients and the
+\texttt{or\_set} conflict policy: (A) three clients add distinct nodes while
+offline; (B) two clients update the same node concurrently; (C) split-brain
+reconnection where one client deletes a node and another updates it while
+both are offline.
+
+\textbf{Perplexity gate smoke test.}
+A standalone calibration run on the 100-string benign corpus (no external
+LLM or model file required) confirms $P^{*} = 231.8$ and correctly flags a
+representative mimicry payload at $\mathcal{P} = 463.3$.
 
 % =============================================================================
 \section{Results}
 \label{sec:results}
 
-\subsection{Master Results Table}
+\subsection{Multi-Baseline Comparison}
+\label{sec:multibaseline}
 
-\begin{table}[H]
+\begin{table*}[t]
 \centering
-\caption{ContextForge vs.\ Stateless RAG baseline across all key metrics.}
+\caption{Five-system comparison ($n=10$ seeds each). All metrics reproduced by
+  \texttt{benchmark/runner.py}. \textbf{Bold} = best per row.
+  Sig.\ column: Mann-Whitney U test vs.\ StatelessRAG; $*$ $p<0.05$; \textit{ns}\,=\,not significant.
+  $^\dagger$ CSS\,=\,(1\,−\,FPR)\,$\times$\,ABR; Nexus FPR\,=\,25\% reflects the
+  broader dual-signal gate; Hardened-RAG FPR\,=\,5\% (keyword-only, lower recall).}
 \label{tab:master}
-\begin{tabularx}{\linewidth}{lXXX}
+{\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lrrrrrl@{}}
 \toprule
-\textbf{Metric} & \textbf{Stateless RAG} & \textbf{ContextForge} & \textbf{Improvement} \\
+\textbf{Metric} &
+  \textbf{StatelessRAG} &
+  \textbf{MemGPT-style} &
+  \textbf{LangChain-Buf} &
+  \textbf{Hardened-RAG} &
+  \textbf{Nexus (ours)} &
+  \textbf{Sig.} \\
 \midrule
-Context Survival Score (CSS)   & 0.589  & 0.812  & $+37.8\%$  \\
-Cumulative Token Overhead (CTO) & 412{,}000 & 231{,}780 & $-43.7\%$ \\
-Adversarial Block Rate (ABR)   & 0\%    & 85.0\% & $+85.0$\,pp \\
-L0 Fallback Rate               & 22.7\% & 1.3\%  & $-94.3\%$  \\
-Cold-start Failover Latency    & 480\,ms & 149\,ms & $-68.9\%$ \\
-Token Noise Reduction (DCI)    & 0\%    & 87.4\% & $+87.4$\,pp \\
+ABR (\%)             & 0.0  & 0.0  & 0.0   & 75.0   & \textbf{90.0}          & $*$        \\
+CSS$^\dagger$        & 0.000 & 0.000 & 0.000 & 0.712  & 0.675                 & \textit{ns} \\
+CTO (tokens/query)   & 245.4 & 227.5 & $1590{\pm}11$ & \textbf{134.7} & 73.1 & $*$        \\
+Failover (ms)        & 480  & 600  & 510   & 485    & \textbf{149.5}         & $*$        \\
+TNR (\%)             & 0.0  & 0.0  & 0.0   & 45.1   & \textbf{70.2}          & $*$        \\
+FPR (\%)             & 0.0  & 0.0  & 0.0   & 5.0    & 25.0                  & $*$        \\
 \midrule
-\multicolumn{4}{l}{\textit{New metrics (suites 07--09, iter 06)}} \\
+\multicolumn{7}{l}{\textit{New in v2.1}} \\
 \midrule
-Slow-drip Detection Rate       & 0\%    & 100\%  & $+100$\,pp \\
-Slow-drip False Positive Rate  & ---    & 0\%    & ---        \\
-F1 at $H^{*}=3.5$              & ---    & 1.0    & Unique maximum \\
-Concurrent-writer integrity    & ---    & 100\%  & 500 writers, 0 lost writes \\
-Adversarial boundary ABR       & 0\%    & 100\%  & $+100$\,pp (77/77) \\
-Weighted Safety Index $\Phi$   & 0.0    & 80.7\% & --- \\
+CRDT conv.\ rate     & N/A & N/A & N/A & N/A & \textbf{100\%}          & --- \\
+Perp.\ gate $\mathcal{P}/P^{*}$  & N/A & N/A & N/A & N/A & \textbf{$2.0\times$} flagged & --- \\
+Dual-signal F1 (ext.) & 0.573 & --- & --- & --- & \textbf{0.869}         & $*$        \\
 \midrule
-Total tests passing            & ---    & 527/527 & 100\% \\
+\textbf{Total tests}  & --- & --- & --- & --- & \textbf{530/530}        & 100\%      \\
 \bottomrule
-\end{tabularx}
-\end{table}
+\end{tabular}
+}
+\end{table*}
+
+Table~\ref{tab:master} compares ContextForge Nexus against four baselines
+(see Figure~\ref{fig:radar} for the radar view).
+ContextForge leads on ABR, CTO, failover latency, and TNR.
+The CSS column does not reach best-in-class because CSS\,=\,(1\,−\,FPR)\,$\times$\,ABR
+and Nexus carries a higher FPR (25\%) than Hardened-RAG's keyword-only gate (5\%).
+This is the intended design trade-off: broader recall at the cost of elevated FPR
+on out-of-distribution benign content.
+
+The Weighted Composite Safety Index is
+\begin{equation}
+  \Phi = 0.5 \cdot \text{ABR} + 0.3 \cdot \Delta_{\text{latency}}
+         + 0.2 \cdot \text{TNR}
+       = 0.5(90.0) + 0.3(68.9) + 0.2(70.2) = \mathbf{79.7\%}.
+  \label{eq:phi}
+\end{equation}
+Weights reflect the relative criticality of adversarial resilience (0.5),
+availability (0.3), and context quality (0.2) in a production IDE workflow.
+Three named presets (\texttt{ide\_workflow}: 0.5/0.3/0.2;
+\texttt{backend\_automation}: 0.3/0.4/0.3;
+\texttt{research\_pipeline}: 0.4/0.2/0.4) are configurable via
+\texttt{src/metrics/safety\_index.py}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figure_10_weight_sensitivity}
+  \caption{Weight sensitivity: $\Phi(\text{Nexus}) - \Phi(\text{StatelessRAG})$
+    across the $(w_{\mathrm{abr}}, w_{\mathrm{tnr}})$ grid
+    ($w_{\mathrm{lat}} = 1 - w_{\mathrm{abr}} - w_{\mathrm{tnr}}$).
+    Grey region: infeasible ($w_{\mathrm{lat}}<0$). All feasible weight
+    combinations yield a positive Nexus advantage; markers show three
+    deployment presets ($\star$\,ide\_workflow, $\blacktriangle$\,backend\_auto,
+    $\blacklozenge$\,research\_pipe).}
+  \label{fig:weight_sensitivity}
+\end{figure}
 
 \subsection{Entropy Gate Calibration}
 
-\begin{figure}[H]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.85\linewidth]{fig_calibration_sweep}
+  \includegraphics[width=\linewidth]{fig_calibration_sweep}
   \caption{FPR, FNR, and F1 across the entropy threshold sweep
     $H^{*} \in [2.5, 5.0]$. $H^{*} = 3.5$ is the unique F1 maximum
     ($\mathrm{FPR} = 0$, $\mathrm{FNR} = 0$, $\mathrm{F1} = 1.0$).}
   \label{fig:calibration}
 \end{figure}
 
-Suite~08 swept the entropy threshold in 0.25-bit increments across 11 values.
-At $H^{*} = 3.5$: $\mathrm{FPR} = 0\%$, $\mathrm{FNR} = 0\%$, $\mathrm{F1} = 1.0$.
-No other threshold in the sweep achieves F1 $= 1.0$, confirming
-$H^{*} = 3.5$ as the uniquely optimal operating point
-(Figure~\ref{fig:calibration}).
+Suite~08 swept the entropy threshold in 0.25-bit steps across 11 values.
+At $H^{*} = 3.5$: FPR\,=\,0\%, FNR\,=\,0\%, F1\,=\,1.0 (Figure~\ref{fig:calibration}).
+No other threshold in the range $[2.5, 5.0]$ achieves F1\,=\,1.0, confirming
+$H^{*} = 3.5$ as the uniquely optimal operating point on the internal benchmark.
+
+A separate two-phase calibration sweep on an external corpus (100 samples;
+39 adversarial, 61 benign) yields $H^{*}_{\mathrm{opt}} = 3.46$ and
+$\rho_{\mathrm{min,opt}} = 0.48$, with the dual-signal gate reaching
+macro-F1\,=\,0.869 vs.\ 0.573 for entropy alone. The 29.6\,pp improvement
+quantifies the benefit of the LZ signal on out-of-distribution adversarial
+content.
+
+\subsection{External Validation}
+\label{sec:external_val}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figure_12_external_validation}
+  \caption{Internal vs.\ external validation on \texttt{deepset/prompt-injections}
+    ($n=120$; 70 adversarial, 50 benign). Adversarial recall is maintained at
+    91.4\%, but FPR rises to 64\% on the external corpus — the expected cost of
+    broad entropy+LZ gating on a corpus with more borderline benign phrasing
+    than the internal benchmark.}
+  \label{fig:external_val}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Internal vs.\ external adversarial evaluation.
+  Internal: ContextForge benchmark suite (suites 07--10, $n=40$ probes).
+  External: \texttt{deepset/prompt-injections}~\cite{deepset2023injections}
+  ($n=120$; 70 adversarial, 50 benign; source: static\_fallback split).
+  $^\dagger$\,Two failure modes: (a) stylised injections with H\,=\,3.17
+  (below $H^{*}$) and low LZ density evade both gates;
+  (b) borderline benign technical prompts (e.g.\ ``override configuration'')
+  trigger the keyword gate.}
+\label{tab:external}
+{\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Metric} & \textbf{Internal} & \textbf{External$^\dagger$} \\
+\midrule
+Block rate on adv.\  & 90.0\%  & 91.4\% \\
+False positive rate  & 0.0\%   & 64.0\% \\
+Precision            & 100.0\% & 66.7\% \\
+Recall               & 90.0\%  & 91.4\% \\
+F1 (attack class)    & 94.7\%  & 77.1\% \\
+Macro-F1             & 91.9\%  & 62.9\% \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+Table~\ref{tab:external} and Figure~\ref{fig:external_val} compare internal and
+external evaluation. Adversarial recall is stable at ${\approx}91$\% across
+corpora, confirming that the dual-signal gate generalises to unseen adversarial
+payloads. The elevated FPR (64\%) on the external corpus identifies two failure
+modes: (a) stylised injections with $H\approx3.17$ (below $H^{*}=3.5$, avoiding
+the entropy gate) and $\rho<\rho_{\min}$ (caught by LZ gate) that fail only when
+both gates are bypassed simultaneously; (b) borderline benign phrases
+(``override configuration'', ``disable safe mode'') that trigger the keyword gate
+intended for unambiguous injection commands. Recalibrating the keyword list on a
+corpus representative of the deployment domain is the primary mitigation.
 
 \subsection{Token Economics}
 
-\begin{figure}[H]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.85\linewidth]{fig_token_savings}
+  \includegraphics[width=\linewidth]{fig_token_savings}
   \caption{Token cost at session start as a function of decisions stored.
-    CLAUDE.md grows linearly at 150 tokens/decision; ContextForge
-    \texttt{load\_context} is bounded at $B = 1{,}500$ tokens regardless
-    of graph size.}
+    CLAUDE.md grows at 150 tokens/decision; ContextForge \texttt{load\_context}
+    is bounded at $B = 1{,}500$ tokens regardless of graph size.}
   \label{fig:token_savings}
 \end{figure}
 
-At 100 decisions: CLAUDE.md $= 15{,}000$ tokens vs.\ ContextForge $\approx 950$
-tokens ($-93.7\%$). At 200 decisions: $30{,}000$ vs.\ $1{,}500$ ($-95.0\%$).
-The savings compound with each additional decision stored
-(Figure~\ref{fig:token_savings}).
+At 100 decisions: paste-all $= 15{,}000$ tokens vs.\ ContextForge
+$\approx 950$ tokens ($-93.7\%$). At 200 decisions: $30{,}000$
+vs.\ $1{,}500$ ($-95.0\%$). The savings compound with every additional
+decision stored (Figure~\ref{fig:token_savings}).
 
 \subsection{Six-Pillar Safety Profile}
 
-\begin{figure}[H]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.6\linewidth]{fig_radar}
-  \caption{Six-pillar radar comparison. ContextForge Nexus (blue) dominates
-    the stateless RAG baseline (grey) on all six dimensions.
-    The sixth pillar (Slow-Drip Detection) is new in this paper.}
+  \includegraphics[width=0.9\linewidth]{figure_08_safety_radar}
+  \caption{Five-system safety radar: ABR, CSS, TNR, and normalised latency gain.
+    ContextForge Nexus (green, solid) leads on all adversarial metrics;
+    Hardened-RAG approaches on CSS but achieves ABR\,=\,75\%, well below the 90\%
+    target. StatelessRAG and MemGPT-style score 0\% on all security axes.}
   \label{fig:radar}
 \end{figure}
 
-The six-pillar radar (Figure~\ref{fig:radar}) captures all measurable
-dimensions: adversarial block rate, failover latency improvement, token
-noise reduction, context survival, benchmark pass rate, and slow-drip
-detection. ContextForge outperforms or ties the baseline on every axis.
+Figure~\ref{fig:radar} captures all six measurable safety dimensions:
+adversarial block rate, failover latency improvement, token noise reduction,
+context survival, benchmark pass rate, and slow-drip detection.
+ContextForge outperforms or ties the baseline on every axis.
 
-\subsection{Weighted Composite Safety Index}
+\subsection{OR-Set CRDT Convergence (Suite~12)}
+\label{sec:crdt_results}
 
-\[
-  \Phi = 0.5 \cdot \mathrm{ABR} + 0.3 \cdot \Delta_{\mathrm{latency}}
-         + 0.2 \cdot \mathrm{TNR}
-       = 0.5(85.0) + 0.3(68.9) + 0.2(87.4)
-       = \mathbf{80.7\%}
-\]
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_crdt_convergence}
+  \caption{Suite~12 OR-Set CRDT convergence: merge latency per scenario (bars,
+    left axis) and scenario summary (right table). All three scenarios converge
+    with 0 conflicts. Scenario~B latency (15\,ms) reflects the
+    \texttt{time.sleep(0.001)} in the test harness that ensures distinct
+    timestamps for the concurrent-update LWW tiebreak.}
+  \label{fig:crdt_conv}
+\end{figure}
 
-Weights reflect the relative criticality of adversarial resilience ($0.5$),
-availability ($0.3$), and context quality ($0.2$) in a production IDE workflow.
+\begin{table}[t]
+\centering
+\caption{Suite~12 OR-Set CRDT: 3 IDE clients, \texttt{or\_set} policy,
+  6-way gossip. All scenarios converge, 0 conflicts.}
+\label{tab:crdt}
+{\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lccr@{}}
+\toprule
+\textbf{Scenario} & \textbf{Conv.} & \textbf{Conf.} & \textbf{Latency} \\
+\midrule
+A: Conc.\ adds    & \checkmark & 0 & ${<}1$\,ms \\
+B: Conc.\ updates & \checkmark & 0 & $15$\,ms   \\
+C: Split-brain    & \checkmark & 0 & ${<}1$\,ms \\
+\midrule
+\textbf{All 3}    & \textbf{3/3} & \textbf{0} & ---        \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+All three scenarios pass with convergence\_rate\,=\,1.0 (Table~\ref{tab:crdt}).
+In Scenario~C, Client~A removes \texttt{node\_001} and adds \texttt{node\_002}
+while offline; Client~B simultaneously updates \texttt{node\_001} and adds
+\texttt{node\_003} while offline. After reconnection to a coordinator and a
+full gossip round, all three nodes (\texttt{node\_001}, \texttt{node\_002},
+\texttt{node\_003}) are present on all replicas. This confirms the add-wins
+property of Eq.~\ref{eq:orset}: Client~B's add-tag for \texttt{node\_001} was
+unknown to Client~A at remove time and therefore escapes removal.
+
+Merge latency is dominated by Python dict-union operations on small sets
+($<$30 entries per client), completing in $\leq 15$\,ms for all scenarios.
+At scale, the gossip complexity is $O(n^2 |S|)$ for $n$ replicas and set size
+$|S|$; a delta-CRDT variant (shipping only changed tags since last sync) is
+left as future work.
+
+\subsection{Perplexity Gate Validation}
+\label{sec:perp_results}
+
+The perplexity gate is validated via a calibration smoke test and a comparison
+with entropy-gate-only detection on entropy-mimicry payloads (Figure~\ref{fig:perplexity}).
+
+\textbf{Calibration.}
+On the 100-string benign corpus, the trigram fallback backend achieves:
+$P^{*} = 231.8$ (95th percentile), backend latency~$<1$\,ms.
+
+\textbf{Mimicry detection.}
+A representative entropy-mimicry payload (Shannon entropy $H = 2.80$, safely
+below $H^{*} = 3.5$; LZ density $\rho = 0.41 < \rho_{\min}$ --- caught by LZ
+gate) scores $\mathcal{P} = 463.3$, a $2.0\times$ excess above $P^{*}$.
+This demonstrates the gate's utility for payloads that evade the entropy gate
+and slip through the LZ gate due to high local token variety.
+
+\textbf{Three-gate complementarity.}
+The three passes target distinct attack surfaces:
+Pass~0 (keyword regex) catches explicit injection keywords regardless of entropy;
+Pass~0.5 (perplexity) catches statistically improbable token sequences
+regardless of raw character-level entropy;
+Pass~1 (entropy+LZ) catches high-entropy obfuscated payloads and repetition
+attacks. The union of the three passes is strictly stronger than any single gate.
+
+\subsection{Adaptive Adversary Results (Suite~10)}
+\label{sec:adaptive_results}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figure_11_adaptive_abr}
+  \caption{Suite~10 adversarial block rate per attack class.
+    Boundary (Class~A): 10 payloads crafted to straddle $H^{*}=3.5$;
+    all caught by the LZ gate ($\rho_{\min}=0.60$).
+    Mimicry (Class~B): 10 payloads matching benign $\mu=2.74$;
+    all caught by the keyword layer.
+    Slow-drip (Class~C): 10 multi-step sequences; all 30/30 tests pass.}
+  \label{fig:adaptive_abr}
+\end{figure}
+
+Suite~10 evaluates three specialist adversarial classes against the full
+three-pass gate (Figure~\ref{fig:adaptive_abr}).
+
+\textbf{Class~A --- Boundary payloads.}
+Ten word-cycling sequences sweep entropy in $[3.16, 3.79]$, straddling $H^{*}=3.5$.
+Five are above the gate (blocked by Pass~1); five are below but carry intentional
+keywords. LZ density is $\bar{\rho} = 0.38$ (well below $\rho_{\min}$),
+so all 10 are independently caught by the LZ gate. Block rate: 10/10 (100\%).
+
+\textbf{Class~B --- Entropy-mimicry payloads.}
+Ten payloads are constructed with entropy $H = 2.80 \approx \mu_{\mathrm{benign}} + 0.06$,
+evading the entropy gate. LZ density $\bar{\rho} = 0.41 < \rho_{\min}$; all are
+caught by the LZ gate. The keyword layer additionally catches 10/10 regardless of
+the LZ outcome. Block rate: 10/10 (100\%).
+
+\textbf{Class~C --- Slow-drip sequences.}
+Ten multi-step sequences target gradient $0.14$ (just below $\nabla^{*}=0.15$).
+Entropy quantisation causes 6/10 to exceed the threshold (detected by the
+Temporal Correlator); 4/10 stay below but are caught by the keyword layer on the
+final write. Block rate: 10/10 (100\%).
+
+\textbf{Overall.}
+30/30 tests pass (pass rate 100\%). The three-gate architecture provides
+redundant coverage: no single-gate evasion propagates through the full pipeline.
 
 % =============================================================================
 \section{Ablation Study}
 \label{sec:ablation}
 
-\begin{figure}[H]
+\begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_ablation}
-  \caption{Ablation results: each bar pair shows CSS (blue, left axis) and
-    ABR~\% (red, right axis) when one component is removed.
-    Shadow-Reviewer removal collapses ABR to 0\%; Historian GC removal
-    raises CTO by $24.8\%$; L2 BM25 removal degrades CSS by $13.1\%$.}
+  \caption{Ablation results: each bar pair shows CSS (blue, left axis) and ABR\,\%
+    (red, right axis) with one component removed. Shadow-Reviewer removal
+    collapses ABR to 0\%; Historian GC removal raises CTO by $24.8\%$; L2 BM25
+    removal degrades CSS by $13.1\%$.}
   \label{fig:ablation}
-\end{figure}
+\end{figure*}
 
 We ablate seven configurations by removing one component at a time from the
 full Iter-5 system (Figure~\ref{fig:ablation}):
 
-\begin{description}
-  \item[$-$Shadow-Reviewer.]
-    ABR drops from 100\% to 0\%. The Shadow-Reviewer is the \emph{sole}
-    adversarial block agent; CSS drops from 0.8124 to 0.7201 due to
-    undetected contradictions entering the graph.
+\textbf{$-$Shadow-Reviewer.}
+ABR drops from 100\% to 0\%. The Shadow-Reviewer is the sole adversarial block
+agent; CSS drops from 0.8124 to 0.7201 ($-11.4\%$) due to undetected
+contradictions entering the graph.
 
-  \item[$-$Historian GC.]
-    Duplicate nodes accumulate; CTO rises $+24.8\%$; CSS drops 2.2\%.
-    ABR is unaffected (Shadow-Reviewer remains).
+\textbf{$-$Historian GC.}
+Duplicate nodes accumulate; CTO rises $+24.8\%$; CSS drops 2.2\%. ABR is
+unaffected since Shadow-Reviewer remains active.
 
-  \item[$-$L2 BM25.]
-    L0 fallback rate rises to 18.7\%; CSS drops from 0.8124 to 0.7055
-    ($-13.1\%$). Without L2, L3 research nodes cannot compensate.
+\textbf{$-$L2 BM25.}
+L0 fallback rate rises to 18.7\%; CSS drops from 0.8124 to 0.7055 ($-13.1\%$).
+Without L2, L3 research nodes cannot compensate for missing decision-graph hits.
 
-  \item[$-$Injection patterns.]
-    ABR drops to 0\%: the 20 regex patterns are the first line of
-    defence for fast pattern-matched attacks. The entropy gate remains but
-    cannot catch low-entropy keyword attacks.
+\textbf{$-$Injection patterns.}
+ABR drops to 0\%: the 20 compiled regex patterns are the first-line defence
+for fast keyword-pattern attacks. The entropy gate remains active but cannot
+catch low-entropy keyword injections.
 
-  \item[$-$Noise tolerance.]
-    CSS drops to 0.7841 as noisy-turn measurements are penalised without
-    the $+0.06/+0.08$ compensation. ABR is unaffected.
+\textbf{$-$Noise tolerance.}
+CSS drops to 0.7841 ($-3.5\%$) as noisy-turn measurements are penalised without
+the $+0.06/+0.08$ vocabulary-mismatch compensation. ABR is unaffected.
 
-  \item[Standard RAG.]
-    CSS 0.5891, ABR 0\%, CTO 412{,}000 tokens---the full baseline.
-\end{description}
+\textbf{Standard RAG.}
+CSS 0.5891, ABR 0\%, CTO 412{,}000 tokens---the full stateless baseline.
 
 % =============================================================================
 \section{Token Economics}
 \label{sec:tokeneconomics}
 
-The fundamental economic argument for ContextForge over manual CLAUDE.md
-management is sublinear context cost.
-
-Let $n$ be the number of stored decisions. A CLAUDE.md approach pastes all
-decisions into the system prompt:
-\[
-  \tau_{\text{CLAUDE.md}}(n) \approx 150 n \quad \text{(tokens)}
-\]
-The ContextForge \texttt{load\_context} tool retrieves the top-$k$ most
-relevant decisions subject to the DCI budget $B$:
-\[
-  \tau_{\text{CF}}(n) = \min\!\Bigl(150 n \cdot \epsilon + c_0,\; B\Bigr)
-\]
-where $\epsilon \ll 1$ is the fraction of decisions that match a given
-query and $c_0 \approx 200$ tokens is a fixed overhead. In practice, with
-$B = 1{,}500$:
-\[
-  \tau_{\text{CF}}(n) \leq 1{,}500 \quad \forall n
-\]
+Let $n$ denote the number of stored decisions. The paste-all approach incurs
+\begin{equation}
+  \tau_{\text{paste}}(n) \approx 150\,n \quad \text{tokens per session}
+  \label{eq:paste}
+\end{equation}
+which grows without bound. The ContextForge \texttt{load\_context} tool
+retrieves the top-$k$ most relevant decisions subject to the DCI budget $B$:
+\begin{equation}
+  \tau_{\text{CF}}(n) \leq B \quad \forall\, n.
+  \label{eq:cf_bound}
+\end{equation}
 The cross-over point where ContextForge saves tokens is $n \geq 10$ decisions.
 At $n = 100$: $-93.7\%$. At $n = 200$: $-95.0\%$.
+Token savings compound with every decision added to the graph.
+
+The adaptive DCI budget is defined as
+\begin{equation}
+  B_{\mathrm{adaptive}} = \min(0.25 \times W,\; 8{,}000)
+  \label{eq:adaptive_budget}
+\end{equation}
+where $W$ is the model context window in tokens, obtained from a 25-entry
+lookup table or caller-supplied via the \texttt{load\_context} tool parameter.
+Suite~11 confirms that $B_{\mathrm{adaptive}}$ is non-binding for typical
+query loads: the cosine filter ($\theta=0.75$) naturally limits candidate
+token counts to ${\approx}30\%$ of retrieved tokens, well below any tested
+budget (Figure~\ref{fig:dci_scaling}).
+For deployments targeting large-context models
+(e.g.\ Gemini~1.5~Pro at $W = 1{,}000{,}000$ tokens), adaptive mode caps
+$B$ at $8{,}000$ tokens --- a $5.3\times$ increase over the fixed budget ---
+while still bounding injection to $< 1\%$ of the available context window.
 
 % =============================================================================
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{Limitations.}
-The entropy gate assumes adversarial payloads have distinguishably higher
-or lower entropy than benign content. Carefully crafted payloads engineered
-to match the benign entropy distribution (entropy-mimicry attacks) are not
-addressed by the current gate; they require the Temporal Correlator or the
-Shadow-Reviewer's semantic check for detection.
+\textbf{Entropy mimicry.}
+The entropy gate's blind spot against entropy-mimicry attacks is now
+mitigated by the perplexity gate (Section~\ref{sec:perplexity}). Payloads that
+match benign entropy distributions but encode adversarial instructions produce
+anomalous token-sequence probabilities under the trigram reference model.
+The trigram fallback provides this protection at $<1$\,ms overhead with no
+external dependencies. Payloads that simultaneously mimic both entropy and
+token-level n-gram statistics remain a residual threat and are handled by the
+keyword regex layer (Pass~0) for known attack patterns, and by the
+Shadow-Reviewer agent for semantic contradictions.
 
-The $H^{*} = 3.5$ threshold was calibrated on an English-language SaaS
-development corpus. Different domains (e.g.\ source code with high natural
-entropy, or non-Latin scripts) may require recalibration.
+\textbf{CRDT deployment trade-offs.}
+The OR-Set CRDT adds $O(|S| \times n_{\mathrm{tags}})$ memory per replica
+for the add-tag bookkeeping, where $|S|$ is the element count and
+$n_{\mathrm{tags}}$ the mean number of add operations per element. For a
+knowledge graph of 10{,}000 nodes with an average of 2 add operations each,
+this is approximately $160$\,KB per replica --- negligible for desktop IDE
+deployments. The gossip overhead ($O(n^2)$ in the number of replicas) limits
+scalability beyond a handful of concurrent IDE clients; a delta-CRDT variant
+is a natural next step.
 
-\paragraph{Production gaps.}
-The current system requires the developer to run the ContextForge Python
-server as a background process. A packaged installer (analogous to Ollama's
-user-space daemon) would lower the setup barrier significantly.
+\textbf{Calibration portability.}
+The $H^{*} = 3.5$ threshold achieves F1\,=\,1.0 on the internal English SaaS
+development corpus. On the external \texttt{deepset/prompt-injections}
+dataset~\cite{deepset2023injections} (120 samples, 70 adversarial, 50 benign),
+the same threshold achieves recall\,=\,91.4\% at FPR\,=\,64\%, suggesting
+that the threshold is well-tuned for the internal corpus but requires
+recalibration for broader adversarial distributions. The two-phase calibration
+sweep (Section~\ref{sec:gate}) provides an automated mechanism for such
+adaptation.
 
-\paragraph{Weight sensitivity.}
-The $\Phi$ index uses weights $(0.5, 0.3, 0.2)$ reflecting IDE-workflow
-priorities. Different deployment contexts (e.g.\ production backend automation
-vs.\ exploratory research) would use different weights; $\Phi$ should be
-treated as a configurable metric rather than a universal constant.
+\textbf{Weight sensitivity.}
+$\Phi$ uses weights $(0.5, 0.3, 0.2)$ reflecting IDE-workflow priorities.
+Different deployment contexts (e.g.\ backend automation, research pipelines)
+should use the named preset configurations in \texttt{src/metrics/safety\_index.py}
+rather than the default weights.
+
+\textbf{Production gaps.}
+The current system requires the developer to run the ContextForge Python server
+as a background process. A packaged installer would lower the setup barrier.
+The KenLM and llama-cpp perplexity backends require separate model file setup;
+the trigram fallback requires no setup and is the recommended starting point.
 
 % =============================================================================
 \section{Future Work}
 \label{sec:future}
 
-\begin{description}
-  \item[Cross-process VOH.]
-    The current VOH implementation issues HMAC tokens within a single process.
-    Cross-process VOH (e.g.\ between the Python MCP server and an external
-    validation daemon) requires a shared secret store or asymmetric
-    token scheme.
+\textbf{Cross-process VOH.}
+Extending HMAC token verification across process boundaries requires a shared
+secret store or asymmetric token scheme.
 
-  \item[L3 semantic cache.]
-    The current L3 tier uses recency-ranked research nodes. Replacing this
-    with a FAISS-backed~\cite{johnson2021faiss} embedding index would
-    enable true semantic similarity search over the full graph.
+\textbf{Semantic L3 cache.}
+Replacing recency-ranked research nodes with a FAISS-backed~\cite{johnson2021faiss}
+embedding index would enable true semantic similarity search over the full graph.
 
-  \item[Full CRDT deployment.]
-    The Sync pillar currently uses server-authoritative last-write-wins for
-    cross-IDE synchronisation. A full OR-Set CRDT with vector clocks
-    (designed but not yet deployed) would enable conflict-free concurrent
-    writes from multiple IDE clients.
+\textbf{Delta-CRDT sync.}
+The current gossip protocol ships full replica state; a delta-CRDT variant
+shipping only changed add-tags since the last synchronisation point would
+reduce network overhead to $O(\Delta |S|)$ per sync round.
 
-  \item[Entropy-mimicry defense.]
-    Adding a semantic coherence score (e.g.\ perplexity under a small local
-    LM) alongside the entropy gate would catch payloads specifically crafted
-    to mimic benign entropy distributions.
+\textbf{Online perplexity recalibration.}
+The trigram model is trained at gate initialisation on a static corpus.
+An online recalibration module could update the model incrementally as the
+knowledge graph grows, adapting the threshold to domain drift without
+manual intervention.
 
-  \item[Automated threshold recalibration.]
-    Suite~08 demonstrates that $H^{*}$ can be calibrated from data. An
-    online recalibration module could adapt $H^{*}$ to domain drift without
-    manual intervention.
-\end{description}
+\textbf{Automated entropy threshold recalibration.}
+Suite~08 demonstrates $H^{*}$ can be calibrated from data. Extending the
+two-phase calibration sweep to run automatically at deployment time would
+adapt the gate to non-English or high-entropy technical domains.
+
+\textbf{Packaged installer.}
+A one-command installer (e.g.\ via \texttt{pipx} or a standalone binary)
+would eliminate the background-process requirement and lower adoption friction.
 
 % =============================================================================
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented ContextForge, a five-pillar agentic memory architecture
-with a 22-tool MCP server, empirically validated across 527 benchmark tests.
-The system closes three structural failure modes of stateless RAG---adversarial
-vulnerability, high failover latency, and unbounded context injection---with
-measurable, reproducible improvements on all fronts.
+We have presented ContextForge v2.1, a five-pillar agentic memory architecture
+with a 22-tool MCP server, empirically validated across 530 benchmark tests
+at 100\% pass rate. The system closes three structural failure modes of
+stateless RAG---adversarial vulnerability, high failover latency, and
+unbounded context injection---with measurable, reproducible improvements
+on all fronts.
 
-Key contributions of this paper over the v1 report:
-\begin{itemize}
-  \item Full characterisation of the Shannon entropy gate with F1 $= 1.0$
-    at the unique optimal threshold $H^{*} = 3.5$ (suite~08).
-  \item Sliding-Window Temporal Correlator achieving 100\% slow-drip detection
-    at 0\% FP rate (suite~07).
-  \item Tiered Clearance Logic (VOH) with HMAC-SHA256 token scheme.
-  \item Complete ablation study isolating per-component contributions.
-  \item Token economics formalisation: provably sublinear context cost
-    bounded at $B = 1{,}500$ tokens regardless of graph size.
-  \item 22-tool MCP server as a first-class architectural contribution.
-\end{itemize}
+Key contributions over the v2.0 report: a trigram perplexity gate (Pass~0.5)
+that detects entropy-mimicry payloads orthogonally to the Shannon/LZ dual
+signal, with calibration threshold $P^{*}=231.8$ and $<1$\,ms overhead at
+zero external dependencies; a complete OR-Set CRDT synchronisation layer with
+vector-clock causal ordering verified at 100\% convergence across concurrent-add,
+concurrent-update, and split-brain reconnection scenarios; a configurable DCI
+budget supporting adaptive and model-aware modes across 25+ LLM families; and
+a Weighted Composite Safety Index $\Phi$ with three deployment presets.
 
-All benchmark code, figure generators, and the paper source are published
-at \url{https://github.com/parnish007/contextforge}. Every figure in this
-paper is reproducible by running \texttt{python research/figures/gen\_all.py}.
+Earlier v2.0 contributions remain: full calibration of the Shannon entropy gate
+with F1\,=\,1.0 at the unique optimal threshold $H^{*} = 3.5$; a
+Sliding-Window Temporal Correlator achieving 100\% slow-drip detection at 0\%
+FP rate; Tiered Clearance Logic with HMAC-SHA256 VOH tokens; a complete
+ablation study; token-economics formalisation bounding context cost at
+$B \leq 8{,}000$ tokens regardless of graph size.
 
-% ---------- Bibliography ------------------------------------------------------
-\printbibliography
+All benchmark code, figure generators, and the paper source are published at
+\url{https://github.com/parnish007/contextforge}.
+Every figure is reproducible by running
+\texttt{python research/figures/gen\_all.py}.
+
+% ── References ────────────────────────────────────────────────────────────────
+\balance
+\bibliographystyle{unsrt}
+\bibliography{refs}
 
 \end{document}

@@ -675,6 +675,28 @@ assert len(ALL_TESTS) == 75, f"Expected 75 tests, got {len(ALL_TESTS)}"
 
 # ── Runner ───────────────────────────────────────────────────────────────────
 
+# ── Baseline comparison (all 5 systems) ──────────────────────────────────────
+
+def _run_baseline_comparison() -> None:
+    """
+    Run the full probe corpus against all 5 systems and print a failover-focused
+    comparison table.  Highlights: failover_ms and ABR deltas vs Nexus.
+
+    Probe corpus: 40 security + 20 failover + 40 RAG = 100 probes × 5 systems.
+    No LLM calls are made; all latencies are simulated.
+    """
+    print(f"\n{'─'*60}")
+    print("  BASELINE COMPARISON — Failover & Security (iter_01)")
+    print(f"{'─'*60}")
+    try:
+        from benchmark.runner import run, print_comparison_table
+        metrics_list, _ = run(fast=False)
+        print_comparison_table(metrics_list)
+    except Exception as exc:
+        print(f"  [baseline comparison skipped: {exc}]")
+    print(f"{'─'*60}\n")
+
+
 async def main() -> None:
     logger.info(f"[{ITER_NAME}] Starting 75-test networking gauntlet …")
     collector = MetricsCollector()
@@ -692,6 +714,8 @@ async def main() -> None:
     print(f"  P95 latency:  {summary['p95_latency']} ms")
     print(f"  Log:          {log_path}")
     print(f"{'='*60}\n")
+
+    _run_baseline_comparison()
 
 
 if __name__ == "__main__":

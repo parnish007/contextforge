@@ -6,10 +6,13 @@ Principal Investigator : Trilochan Sharma (Independent Researcher)
 Architecture           : ContextForge Nexus
 
 Reads  : data/academic_metrics.json  (produced by benchmark/engine.py)
+         research/benchmark_results/suite_11_dci_scaling.json  (optional)
 Writes : docs/assets/
   • radar_comparison.png      — 6-axis spider: Stateless RAG vs ContextForge
   • entropy_gate_profile.png  — density plot: H distribution + 3.5-bit gate
   • failover_performance.png  — bar chart: T_failover Baseline vs Nexus
+  • figure_07_token_cost_scaling.png — Figure 7: CTO & TNR vs B for multiple
+                                       DCI budget values (1500, 4000, 8000, 16000)
 
 All charts: 300 DPI, academic dark-theme, no version markers.
 """
@@ -357,6 +360,145 @@ def _failover_performance(data: dict, out: Path) -> None:
 # Entry point
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _token_cost_scaling(out: Path) -> None:
+    """
+    Figure 7 — Token Cost Scaling: CTO and TNR as functions of DCI budget B.
+
+    Shows curves for B ∈ {1500, 4000, 8000, 16000} tokens with the same
+    RAG simulation model as suite_11_dci_scaling.py.
+
+    If research/benchmark_results/suite_11_dci_scaling.json exists (from a
+    prior suite_11 run), its actual values are plotted.  Otherwise the
+    simulation is re-run inline so the chart can always be generated.
+
+    Axes
+    ────
+    Left  y-axis  : CTO — mean tokens injected per RAG query
+    Right y-axis  : TNR — token noise reduction (%)
+    x-axis        : DCI budget B (tokens, log-scale)
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as mticker
+    import numpy as np
+
+    # ── Load or simulate data ─────────────────────────────────────────────────
+    SUITE11_JSON = ROOT / "research" / "benchmark_results" / "suite_11_dci_scaling.json"
+    budgets: list[int]   = []
+    cto_vals: list[float] = []
+    tnr_vals: list[float] = []
+    abr_val: float = 0.0
+    css_val: float = 0.0
+
+    if SUITE11_JSON.exists():
+        raw = json.loads(SUITE11_JSON.read_text(encoding="utf-8"))
+        for r in raw.get("results", []):
+            budgets.append(r["budget"])
+            cto_vals.append(r["cto"])
+            tnr_vals.append(r["tnr"] * 100.0)
+        if raw["results"]:
+            abr_val = raw["results"][0]["abr"]
+            css_val = raw["results"][0]["css"]
+    else:
+        # Inline simulation (same model as suite_11)
+        _TOP_K = 20; _AVG_CHUNK_TOKENS = 65; _DCI_PASS_RATE = 0.30
+        _QUERIES = [
+            "circuit breaker CLOSED OPEN HALF_OPEN",
+            "Shannon entropy adversarial detection threshold",
+            "Differential Context Injection cosine similarity",
+            "EventLedger append ReviewerGuard rollback",
+            "FluidSync AES-256-GCM snapshot checkpoint",
+            "NexusRouter Groq Gemini Ollama failover",
+            "JITLibrarian LRU cache warm payload",
+            "LocalIndexer TF-IDF sentence-transformers",
+            "PROJECT_CHARTER hard constraints adversarial",
+            "SQLite rowid ordering temporal hash chain",
+        ]
+        for B in [1500, 4000, 8000, 16000]:
+            injected_list = []
+            retrieved_list = []
+            for q in _QUERIES:
+                k = min(_TOP_K, max(3, len(q.split()) // 3))
+                retr = k * _AVG_CHUNK_TOKENS
+                cand = int(retr * _DCI_PASS_RATE)
+                inj  = min(cand, B)
+                retrieved_list.append(float(retr))
+                injected_list.append(float(inj))
+            mean_inj  = sum(injected_list)  / len(_QUERIES)
+            total_r   = sum(retrieved_list)
+            total_i   = sum(injected_list)
+            tnr       = (total_r - total_i) / total_r if total_r > 0 else 0.0
+            budgets.append(B)
+            cto_vals.append(round(mean_inj, 1))
+            tnr_vals.append(round(tnr * 100, 2))
+        abr_val = 0.90  # Nexus nominal
+        css_val = 0.675
+
+    # ── Plot ──────────────────────────────────────────────────────────────────
+    fig, ax1 = plt.subplots(figsize=(9, 6), facecolor=BG)
+    ax1.set_facecolor(PANEL)
+    ax2 = ax1.twinx()
+    ax2.set_facecolor(PANEL)
+
+    x = np.array(budgets, dtype=float)
+
+    # CTO line (left axis)
+    l1, = ax1.plot(x, cto_vals, "o-", color=NEXUS, linewidth=2.5,
+                   markersize=8, label="CTO — tokens injected")
+    ax1.set_ylabel("Mean tokens injected per query  (CTO)", color=NEXUS,
+                   fontsize=12)
+    ax1.tick_params(axis="y", labelcolor=NEXUS)
+
+    # TNR line (right axis)
+    l2, = ax2.plot(x, tnr_vals, "s--", color=PASS_C, linewidth=2.5,
+                   markersize=8, label="TNR — noise reduction (%)")
+    ax2.set_ylabel("Token Noise Reduction  TNR (%)", color=PASS_C,
+                   fontsize=12)
+    ax2.tick_params(axis="y", labelcolor=PASS_C)
+
+    # B=1500 baseline marker (paper value)
+    ax1.axvline(1500, color=THRESH, linestyle=":", linewidth=1.5, alpha=0.8)
+    ax1.text(1500 * 1.04, ax1.get_ylim()[0] * 1.05,
+             "B=1500\n(paper)", color=THRESH, fontsize=9)
+
+    # Styling
+    ax1.set_xlabel("DCI Token Budget  B (tokens)", fontsize=12, color=TEXT)
+    ax1.set_xscale("log")
+    ax1.xaxis.set_major_formatter(mticker.FuncFormatter(
+        lambda v, _: f"{int(v):,}"
+    ))
+    ax1.set_xticks(budgets)
+
+    for ax in (ax1, ax2):
+        ax.tick_params(colors=TEXT, labelsize=10)
+        ax.spines[:].set_color(GRIDC)
+        ax.grid(axis="both", color=GRIDC, linewidth=0.5, alpha=0.6)
+
+    # Annotation: security metrics (B-independent)
+    ax1.text(0.02, 0.97,
+             f"ABR={abr_val:.0%}  CSS={css_val:.3f}  (B-independent)",
+             transform=ax1.transAxes,
+             color=MUTED, fontsize=9, va="top",
+             bbox=dict(facecolor=PANEL, edgecolor=GRIDC, pad=3))
+
+    fig.suptitle(
+        "Figure 7 — Token Cost Scaling: CTO and TNR vs DCI Budget B",
+        color=TEXT, fontsize=13, y=1.01,
+    )
+    lines  = [l1, l2]
+    labels = [l.get_label() for l in lines]
+    ax1.legend(lines, labels, loc="lower right", fontsize=10,
+               facecolor=PANEL, edgecolor=GRIDC, labelcolor=TEXT)
+
+    fig.patch.set_facecolor(BG)
+    plt.tight_layout()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(str(out), dpi=DPI, bbox_inches="tight", facecolor=BG)
+    plt.close(fig)
+    print(f"  [Viz] Figure 7 token cost scaling → {out}")
+
+
 def main() -> None:
     data = _load()
 
@@ -369,7 +511,10 @@ def main() -> None:
     _failover_performance(
         data, ASSETS_DIR / "failover_performance.png",
     )
-    print(f"\n[Viz] All 3 publication charts written to {ASSETS_DIR}  ({DPI} DPI)")
+    _token_cost_scaling(
+        ASSETS_DIR / "figure_07_token_cost_scaling.png",
+    )
+    print(f"\n[Viz] All 4 publication charts written to {ASSETS_DIR}  ({DPI} DPI)")
 
 
 if __name__ == "__main__":

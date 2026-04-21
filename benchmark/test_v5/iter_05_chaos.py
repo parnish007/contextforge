@@ -1051,6 +1051,30 @@ ALL_TESTS = [
 assert len(ALL_TESTS) == 75, f"Expected 75, got {len(ALL_TESTS)}"
 
 
+# ── Baseline comparison (all 5 systems) ──────────────────────────────────────
+
+def _run_baseline_comparison() -> None:
+    """
+    Run all 5 systems on the full probe corpus and print the complete comparison
+    table (CSS, CTO, ABR, L0%, failover_ms, TNR).
+
+    Context: iter_05 is the full heat-death / chaos suite.  The baseline
+    comparison is the definitive cross-system summary that shows ContextForge
+    Nexus's CSS and ABR advantage across all three probe categories under the
+    same conditions used in the main benchmark paper (§4).
+    """
+    print(f"\n{'─'*60}")
+    print("  BASELINE COMPARISON — Full-Chaos Summary (iter_05)")
+    print(f"{'─'*60}")
+    try:
+        from benchmark.runner import run, print_comparison_table
+        metrics_list, _ = run(fast=False)
+        print_comparison_table(metrics_list)
+    except Exception as exc:
+        print(f"  [baseline comparison skipped: {exc}]")
+    print(f"{'─'*60}\n")
+
+
 async def main() -> None:
     logger.info(f"[{ITER_NAME}] Starting 75-test heat-death suite …")
     collector = MetricsCollector()
@@ -1075,6 +1099,8 @@ async def main() -> None:
         for r in failed[:10]:
             print(f"    ✗ {r.name}: {r.error[:80]}")
         print()
+
+    _run_baseline_comparison()
 
 
 if __name__ == "__main__":

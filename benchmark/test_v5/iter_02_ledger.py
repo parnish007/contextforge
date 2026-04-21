@@ -841,6 +841,29 @@ ALL_TESTS = [
 assert len(ALL_TESTS) == 75, f"Expected 75, got {len(ALL_TESTS)}"
 
 
+# ── Baseline comparison (all 5 systems) ──────────────────────────────────────
+
+def _run_baseline_comparison() -> None:
+    """
+    Run all 5 systems against the shared probe corpus and print an ABR-focused
+    comparison table.
+
+    Context: iter_02 validates hash-chain temporal integrity in ContextForge.
+    The baseline comparison shows how each system's security gate (ABR) holds up
+    vs the StatelessRAG stub, MemGPT, LangChain-Buffer, and Hardened-RAG.
+    """
+    print(f"\n{'─'*60}")
+    print("  BASELINE COMPARISON — Security ABR & Ledger Integrity (iter_02)")
+    print(f"{'─'*60}")
+    try:
+        from benchmark.runner import run, print_comparison_table
+        metrics_list, _ = run(fast=False)
+        print_comparison_table(metrics_list)
+    except Exception as exc:
+        print(f"  [baseline comparison skipped: {exc}]")
+    print(f"{'─'*60}\n")
+
+
 async def main() -> None:
     logger.info(f"[{ITER_NAME}] Starting 75-test temporal integrity suite …")
     collector = MetricsCollector()
@@ -858,6 +881,8 @@ async def main() -> None:
     print(f"  P95 latency:  {summary['p95_latency']} ms")
     print(f"  Log:          {log_path}")
     print(f"{'='*60}\n")
+
+    _run_baseline_comparison()
 
 
 if __name__ == "__main__":

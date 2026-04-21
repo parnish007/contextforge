@@ -55,7 +55,7 @@ This creates three concrete, measurable failure modes:
 
 $$\text{ABR} = \frac{|\text{adversarial prompts correctly blocked}|}{|\text{total adversarial prompts}|} \in [0, 1]$$
 
-Measured over the 20-prompt adversarial corpus in `benchmark/test_v5/iter_03_poison.py`. Baseline (stateless RAG): **0%**. ContextForge: **85%** (17/20 blocked).
+Measured over the multi-seed benchmark (`results/comparison_table.json`, $n=10$ seeds). Baseline (stateless RAG): **0%**. ContextForge: **90%** (multi-seed mean). External validation: 91.4% recall on `deepset/prompt-injections` ($n=120$).
 
 ### 2.2 Context Survival Rate (CSR)
 
@@ -81,9 +81,9 @@ $$\Phi = w_S \cdot \Delta S + w_L \cdot \Delta L_{\%} + w_{\text{DCI}} \cdot \De
 
 With weights $w_S = 0.5$, $w_L = 0.3$, $w_{\text{DCI}} = 0.2$:
 
-$$\Phi = 0.5(85.0) + 0.3(68.9) + 0.2(87.4) = 42.5 + 20.67 + 17.48 = \mathbf{80.7\%}$$
+$$\Phi = 0.5(90.0) + 0.3(68.9) + 0.2(70.2) = 45.0 + 20.67 + 14.04 = \mathbf{79.7\%}$$
 
-Φ is stable across weight perturbations: $w_S \in [0.3, 0.7]$ yields $\Phi \in [79.3\%, 82.0\%]$.
+Φ is stable across weight perturbations (see `results/comparison_table.json`); weight sensitivity heatmap in `research/figures/output/figure_10_weight_sensitivity.png`.
 
 ---
 
@@ -238,7 +238,9 @@ All values are live-measured from `benchmark/engine.py` (100 probes × 2 modes, 
 
 ### 7.1 ΔS — Adversarial Block Rate Improvement
 
-$$\Delta S = \text{ABR}_{\text{Nexus}} - \text{ABR}_{\text{baseline}} = 85.0\% - 0.0\% = +85.0\text{ pp}$$
+$$\Delta S = \text{ABR}_{\text{Nexus}} - \text{ABR}_{\text{baseline}} = 90.0\% - 0.0\% = +90.0\text{ pp}$$
+
+(Multi-seed mean, $n=10$; source: `results/comparison_table.json`)
 
 ### 7.2 ΔL — Failover Latency Improvement
 
@@ -248,24 +250,24 @@ $$\Delta L_{\%} = \frac{330.5}{480.0} \times 100 = 68.9\%$$
 
 ### 7.3 ΔDCI — Token Noise Reduction
 
-$$\Delta_{\text{DCI}} = 1 - \text{TOR}_{\text{Nexus}} = 1 - 0.126 = 87.4\%$$
+$$\Delta_{\text{DCI}} = \text{TNR}_{\text{Nexus}} = 70.2\%$$
 
-(Sentence-Transformers mode. TF-IDF fallback: 100% noise reduction — zero tokens injected when no match.)
+(Multi-seed mean; TNR = (retrieved − injected) / retrieved. Source: `results/comparison_table.json`)
 
 ---
 
 ## 8. Composite Safety Index Φ
 
-$$\Phi = 0.5(85.0) + 0.3(68.9) + 0.2(87.4) = \mathbf{80.7\%}$$
+$$\Phi = 0.5(90.0) + 0.3(68.9) + 0.2(70.2) = \mathbf{79.7\%}$$
 
 | Weight | Dimension | Value | Contribution |
 |--------|-----------|-------|-------------|
-| 0.5 | ΔS (adversarial block rate) | 85.0 pp | 42.50 |
+| 0.5 | ΔS (adversarial block rate) | 90.0 pp | 45.00 |
 | 0.3 | ΔL% (latency improvement) | 68.9% | 20.67 |
-| 0.2 | ΔDCI (noise reduction) | 87.4% | 17.48 |
-| — | **Φ** | — | **80.65%** |
+| 0.2 | ΔDCI (noise reduction) | 70.2% | 14.04 |
+| — | **Φ** | — | **79.71%** |
 
-**Stability:** $w_S \in [0.3, 0.7]$ yields $\Phi \in [79.3\%, 82.0\%]$. The result is not an artefact of the chosen weights.
+**Stability:** Weight sensitivity heatmap in `research/figures/output/figure_10_weight_sensitivity.png`. All feasible weight combinations show positive Nexus advantage over StatelessRAG.
 
 ---
 

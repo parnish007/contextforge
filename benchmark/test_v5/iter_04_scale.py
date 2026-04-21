@@ -883,6 +883,31 @@ ALL_TESTS = [
 assert len(ALL_TESTS) == 75, f"Expected 75, got {len(ALL_TESTS)}"
 
 
+# ── Baseline comparison (all 5 systems) ──────────────────────────────────────
+
+def _run_baseline_comparison() -> None:
+    """
+    Run all 5 systems on the full probe corpus and print a RAG-efficiency-focused
+    comparison table.
+
+    Context: iter_04 is the RAG flooding / token efficiency suite.  The baseline
+    comparison highlights CTO (Context Token Overhead) and TNR (Token Noise
+    Reduction) — the key metrics that show how much irrelevant context each system
+    injects vs ContextForge's DCI (cosine θ ≥ 0.75, 1500-token budget).
+    """
+    print(f"\n{'─'*60}")
+    print("  BASELINE COMPARISON — RAG Efficiency / CTO & TNR (iter_04)")
+    print(f"{'─'*60}")
+    try:
+        from benchmark.runner import run, print_comparison_table
+        # fast=False: include RAG probes, which are central to this iter's domain.
+        metrics_list, _ = run(fast=False)
+        print_comparison_table(metrics_list)
+    except Exception as exc:
+        print(f"  [baseline comparison skipped: {exc}]")
+    print(f"{'─'*60}\n")
+
+
 async def main() -> None:
     logger.info(f"[{ITER_NAME}] Starting 75-test RAG scale suite …")
     collector = MetricsCollector()
@@ -900,6 +925,8 @@ async def main() -> None:
     print(f"  P95 latency:  {summary['p95_latency']} ms")
     print(f"  Log:          {log_path}")
     print(f"{'='*60}\n")
+
+    _run_baseline_comparison()
 
 
 if __name__ == "__main__":

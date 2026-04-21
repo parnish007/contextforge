@@ -1,0 +1,71 @@
+{
+  "suite": "suite_12_concurrent_sync",
+  "version": "1.0",
+  "run_at": "2026-04-14T11:19:31Z",
+  "policy": "or_set",
+  "total": 3,
+  "passed": 3,
+  "convergence_rate": 1.0,
+  "results": [
+    {
+      "name": "A_concurrent_adds",
+      "policy": "or_set",
+      "passed": true,
+      "convergent": true,
+      "expected_elements": [
+        "node_circuit_break",
+        "node_entropy_gate",
+        "node_jwt_auth"
+      ],
+      "actual_elements": [
+        "node_circuit_break",
+        "node_entropy_gate",
+        "node_jwt_auth"
+      ],
+      "conflict_count": 0,
+      "split_brain_nodes": [],
+      "latency_ms": 0.0,
+      "detail": "All 3 clients converged with 3 nodes"
+    },
+    {
+      "name": "B_concurrent_updates",
+      "policy": "or_set",
+      "passed": true,
+      "convergent": true,
+      "expected_elements": [
+        "node_001"
+      ],
+      "actual_elements": [
+        "node_001"
+      ],
+      "conflict_count": 0,
+      "split_brain_nodes": [],
+      "latency_ms": 15.0,
+      "detail": "Converged; node_001 = 'JWT auth \u2014 updated by A'"
+    },
+    {
+      "name": "C_split_brain",
+      "policy": "or_set",
+      "passed": true,
+      "convergent": true,
+      "expected_elements": [
+        "node_001",
+        "node_002",
+        "node_003"
+      ],
+      "actual_elements": [
+        "node_001",
+        "node_002",
+        "node_003"
+      ],
+      "conflict_count": 0,
+      "split_brain_nodes": [
+        "node_001",
+        "node_002",
+        "node_003"
+      ],
+      "latency_ms": 0.0,
+      "detail": "OR-Set add-wins: all split-brain nodes recovered (['node_001', 'node_002', 'node_003'])"
+    }
+  ]
+}
