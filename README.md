@@ -136,17 +136,18 @@ MIS = mean(Recall@3, UpdateAccuracy, DeleteAccuracy, PoisonResistance). ContextF
 ```mermaid
 quadrantChart
     title Security Trade-off: FPR vs Adversarial Block Rate
-    x-axis "Low FPR → production safe" --> "High FPR → unusable"
-    y-axis "Low protection" --> "High protection"
-    quadrant-1 Research/air-gap only
+    x-axis Low FPR --> High FPR
+    y-axis Low protection --> High protection
+
+    quadrant-1 Research / air-gap only
     quadrant-2 Ideal: safe + protective
     quadrant-3 No guard at all
     quadrant-4 Noisy + unprotective
+
     ContextForge v3 Deployed: [0.04, 0.55]
     HardenedRAG: [0.19, 0.71]
     ContextForge Paper Mode: [0.62, 0.90]
     StatelessRAG: [0.02, 0.02]
-```
 
 ### Memory Quality — 5 Metrics Breakdown
 
