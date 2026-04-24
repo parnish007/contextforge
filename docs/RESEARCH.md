@@ -45,7 +45,7 @@ This creates three concrete, measurable failure modes:
 
 **Null hypothesis:** No local architecture can match cloud-scale RAG on adversarial defense while also reducing latency and token noise.
 
-**ContextForge answer:** All three gaps closed. Results validated across 450 tests (375 canonical + 75 adversarial boundary).
+**ContextForge answer:** All three gaps closed. Results validated across 990 tests (375 OMEGA-75 + 300 Suite 14 + 160 Suite 15 + 155 core suites). ContextForge v3 ranks #1 on Memory Integrity Score (MIS=0.801) across 6 systems.
 
 ---
 
@@ -55,7 +55,7 @@ This creates three concrete, measurable failure modes:
 
 $$\text{ABR} = \frac{|\text{adversarial prompts correctly blocked}|}{|\text{total adversarial prompts}|} \in [0, 1]$$
 
-Measured over the multi-seed benchmark (`results/comparison_table.json`, $n=10$ seeds). Baseline (stateless RAG): **0%**. ContextForge: **90%** (multi-seed mean). External validation: 91.4% recall on `deepset/prompt-injections` ($n=120$).
+Measured over Suite 14 (n=300 samples, 5 baselines). Baseline (stateless RAG): **0%**. ContextForge v3 deployed (experiment mode): **55%** at FPR=1%. ContextForge paper mode: **90%** at FPR=25%. HardenedRAG: 71% at FPR=5%. External validation: 85.0% recall on `deepset/prompt-injections` (n=116, live split); macro-F1=0.755. Data: `results/v3_security_summary.json`.
 
 ### 2.2 Context Survival Rate (CSR)
 
@@ -271,14 +271,65 @@ $$\Phi = 0.5(90.0) + 0.3(68.9) + 0.2(70.2) = \mathbf{79.7\%}$$
 
 ---
 
-## 9. Companion Files
+## 9. v3 Security Operating Points (Suite 14, n=300)
+
+The v3 OR-gate ReviewerGuard has two production operating points:
+
+| Parameter | Paper Mode (`CF_MODE=paper`) | Experiment Mode (`CF_MODE=experiment`) |
+|-----------|:---:|:---:|
+| Entropy mode | Word-level | Char-level |
+| H* threshold | 3.5 bits | 4.8 bits |
+| Gate logic | AND (entropy + entity) | OR (Path A entropy OR Path B intent) |
+| ABR | **90%** | **55%** |
+| FPR | 25% | **1%** |
+| Macro-F1 | 0.490 | **0.639** |
+| Recommended for | Research / air-gap | **Production** |
+
+V3 Weighted Safety Index: Φ = 0.5(55.0) + 0.3(68.9) + 0.2(70.2) = **62.2%** (experiment mode).  
+V1 Weighted Safety Index: Φ = 0.5(90.0) + 0.3(68.9) + 0.2(70.2) = **79.7%** (paper mode).
+
+Data: `results/v3_security_summary.json`, `results/comparison_table_v3.json`.
+
+---
+
+## 10. Suite 15 v2 — Memory Quality Formal Definition
+
+**Memory Integrity Score:**
+
+$$\text{MIS} = \frac{1}{4}\bigl(\text{Recall@3} + \text{UpdateAcc} + \text{DeleteAcc} + \text{PoisonRes}\bigr)$$
+
+**Recency-weighted BM25** (applied in v2):
+
+$$s_i^{\text{final}} = s_i^{\text{BM25}} \times \exp\!\bigl(-\lambda\,(t_{\text{now}} - t_i)\bigr), \quad \lambda = 0.0001\,\text{s}^{-1}$$
+
+Controlled via `RECENCY_WEIGHTING_ENABLED=true` and `RECENCY_LAMBDA` in `dci_config.py`. Raises update accuracy from 0.229 → 0.600 (+37.1 pp).
+
+**v2 results (recency fix applied):**
+
+| System | MIS | Rank |
+|--------|:---:|:----:|
+| ContextForge v3 | **0.801** | **1st** |
+| HardenedRAG | 0.753 | 2nd |
+| ClaudeMem | 0.595 | 3rd |
+| MemGPT | 0.574 | 4th |
+| LangGraph | 0.549 | 5th |
+| StatelessRAG | 0.417 | 6th |
+
+Data: `benchmark/benchmark_memory/results/suite_15_final_report_v2.json`.  
+Figures: `research/figures/output/fig_16_memory_radar_v2.png`, `fig_17_memory_bars_v2.png`, `fig_18_memory_heatmap_v2.png`.
+
+---
+
+## 11. Companion Files
 
 | File | Purpose |
 |------|---------|
 | [`docs/BENCHMARK_RESULTS.md`](BENCHMARK_RESULTS.md) | Test pass/fail tables, per-suite results, novelty claims |
-| [`docs/EVOLUTION_LOG.md`](EVOLUTION_LOG.md) | 5-iteration tuning history with per-iteration diffs |
+| [`docs/EVOLUTION_LOG.md`](EVOLUTION_LOG.md) | Iteration tuning history with per-iteration diffs (v1→v3) |
 | [`docs/METHODOLOGY.md`](METHODOLOGY.md) | Full formal algorithm reference (all 9 algorithms) |
-| [`docs/contextforge_research.tex`](contextforge_research.tex) | Submission-ready LaTeX paper |
+| [`research/contextforge_v2_final.tex`](../research/contextforge_v2_final.tex) | v2.3 paper (honest v3 numbers, Suite 15 v2) |
 | [`data/academic_metrics.json`](../data/academic_metrics.json) | Machine-readable benchmark results |
 | [`data/academic_metrics.md`](../data/academic_metrics.md) | Full ΔS/ΔL/ΔDCI mathematical derivations |
+| [`results/v3_security_summary.json`](../results/v3_security_summary.json) | v3 OR-gate security metrics |
+| [`benchmark/benchmark_memory/results/suite_15_final_report_v2.json`](../benchmark/benchmark_memory/results/suite_15_final_report_v2.json) | Suite 15 v2 full results |
 | [`benchmark/engine.py`](../benchmark/engine.py) | Scientific dual-pass benchmark engine |

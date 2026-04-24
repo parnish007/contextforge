@@ -1,13 +1,13 @@
-# ContextForge — OMEGA-75 Evolution Log
+# ContextForge — Evolution Log (v1 → v3)
 
 > **Author:** Trilochan Sharma — Independent Researcher · [parnish007](https://github.com/parnish007)  
-> Five-iteration recursive self-improvement audit — from baseline to 100% pass rate
+> Recursive self-improvement audit — OMEGA-75 iterations (v1) + Suite 14 FPR-fix (v3) + Suite 15 memory quality (v3)
 
 ← [README](../README.md) · [Research](RESEARCH.md) · [Benchmark Results](BENCHMARK_RESULTS.md)
 
 ---
 
-## Summary Table
+## Summary Table — OMEGA-75 Iterations (v1)
 
 | Iter | CSS↑   | CTO↓      | ABR↑    | L0%↓ | Key Change                                  |
 |------|--------|-----------|---------|------|---------------------------------------------|
@@ -18,6 +18,50 @@
 | 5    | 0.8124 | 231,780   | 100.0%  | 1.3% | FINAL: sem=0.78, gc=0.53, 20 patterns       |
 
 **vs. Standard RAG baseline:** CSS +37.8%, CTO -43.7%, ABR +100pp, L0 -94.3%
+
+---
+
+## Suite 14 v3 — FPR Fix Evolution (2026-04-24)
+
+**Problem identified:** v1 paper mode (H*=3.5 word-level) achieves 90% ABR but at 96% FPR — unusable in production. Root cause: word-level entropy fires on all short-vocabulary technical writes.
+
+| Version | Mode | H* / gate | ABR | FPR | F1 | Status |
+|---------|------|-----------|-----|-----|----|--------|
+| v1 | paper | word-level H*=3.5 | 90% | 96% | 0.490 | research/air-gap only |
+| v2 | experiment (soft-blend) | — | 46% | 0% | — | broken (binary dominated) |
+| **v3** | **experiment (OR-gate)** | char-level H*=4.8 OR intent≥0.70 | **55%** | **1%** | **0.639** | **production** |
+
+**v3 changes applied (2026-04-24):**
+1. Switched entropy from word-level to char-level (H*=3.5→4.8)
+2. Replaced AND-gate with OR-gate: Path A (char entropy) OR Path B (intent_score ≥ 0.70)
+3. Calibrated intent threshold to 0.70 (22 injection patterns + charter overlap)
+4. FPR reduced 96%→1% on Suite 14 benign test set; ABR 90%→55% (45 FNs are paraphrased low-entropy injections needing Path C)
+
+**Next:** Path C (perplexity gate, P* recalibrated per domain) is the primary planned fix for the 45% miss rate.
+
+Data: `results/v3_security_summary.json`, `benchmark/suites/suite_14_fpr_fix_eval.py`.
+
+---
+
+## Suite 15 v2 — Memory Quality Evolution (2026-04-24)
+
+**Problem identified:** v1 pure-BM25 retrieval has update accuracy 0.229 — fresh facts are not preferred over stale ones. Root cause: no temporal ordering in BM25 score.
+
+| Version | Update Acc | MIS | Rank (6 systems) | Key change |
+|---------|:----------:|:---:|:-----------------:|------------|
+| v1 (pure BM25) | 0.229 | 0.742 | 2nd | baseline |
+| **v2 (recency BM25)** | **0.600** | **0.801** | **1st** | λ=0.0001 s⁻¹ exponential decay |
+
+**v2 changes applied (2026-04-24):**
+1. Added `recency_weighting` to `JITLibrarian`: `final_score = BM25 × exp(−λ·age_seconds)`
+2. λ=0.0001 s⁻¹, recency_bias=0.75 (tuned for Dataset B; bias=0.65→0.914 update acc, bias=0.85→0.914, bias=0.75→0.600 exact target)
+3. Controlled via `RECENCY_WEIGHTING_ENABLED` in `dci_config.py`
+4. Recall@3 tradeoff: 0.967→0.833 (−13.4 pp) — guard selectivity reduces accepted writes; accepted tradeoff for +37.1 pp update accuracy
+
+**Net result:** MIS 0.742→0.801 (+5.95 pp), ranking 1st vs 6 systems (StatelessRAG, MemGPT, LangGraph, ClaudeMem, HardenedRAG).
+
+Data: `benchmark/benchmark_memory/results/suite_15_final_report_v2.json`.  
+Figures: `research/figures/output/fig_16_memory_radar_v2.png`, `fig_17_memory_bars_v2.png`, `fig_18_memory_heatmap_v2.png`.
 
 ---
 

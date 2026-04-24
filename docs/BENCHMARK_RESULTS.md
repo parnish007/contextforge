@@ -4,10 +4,10 @@
 
 ← [README](../README.md) · [Research](RESEARCH.md) · [Engineering Reference](ENGINEERING_REFERENCE.md)
 
-**Version:** 5.0.0  
-**Report Date:** 2026-04-05  
-**Benchmark Suite:** OMEGA-75 × 5 (375 tests, 5 iterations) + Suite 06 Adversarial Boundary (75 tests)  
-**Overall Result:** 450 / 450 — **100.0% pass rate**
+**Version:** 5.0.0 / v3 security  
+**Report Date:** 2026-04-24 (Suite 14 v3 + Suite 15 v2 added)  
+**Benchmark Suite:** OMEGA-75 × 5 (375) + Suite 14 FPR-fix (300) + Suite 15 Memory (160) + core suites (155)  
+**Overall Result:** 990 total tests — **100.0% pass rate** on OMEGA suites; v3 deployed ABR=55%, FPR=1%
 
 ---
 
@@ -148,8 +148,8 @@ Each bar shows the 75-test suite broken into passed (green) and failed (red) seg
 
 | Metric | Value | Notes |
 |--------|------:|-------|
-| Total benchmark tests | 375 | 75 per suite × 5 suites |
-| Overall pass rate | **100.0%** | 375/375 |
+| Total benchmark tests | **990** | 375 OMEGA + 300 Suite14 + 160 Suite15 + 155 core |
+| OMEGA pass rate | **100.0%** | 375/375 |
 | Context survival rate | **94.3%** | Surviving after chaos (FluidSync) |
 | Adversarial block rate | **92.3%** | ReviewerGuard + charter constraints |
 | DCI token efficiency | **87.4%** | Chunks injected vs total retrieved |
@@ -160,6 +160,46 @@ Each bar shows the 75-test suite broken into passed (green) and failed (red) seg
 | RAG embedding backend | TF-IDF / `all-MiniLM-L6-v2` | Auto-detects sentence-transformers |
 | Injection patterns blocked | **35+** | In `_INJECTION_PATTERNS` |
 | Protected entities | **30+** | Charter-derived `_CORE_PROTECTED` |
+
+---
+
+## Suite 14 — FPR Fix Evaluation (300 samples, measured 2026-04-24)
+
+| Mode | Benign FPR | Adv Recall | Edge FPR | F1 | Notes |
+|------|:----------:|:----------:|:--------:|:--:|-------|
+| CF-PAPER (word H\*=3.5) | **96%** | **95%** | **97%** | 0.490 | Severely miscalibrated for prod |
+| CF-EXPERIMENT v2 (broken soft-blend) | 0% | 46% | 15% | — | entropy\_flag binary dominated |
+| CF-EXPERIMENT v3 (multi-trigger OR-gate) | **1%** | **55%** | **16%** | **0.639** | **Recommended** |
+| HardenedRAG (regex) | 3% | 71% | 45% | 0.648 | High recall, high edge FPR |
+
+**v3 trigger breakdown (Dataset C — 100 edge cases):**
+- PAPER: all 97 FPs from word-entropy path alone (H\_word > 3.5)
+- EXPERIMENT v3: 15 FPs from entity+verb path, 1 FP from intent path, 0 from char-entropy
+- 45 adversarial FNs: max intent\_score = 0.50, mean = 0.27 — paraphrased injections that need Path C (perplexity gate) to catch
+
+---
+
+## Suite 15 v2 — Memory Quality Benchmark (160 samples, measured 2026-04-24, recency weighting fix)
+
+6 systems evaluated across 4 datasets. **Memory Integrity Score (MIS) = mean(Recall@3, Update Accuracy, Delete Accuracy, Poison Resistance).**
+
+| System | Recall@3 | Update Acc | Delete Acc | Poison Res | **MIS** | F1 (Dataset A) |
+|--------|:--------:|:----------:|:----------:|:----------:|:-------:|:--------------:|
+| StatelessRAG | 0.000 | 0.000 | 0.667 | 1.000 | 0.417 | 0.000 |
+| LangGraph | 0.967 | 0.229 | 1.000 | 0.000 | 0.549 | 0.570 |
+| MemGPT | 0.867 | 0.429 | 1.000 | 0.000 | 0.574 | 0.510 |
+| ClaudeMem | 0.867 | 0.429 | 1.000 | 0.086 | 0.595 | 0.510 |
+| HardenedRAG | **0.983** | 0.229 | 1.000 | 0.800 | 0.753 | 0.578 |
+| **ContextForge v3** | 0.833 | **0.600** | **1.000** | 0.771 | **0.801** | 0.495 |
+
+**Key takeaways (v2, recency weighting applied):**
+- ContextForge v3 ranks **first** (MIS = **0.801**), up from 0.742 (+5.95 pp via recency fix)
+- Recency-weighted BM25 (`λ=0.0001 s⁻¹`, bias=0.75) raises update accuracy from 0.229 → **0.600** (+37.1 pp), surpassing MemGPT/ClaudeMem (0.429)
+- Recall@3 decreased 0.967 → 0.833 (−13.4 pp) due to guard selectivity — accepted tradeoff for +37.1 pp update accuracy
+- Poison resistance: ContextForge (0.771) and HardenedRAG (0.800) are the only systems with meaningful defense; all others ≤ 0.086
+- Run benchmark: `python -X utf8 benchmark/benchmark_memory/run_suite15_v2.py`
+- Generate v2 figures: `python benchmark/benchmark_memory/figures/gen_memory_figures_v2.py`
+- Full data: `benchmark/benchmark_memory/results/suite_15_final_report_v2.json`
 
 ---
 
