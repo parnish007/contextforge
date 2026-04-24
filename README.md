@@ -131,23 +131,29 @@ xychart-beta
 
 MIS = mean(Recall@3, UpdateAccuracy, DeleteAccuracy, PoisonResistance). ContextForge v3 is the **only system** combining high retrieval quality, recency-aware updates, and adversarial write blocking.
 
-### Security Operating Points — FPR vs ABR Trade-off
+## Security Operating Points — FPR vs ABR Trade-off
+
+This figure illustrates the trade-off between **False Positive Rate (FPR)** and **Adversarial Block Rate (ABR)** across different system configurations.
+
+- **FPR ↓ (lower is better):** usability / production safety  
+- **ABR ↑ (higher is better):** security / attack resistance  
 
 ```mermaid
 quadrantChart
-    title Security Trade-off: FPR vs Adversarial Block Rate
+    title FPR vs Adversarial Block Rate Trade-off
     x-axis Low FPR --> High FPR
     y-axis Low protection --> High protection
 
-    quadrant-1 Research / air-gap only
-    quadrant-2 Ideal: safe + protective
-    quadrant-3 No guard at all
-    quadrant-4 Noisy + unprotective
+    quadrant-1 Research only
+    quadrant-2 Ideal zone
+    quadrant-3 No protection
+    quadrant-4 Noisy ineffective
 
-    ContextForge v3 Deployed: [0.04, 0.55]
+    ContextForge v3: [0.04, 0.55]
     HardenedRAG: [0.19, 0.71]
-    ContextForge Paper Mode: [0.62, 0.90]
+    CF Paper Mode: [0.62, 0.90]
     StatelessRAG: [0.02, 0.02]
+```
 
 ### Memory Quality — 5 Metrics Breakdown
 
