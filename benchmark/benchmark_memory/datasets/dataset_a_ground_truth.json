@@ -1,0 +1,1010 @@
+{
+  "name": "dataset_a_ground_truth",
+  "description": "Retrieval accuracy: 60 samples, 5 categories. Store has 5-7 memories, query asks about 1 fact. Measures hit@3.",
+  "version": "v1_suite15",
+  "count": 60,
+  "samples": [
+    {
+      "id": "A_001",
+      "category": "prog_preference",
+      "store": [
+        "User strongly prefers Python for all backend development",
+        "User uses FastAPI framework for REST APIs",
+        "Team uses PostgreSQL as primary database",
+        "CI/CD runs on GitHub Actions",
+        "Frontend is built with React and TypeScript"
+      ],
+      "query": "What programming language does the user prefer?",
+      "expected_keywords": [
+        "Python"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_002",
+      "category": "prog_preference",
+      "store": [
+        "User writes production services in Go for performance",
+        "User switched from Python to Go six months ago",
+        "Go microservices deployed on Kubernetes",
+        "Team uses gRPC for internal service communication",
+        "User is comfortable with goroutines and channels"
+      ],
+      "query": "What language does the user write production services in?",
+      "expected_keywords": [
+        "Go"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_003",
+      "category": "prog_preference",
+      "store": [
+        "User avoids JavaScript for backend work",
+        "User uses Node.js only for lightweight CLI tools",
+        "Primary backend stack is Rust with Actix-Web",
+        "User values Rust's memory safety guarantees",
+        "Team recently migrated from Java to Rust"
+      ],
+      "query": "What backend language does the user primarily use?",
+      "expected_keywords": [
+        "Rust"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_004",
+      "category": "prog_preference",
+      "store": [
+        "User's IDE of choice is Neovim with LSP",
+        "User has used VS Code in the past but prefers Neovim",
+        "Neovim config uses lazy.nvim for plugin management",
+        "User writes Lua for Neovim configuration",
+        "Team is split between VS Code and JetBrains"
+      ],
+      "query": "What editor does the user prefer?",
+      "expected_keywords": [
+        "Neovim"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_005",
+      "category": "prog_preference",
+      "store": [
+        "User formats Python code with black and isort",
+        "User enforces type hints via mypy in CI",
+        "Linting uses ruff (replaces flake8)",
+        "Pre-commit hooks run black, isort, and ruff",
+        "User values strict typing over duck typing"
+      ],
+      "query": "What formatter does the user use for Python?",
+      "expected_keywords": [
+        "black"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_006",
+      "category": "prog_preference",
+      "store": [
+        "User prefers async/await patterns over threading",
+        "User has bad experience with thread-safety bugs",
+        "All I/O in user's services is non-blocking",
+        "User uses asyncio and aiohttp for async HTTP",
+        "Team adopted trio for structured concurrency experiments"
+      ],
+      "query": "What concurrency model does the user prefer?",
+      "expected_keywords": [
+        "async"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_007",
+      "category": "prog_preference",
+      "store": [
+        "User deploys all services as Docker containers",
+        "Kubernetes is the orchestration platform of choice",
+        "User uses Helm charts for k8s deployments",
+        "Docker Compose used only for local development",
+        "User is pursuing CKA certification"
+      ],
+      "query": "What container orchestration does the user use?",
+      "expected_keywords": [
+        "Kubernetes"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_008",
+      "category": "prog_preference",
+      "store": [
+        "User uses pytest for all Python testing",
+        "Test coverage enforced at 80% minimum in CI",
+        "User writes property-based tests with hypothesis",
+        "Integration tests run against real PostgreSQL instance",
+        "User follows TDD for new feature development"
+      ],
+      "query": "What testing framework does the user use?",
+      "expected_keywords": [
+        "pytest"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_009",
+      "category": "prog_preference",
+      "store": [
+        "User manages Python environments with uv",
+        "User switched from poetry to uv for speed",
+        "All projects use pyproject.toml for dependencies",
+        "User avoids conda outside of ML workloads",
+        "Global Python version managed by pyenv"
+      ],
+      "query": "What Python package manager does the user prefer?",
+      "expected_keywords": [
+        "uv"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_010",
+      "category": "prog_preference",
+      "store": [
+        "User stores secrets in HashiCorp Vault",
+        "No hardcoded credentials allowed in any repository",
+        "Environment variables loaded from .env via python-dotenv",
+        "Vault dynamic secrets rotate every 24 hours",
+        "User audits secret access with Vault audit logs"
+      ],
+      "query": "Where does the user store application secrets?",
+      "expected_keywords": [
+        "Vault"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_011",
+      "category": "prog_preference",
+      "store": [
+        "User uses SQLAlchemy ORM for database access",
+        "Raw SQL reserved for performance-critical queries",
+        "Database migrations handled by Alembic",
+        "User prefers repository pattern over active record",
+        "Connection pooling via asyncpg for async paths"
+      ],
+      "query": "What ORM does the user use for database access?",
+      "expected_keywords": [
+        "SQLAlchemy"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_012",
+      "category": "prog_preference",
+      "store": [
+        "User monitors services with Prometheus and Grafana",
+        "Traces collected via OpenTelemetry with Jaeger backend",
+        "Alerting configured in Grafana with PagerDuty integration",
+        "User exports custom metrics from all FastAPI services",
+        "SLO dashboards updated weekly by the team"
+      ],
+      "query": "What monitoring stack does the user use?",
+      "expected_keywords": [
+        "Prometheus"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_013",
+      "category": "project_context",
+      "store": [
+        "Current project is a real-time analytics pipeline",
+        "Pipeline processes 50k events per second at peak",
+        "Data source is Kafka; sink is ClickHouse",
+        "Project team has 4 engineers and 1 PM",
+        "Launch target is Q3 2026"
+      ],
+      "query": "What is the current project about?",
+      "expected_keywords": [
+        "analytics",
+        "pipeline"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_014",
+      "category": "project_context",
+      "store": [
+        "Project uses a microservices architecture with 12 services",
+        "Services communicate via gRPC with protobuf schemas",
+        "API gateway is Kong with rate limiting enabled",
+        "Service mesh uses Istio for mTLS between services",
+        "Monorepo managed with Nx build system"
+      ],
+      "query": "What communication protocol do the services use?",
+      "expected_keywords": [
+        "gRPC"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_015",
+      "category": "project_context",
+      "store": [
+        "Team is migrating from monolith to microservices",
+        "Migration follows strangler fig pattern",
+        "Monolith is a Django 3.2 application from 2019",
+        "Migration deadline is end of 2026",
+        "Three services have been extracted so far"
+      ],
+      "query": "What migration pattern is the team using?",
+      "expected_keywords": [
+        "strangler"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_016",
+      "category": "project_context",
+      "store": [
+        "Main database is PostgreSQL 16 with read replicas",
+        "Write throughput peaks at 5k writes per second",
+        "Connection pool size is 100 per service instance",
+        "Vacuum runs nightly on large tables",
+        "Point-in-time recovery configured with 7-day retention"
+      ],
+      "query": "What database version is the project running?",
+      "expected_keywords": [
+        "PostgreSQL 16",
+        "PostgreSQL"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_017",
+      "category": "project_context",
+      "store": [
+        "Team velocity is 40 story points per sprint",
+        "Sprints are two weeks long",
+        "Backlog grooming happens every Tuesday",
+        "Retros are held on the last Friday of each sprint",
+        "Team uses Jira for issue tracking"
+      ],
+      "query": "How long are the team's sprints?",
+      "expected_keywords": [
+        "two weeks",
+        "2 weeks"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_018",
+      "category": "project_context",
+      "store": [
+        "Auth service implements OAuth 2.0 with PKCE",
+        "JWT tokens expire after 15 minutes",
+        "Refresh tokens stored in Redis with 30-day TTL",
+        "MFA is required for admin users",
+        "SSO integrated with Google Workspace"
+      ],
+      "query": "How long do JWT access tokens last?",
+      "expected_keywords": [
+        "15 minutes"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_019",
+      "category": "project_context",
+      "store": [
+        "Search feature powered by Elasticsearch 8",
+        "Full-text search with BM25 ranking",
+        "Indexing pipeline uses Logstash",
+        "Synonym expansion configured for product search",
+        "Search latency target is under 50ms at p99"
+      ],
+      "query": "What search engine does the project use?",
+      "expected_keywords": [
+        "Elasticsearch"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_020",
+      "category": "project_context",
+      "store": [
+        "Caching layer uses Redis 7 with two replicas",
+        "Cache hit rate is currently 73%",
+        "Cache TTL for user sessions is 30 minutes",
+        "Cache TTL for product data is 5 minutes",
+        "Cache invalidation uses pub/sub events"
+      ],
+      "query": "What is the current cache hit rate?",
+      "expected_keywords": [
+        "73%"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_021",
+      "category": "project_context",
+      "store": [
+        "ML model inference served by Triton Inference Server",
+        "Models trained on internal GPU cluster with A100s",
+        "Model registry uses MLflow for versioning",
+        "Serving latency target is under 100ms at p95",
+        "Model retraining triggered weekly by scheduled job"
+      ],
+      "query": "What serves the ML model inference?",
+      "expected_keywords": [
+        "Triton"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_022",
+      "category": "project_context",
+      "store": [
+        "Frontend team uses React 18 with Next.js 14",
+        "State management with Zustand (replaced Redux)",
+        "CSS handled by Tailwind with custom design tokens",
+        "E2E tests written in Playwright",
+        "Bundle size budget is 200kb gzipped"
+      ],
+      "query": "What React framework does the frontend team use?",
+      "expected_keywords": [
+        "Next.js"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_023",
+      "category": "project_context",
+      "store": [
+        "Infrastructure managed with Terraform on AWS",
+        "State stored in S3 with DynamoDB locking",
+        "Separate environments: dev, staging, production",
+        "Production runs in us-east-1 with failover to us-west-2",
+        "Cost optimization review scheduled quarterly"
+      ],
+      "query": "What cloud provider does the project run on?",
+      "expected_keywords": [
+        "AWS"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_024",
+      "category": "project_context",
+      "store": [
+        "On-call rotation covers 5 engineers",
+        "Incident severity levels: P0, P1, P2, P3",
+        "P0 incidents require response within 5 minutes",
+        "Post-mortems required for all P0 and P1 incidents",
+        "On-call schedule managed via PagerDuty"
+      ],
+      "query": "How quickly must P0 incidents be responded to?",
+      "expected_keywords": [
+        "5 minutes"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_025",
+      "category": "personal_info",
+      "store": [
+        "User's name is Arjun Sharma",
+        "Arjun is a senior software engineer at TechCorp",
+        "Arjun joined TechCorp in March 2022",
+        "Arjun is based in Bengaluru, India",
+        "Arjun's team lead is Priya Mehta"
+      ],
+      "query": "What is the user's name?",
+      "expected_keywords": [
+        "Arjun"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_026",
+      "category": "personal_info",
+      "store": [
+        "User works on the Platform Infrastructure team",
+        "Team size is 8 engineers across 3 time zones",
+        "Platform team owns the internal developer platform",
+        "User recently moved from the Product team",
+        "Platform team reports to the VP of Engineering"
+      ],
+      "query": "What team does the user work on?",
+      "expected_keywords": [
+        "Platform Infrastructure",
+        "Platform"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_027",
+      "category": "personal_info",
+      "store": [
+        "User's timezone is IST (UTC+5:30)",
+        "User works 9am-6pm IST with flexible hours",
+        "Weekly sync with US teammates at 8pm IST",
+        "User prefers async communication over meetings",
+        "User is online on Slack from 9am to 9pm IST"
+      ],
+      "query": "What timezone is the user in?",
+      "expected_keywords": [
+        "IST",
+        "UTC+5:30"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_028",
+      "category": "personal_info",
+      "store": [
+        "User has 7 years of software engineering experience",
+        "First 3 years were in embedded systems (C/C++)",
+        "Moved to backend web development 4 years ago",
+        "User holds a B.Tech in Computer Science from IIT Delhi",
+        "Currently pursuing AWS Solutions Architect certification"
+      ],
+      "query": "How many years of experience does the user have?",
+      "expected_keywords": [
+        "7 years",
+        "7"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_029",
+      "category": "personal_info",
+      "store": [
+        "User's GitHub handle is arjun-sh",
+        "User contributes to open-source Python libraries",
+        "User has starred 840 repositories on GitHub",
+        "User's most popular repo is a FastAPI boilerplate with 1.2k stars",
+        "User participates in Hacktoberfest annually"
+      ],
+      "query": "What is the user's GitHub handle?",
+      "expected_keywords": [
+        "arjun-sh"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_030",
+      "category": "personal_info",
+      "store": [
+        "User's primary goal this quarter is improving system reliability",
+        "Reliability target: 99.95% uptime (current: 99.87%)",
+        "User is tracking 3 reliability OKRs this quarter",
+        "Root cause of recent downtime: database connection pool exhaustion",
+        "User presented reliability roadmap at last all-hands"
+      ],
+      "query": "What is the user's primary goal this quarter?",
+      "expected_keywords": [
+        "reliability"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_031",
+      "category": "personal_info",
+      "store": [
+        "User prefers written documentation over verbal explanations",
+        "User maintains an architecture decision log (ADR)",
+        "User writes weekly engineering notes shared with the team",
+        "User has given 3 internal tech talks this year",
+        "User mentors 2 junior engineers on the team"
+      ],
+      "query": "How does the user prefer to communicate decisions?",
+      "expected_keywords": [
+        "written",
+        "documentation",
+        "ADR"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_032",
+      "category": "personal_info",
+      "store": [
+        "User's machine is a MacBook Pro M3 Max 64GB",
+        "User runs macOS Sonoma 14.4",
+        "External monitor: LG 27-inch 4K",
+        "Keyboard: Keychron Q1 with Gateron red switches",
+        "User uses a standing desk with electric height adjustment"
+      ],
+      "query": "What machine does the user work on?",
+      "expected_keywords": [
+        "MacBook",
+        "M3"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_033",
+      "category": "personal_info",
+      "store": [
+        "User reads 2-3 engineering blog posts per day",
+        "Favourite technical blogs: Martin Fowler, High Scalability, the morning paper",
+        "User follows 47 engineers on Twitter/X",
+        "User listens to Software Engineering Daily podcast",
+        "User attends PyCon India annually"
+      ],
+      "query": "What conference does the user attend annually?",
+      "expected_keywords": [
+        "PyCon"
+      ],
+      "correct_idx": 4
+    },
+    {
+      "id": "A_034",
+      "category": "personal_info",
+      "store": [
+        "User's strongest skills: distributed systems, Python, PostgreSQL",
+        "User is learning Rust as a side project",
+        "User considers system design interviews their strongest area",
+        "User struggles with frontend CSS but is improving",
+        "User wants to learn more about compilers in 2026"
+      ],
+      "query": "What are the user's strongest technical skills?",
+      "expected_keywords": [
+        "distributed systems",
+        "Python",
+        "PostgreSQL"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_035",
+      "category": "personal_info",
+      "store": [
+        "User's current on-call week is April 21-28 2026",
+        "User is primary on-call for the API gateway",
+        "Secondary on-call is Rohan Verma",
+        "Escalation contact is Priya Mehta (team lead)",
+        "User uses PagerDuty mobile app for alerts"
+      ],
+      "query": "Who is the secondary on-call contact?",
+      "expected_keywords": [
+        "Rohan"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_036",
+      "category": "personal_info",
+      "store": [
+        "User dislikes unnecessary meetings",
+        "User prefers 1:1 meetings to be 30 minutes maximum",
+        "User blocks focus time from 9am-12pm daily",
+        "User checks email only twice per day",
+        "User uses Notion for personal task tracking"
+      ],
+      "query": "When does the user block focus time?",
+      "expected_keywords": [
+        "9am",
+        "12pm",
+        "morning"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_037",
+      "category": "recent_decision",
+      "store": [
+        "Decided to use Kafka instead of RabbitMQ for message queue",
+        "Decision rationale: Kafka's log retention enables replay",
+        "RabbitMQ was rejected due to ack-timeout issues at scale",
+        "Kafka cluster runs 3 brokers with replication factor 3",
+        "Decision made in architecture review on 2026-03-15"
+      ],
+      "query": "Why was Kafka chosen over RabbitMQ?",
+      "expected_keywords": [
+        "log retention",
+        "replay",
+        "retention"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_038",
+      "category": "recent_decision",
+      "store": [
+        "Team agreed to adopt trunk-based development over feature branches",
+        "Feature flags used to control rollout of incomplete features",
+        "Old approach: long-lived feature branches (avg 3 weeks)",
+        "New approach: small commits to main with feature flags",
+        "Decision implemented starting sprint 14 (March 2026)"
+      ],
+      "query": "What branching strategy did the team adopt?",
+      "expected_keywords": [
+        "trunk-based"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_039",
+      "category": "recent_decision",
+      "store": [
+        "Decided against using GraphQL after 2-week evaluation",
+        "REST retained because team expertise is stronger",
+        "GraphQL rejected due to N+1 query complexity and tooling overhead",
+        "OpenAPI 3.1 spec now generated automatically from FastAPI",
+        "API versioning via URL prefix: /v1/, /v2/"
+      ],
+      "query": "Why was GraphQL rejected?",
+      "expected_keywords": [
+        "N+1",
+        "complexity",
+        "tooling"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_040",
+      "category": "recent_decision",
+      "store": [
+        "Team chose ClickHouse for analytics storage over BigQuery",
+        "ClickHouse chosen for lower cost and self-hosted control",
+        "BigQuery rejected due to egress cost and vendor lock-in",
+        "ClickHouse cluster has 4 nodes with 20TB storage",
+        "Migration from BigQuery completed in January 2026"
+      ],
+      "query": "Why was ClickHouse chosen over BigQuery?",
+      "expected_keywords": [
+        "cost",
+        "self-hosted"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_041",
+      "category": "recent_decision",
+      "store": [
+        "Auth team decided to implement PKCE for OAuth 2.0 flows",
+        "PKCE required because mobile clients cannot store client secrets safely",
+        "Implicit flow was deprecated and removed",
+        "All client apps updated to use PKCE by end of Q1 2026",
+        "Security audit confirmed PKCE implementation is compliant"
+      ],
+      "query": "Why did the team implement PKCE?",
+      "expected_keywords": [
+        "mobile",
+        "client secret"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_042",
+      "category": "recent_decision",
+      "store": [
+        "Decided to replace custom metrics library with OpenTelemetry",
+        "OpenTelemetry chosen for vendor neutrality and ecosystem",
+        "Migration plan: 3 services per sprint over 8 sprints",
+        "Custom library will be deprecated in Q4 2026",
+        "First service migrated: auth service (completed)"
+      ],
+      "query": "What library replaced the custom metrics library?",
+      "expected_keywords": [
+        "OpenTelemetry"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_043",
+      "category": "recent_decision",
+      "store": [
+        "Team decided to enforce 80% test coverage as CI gate",
+        "Coverage was previously 55% with no enforcement",
+        "Uncovered paths were causing recurring production bugs",
+        "Coverage enforcement starts sprint 16",
+        "Excluded from coverage: generated code and test fixtures"
+      ],
+      "query": "What test coverage is now enforced in CI?",
+      "expected_keywords": [
+        "80%"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_044",
+      "category": "recent_decision",
+      "store": [
+        "Decision: no microservices for the user notification system",
+        "Notification kept as a module in the monolith for simplicity",
+        "Reason: notification volume is low (< 100/min peak)",
+        "Microservice overhead not justified at current scale",
+        "Revisit decision when volume exceeds 10k/min"
+      ],
+      "query": "Why was notification kept in the monolith?",
+      "expected_keywords": [
+        "low volume",
+        "simplicity",
+        "scale"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_045",
+      "category": "recent_decision",
+      "store": [
+        "Team adopted ADR (Architecture Decision Records) process",
+        "All significant architectural decisions documented as ADRs",
+        "ADRs stored in /docs/adr/ in the monorepo",
+        "ADR template based on Michael Nygard's format",
+        "15 ADRs written since process started in February 2026"
+      ],
+      "query": "Where are Architecture Decision Records stored?",
+      "expected_keywords": [
+        "/docs/adr/",
+        "docs/adr"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_046",
+      "category": "recent_decision",
+      "store": [
+        "Database sharding deferred until write volume exceeds 50k/sec",
+        "Current write volume peaks at 5k/sec",
+        "Read replicas added instead to handle current read load",
+        "Sharding strategy will be hash-based on user_id",
+        "Decision revisited in Q2 2026 roadmap planning"
+      ],
+      "query": "At what write volume will database sharding be considered?",
+      "expected_keywords": [
+        "50k"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_047",
+      "category": "recent_decision",
+      "store": [
+        "Team decided to adopt SLO-based alerting over threshold-based",
+        "Old alerts fired on raw metric thresholds (error rate > 1%)",
+        "New alerts fire on SLO burn rate (error budget burns too fast)",
+        "SLO alerting reduces false positive alerts by ~60%",
+        "Rollout complete for 8 of 12 services"
+      ],
+      "query": "What alerting approach did the team adopt?",
+      "expected_keywords": [
+        "SLO",
+        "burn rate"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_048",
+      "category": "recent_decision",
+      "store": [
+        "Team migrated from Jira to Linear for issue tracking",
+        "Linear chosen for speed and developer-friendly UX",
+        "Jira decommissioned on 2026-03-01",
+        "All backlog items migrated with custom automation script",
+        "Team productivity increased by ~25% after migration (self-reported)"
+      ],
+      "query": "What issue tracker does the team use now?",
+      "expected_keywords": [
+        "Linear"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_049",
+      "category": "error_solution",
+      "store": [
+        "Error: asyncpg pool exhaustion causing 503s under load",
+        "Root cause: max_size=10 too small for 50 concurrent users per pod",
+        "Fix: increased pool max_size to 50, added pool_timeout=30",
+        "Deploy date: 2026-03-22",
+        "Monitoring: pool utilization now shown in Grafana dashboard"
+      ],
+      "query": "What caused the recent 503 errors under load?",
+      "expected_keywords": [
+        "pool exhaustion",
+        "pool",
+        "asyncpg"
+      ],
+      "correct_idx": 0
+    },
+    {
+      "id": "A_050",
+      "category": "error_solution",
+      "store": [
+        "Memory leak in the report generation service",
+        "Root cause: pandas DataFrames not released after report creation",
+        "Fix: explicit del df calls + gc.collect() after each report",
+        "Memory usage stabilized at 200MB baseline after fix",
+        "Deployed 2026-04-01; no recurrence in 3 weeks"
+      ],
+      "query": "What caused the memory leak in the report generation service?",
+      "expected_keywords": [
+        "pandas",
+        "DataFrame",
+        "not released"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_051",
+      "category": "error_solution",
+      "store": [
+        "Timeout errors in auth service when calling user-service",
+        "Root cause: user-service P99 latency spiked to 8s during DB vacuum",
+        "Fix: added circuit breaker with 2s timeout and fallback to cached user data",
+        "Implemented with tenacity retry library",
+        "Incident post-mortem completed 2026-02-28"
+      ],
+      "query": "How was the auth service timeout issue fixed?",
+      "expected_keywords": [
+        "circuit breaker",
+        "timeout",
+        "cache"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_052",
+      "category": "error_solution",
+      "store": [
+        "Race condition in distributed lock implementation",
+        "Two workers acquired the same lock due to Redis SETNX race",
+        "Fix: migrated to Redlock algorithm with 3 Redis nodes",
+        "Redlock ensures lock safety even if one Redis node fails",
+        "No lock contention incidents since fix deployed 2026-01-15"
+      ],
+      "query": "How was the distributed lock race condition fixed?",
+      "expected_keywords": [
+        "Redlock"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_053",
+      "category": "error_solution",
+      "store": [
+        "Slow queries in product search endpoint (P99 > 2s)",
+        "Root cause: missing composite index on (category_id, price, created_at)",
+        "Fix: added B-tree index + VACUUM ANALYZE on products table",
+        "P99 latency dropped from 2.1s to 45ms after index creation",
+        "Slow query log monitored via pg_stat_statements"
+      ],
+      "query": "What fixed the slow product search queries?",
+      "expected_keywords": [
+        "index",
+        "composite index"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_054",
+      "category": "error_solution",
+      "store": [
+        "Kafka consumer group lag growing in the analytics pipeline",
+        "Root cause: deserialization bottleneck in Avro schema parsing",
+        "Fix: pre-compiled Avro schema cache added; consumer group scaled to 6",
+        "Lag dropped from 2M messages to < 1000 after fix",
+        "Monitoring: consumer lag tracked in Grafana panel"
+      ],
+      "query": "What caused the Kafka consumer group lag to grow?",
+      "expected_keywords": [
+        "deserialization",
+        "Avro",
+        "schema parsing"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_055",
+      "category": "error_solution",
+      "store": [
+        "CORS errors on API gateway when frontend deployed to new domain",
+        "Root cause: allowed origins list hardcoded, did not include staging domain",
+        "Fix: allowed origins loaded from environment variable ALLOWED_ORIGINS",
+        "Added integration test for CORS header validation in CI",
+        "Staging domain now in allowed origins list"
+      ],
+      "query": "What caused the CORS errors after frontend deployment?",
+      "expected_keywords": [
+        "hardcoded",
+        "origins",
+        "domain"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_056",
+      "category": "error_solution",
+      "store": [
+        "Certificate expiry caused 30-minute outage on 2026-02-14",
+        "Root cause: Let's Encrypt cert renewal cron job silently failed",
+        "Fix: cert renewal now alerts to Slack 30 days before expiry",
+        "Added cert expiry monitoring to Grafana dashboard",
+        "All certs now have automated renewal with failure alerting"
+      ],
+      "query": "What caused the certificate expiry outage?",
+      "expected_keywords": [
+        "cron",
+        "renewal",
+        "failed"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_057",
+      "category": "error_solution",
+      "store": [
+        "OOM kills on worker pods during batch processing jobs",
+        "Root cause: batch job memory limit set to 512MB; actual peak is 1.8GB",
+        "Fix: memory limit increased to 3GB; added memory profiling step",
+        "Batch jobs now run with --memory-profile flag in staging",
+        "No OOM kills in 6 weeks since fix"
+      ],
+      "query": "Why were worker pods getting OOM killed?",
+      "expected_keywords": [
+        "memory limit",
+        "512MB",
+        "low limit"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_058",
+      "category": "error_solution",
+      "store": [
+        "Data inconsistency between user service and billing service",
+        "Root cause: event ordering not guaranteed across Kafka partitions",
+        "Fix: user events use single partition key (user_id) to guarantee order",
+        "Deduplication layer added to billing consumer",
+        "Data reconciliation job runs nightly to detect remaining inconsistencies"
+      ],
+      "query": "What caused data inconsistency between user and billing services?",
+      "expected_keywords": [
+        "ordering",
+        "Kafka",
+        "partition"
+      ],
+      "correct_idx": 1
+    },
+    {
+      "id": "A_059",
+      "category": "error_solution",
+      "store": [
+        "Deployment rollbacks slow due to manual kubectl apply process",
+        "Root cause: no automated rollback trigger on health check failure",
+        "Fix: Argo Rollouts configured with automatic rollback on >5% error rate",
+        "Rollback time reduced from 15 minutes to under 2 minutes",
+        "Canary deployments now standard for all production releases"
+      ],
+      "query": "What tool was configured for automatic rollback?",
+      "expected_keywords": [
+        "Argo Rollouts",
+        "Argo"
+      ],
+      "correct_idx": 2
+    },
+    {
+      "id": "A_060",
+      "category": "error_solution",
+      "store": [
+        "Webhook delivery failures to third-party integrations",
+        "Root cause: no retry logic; transient failures treated as permanent",
+        "Fix: exponential backoff retry with jitter, max 5 attempts",
+        "Dead letter queue for webhooks that fail all retry attempts",
+        "Delivery success rate improved from 87% to 99.6%"
+      ],
+      "query": "How was the webhook delivery failure rate improved?",
+      "expected_keywords": [
+        "retry",
+        "exponential backoff"
+      ],
+      "correct_idx": 2
+    }
+  ]
+}

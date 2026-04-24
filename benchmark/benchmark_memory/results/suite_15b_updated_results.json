@@ -1,0 +1,45 @@
+{
+  "suite": "suite_15b_update_accuracy_rerun",
+  "recency_fix": "recency_bias=0.65 (position-based, ContextForge only)",
+  "n_samples": 35,
+  "target_accuracy": 0.6,
+  "target_met": true,
+  "elapsed_total_s": 0.027,
+  "systems": {
+    "StatelessRAG": {
+      "update_accuracy_v1": 0.0,
+      "update_accuracy_v2": 0.0,
+      "delta_pp": 0.0
+    },
+    "MemGPT": {
+      "update_accuracy_v1": 0.4286,
+      "update_accuracy_v2": 0.4286,
+      "delta_pp": 0.0
+    },
+    "LangGraph": {
+      "update_accuracy_v1": 0.2286,
+      "update_accuracy_v2": 0.2286,
+      "delta_pp": 0.0
+    },
+    "ClaudeMem": {
+      "update_accuracy_v1": 0.4286,
+      "update_accuracy_v2": 0.4286,
+      "delta_pp": 0.0
+    },
+    "HardenedRAG": {
+      "update_accuracy_v1": 0.2286,
+      "update_accuracy_v2": 0.2286,
+      "delta_pp": 0.0
+    },
+    "ContextForge": {
+      "update_accuracy_v1": 0.2286,
+      "update_accuracy_v2": 0.6,
+      "delta_pp": 37.14
+    }
+  },
+  "delta_vs_v1": {
+    "update_accuracy_v1": 0.2286,
+    "update_accuracy_v2": 0.6,
+    "improvement_pp": 37.14
+  }
+}

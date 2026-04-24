@@ -57,15 +57,23 @@ def _estimate_tokens(text: str) -> int:
 
 def _compute_entropy(text: str) -> float:
     """
-    Shannon entropy of the token (word) distribution in *text* (bits).
+    Shannon entropy used by Predictive Failover to decide whether to pre-warm Gemini.
 
-    High entropy (> 3.5) correlates with:
-      - Adversarial / obfuscated payloads (unicode homoglyphs, base64 packing)
-      - Very large, lexically diverse prompts that will stress Groq's window
-      - Multi-hop injection chains that shuffle vocabulary across turns
+    Dispatches to character-level or word-level distribution depending on CF_MODE,
+    mirroring ReviewerGuard._compute_entropy so both components use the same signal.
 
-    Used by Predictive Failover to pre-warm Gemini before Groq trips.
+    PAPER mode (default) : word-level  — threshold 3.5 bits
+    EXPERIMENT mode      : char-level  — threshold 4.8 bits/char
     """
+    if os.getenv("CF_MODE", "paper").lower() == "experiment" or \
+       os.getenv("CF_ENTROPY_MODE", "word") == "char":
+        chars = list(text)
+        if not chars:
+            return 0.0
+        counts = Counter(chars)
+        total  = len(chars)
+        return -sum((c / total) * math.log2(c / total) for c in counts.values())
+    # PAPER mode: word-level distribution
     words = text.split()
     if not words:
         return 0.0
@@ -158,7 +166,11 @@ class NexusRouter:
 
     # Predictive Failover — pre-warm Gemini when input Shannon entropy exceeds
     # this threshold while Groq is still the primary candidate.
-    _ENTROPY_THRESHOLD: float = 3.5   # bits
+    # Mirrors ReviewerGuard._H_THRESHOLD: word-mode = 3.5, char-mode = 4.8
+    _ENTROPY_THRESHOLD: float = float(os.getenv("CF_H_THRESHOLD", "4.8"
+        if os.getenv("CF_ENTROPY_MODE",
+            "char" if os.getenv("CF_MODE", "paper").lower() == "experiment" else "word"
+        ) == "char" else "3.5"))
 
     def __init__(self) -> None:
         self._groq_cb    = CircuitBreaker(name="groq",   failure_threshold=3, reset_timeout=60)

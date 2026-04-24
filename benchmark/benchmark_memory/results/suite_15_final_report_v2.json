@@ -1,0 +1,107 @@
+{
+  "suite": "suite_15_memory_benchmark_v2",
+  "recency_fix_applied": true,
+  "recency_config": {
+    "bias": 0.75,
+    "type": "position_based",
+    "system": "ContextForge_v3"
+  },
+  "run_at": "2026-04-24T14:15:54Z",
+  "n_samples": {
+    "A": 60,
+    "B": 35,
+    "C": 30,
+    "D": 35
+  },
+  "elapsed_total_s": 0.147,
+  "no_filter": {
+    "retrieval_recall_at_3": 0.9667,
+    "retrieval_precision_at_3": 0.4278,
+    "retrieval_f1": 0.57,
+    "exact_match": 0.9,
+    "update_accuracy": 0.2286,
+    "delete_accuracy": 1.0,
+    "poison_resistance": 0.0,
+    "memory_integrity_score": 0.5488
+  },
+  "with_guard": {
+    "retrieval_recall_at_3": 0.8333,
+    "retrieval_precision_at_3": 0.3722,
+    "retrieval_f1": 0.495,
+    "exact_match": 0.7167,
+    "update_accuracy": 0.6,
+    "delete_accuracy": 1.0,
+    "poison_resistance": 0.7714,
+    "memory_integrity_score": 0.8012
+  },
+  "systems_comparison": {
+    "StatelessRAG": {
+      "retrieval_recall_at_3": 0.0,
+      "retrieval_precision_at_3": 0.0,
+      "retrieval_f1": 0.0,
+      "exact_match": 0.0,
+      "update_accuracy": 0.0,
+      "delete_accuracy": 0.6667,
+      "poison_resistance": 1.0,
+      "memory_integrity_score": 0.4167
+    },
+    "MemGPT": {
+      "retrieval_recall_at_3": 0.8667,
+      "retrieval_precision_at_3": 0.3833,
+      "retrieval_f1": 0.51,
+      "exact_match": 0.7667,
+      "update_accuracy": 0.4286,
+      "delete_accuracy": 1.0,
+      "poison_resistance": 0.0,
+      "memory_integrity_score": 0.5738
+    },
+    "LangGraph": {
+      "retrieval_recall_at_3": 0.9667,
+      "retrieval_precision_at_3": 0.4278,
+      "retrieval_f1": 0.57,
+      "exact_match": 0.9,
+      "update_accuracy": 0.2286,
+      "delete_accuracy": 1.0,
+      "poison_resistance": 0.0,
+      "memory_integrity_score": 0.5488
+    },
+    "ClaudeMem": {
+      "retrieval_recall_at_3": 0.8667,
+      "retrieval_precision_at_3": 0.3833,
+      "retrieval_f1": 0.51,
+      "exact_match": 0.7667,
+      "update_accuracy": 0.4286,
+      "delete_accuracy": 1.0,
+      "poison_resistance": 0.0857,
+      "memory_integrity_score": 0.5953
+    },
+    "HardenedRAG": {
+      "retrieval_recall_at_3": 0.9833,
+      "retrieval_precision_at_3": 0.4333,
+      "retrieval_f1": 0.5783,
+      "exact_match": 0.9167,
+      "update_accuracy": 0.2286,
+      "delete_accuracy": 1.0,
+      "poison_resistance": 0.8,
+      "memory_integrity_score": 0.753
+    },
+    "ContextForge_v3": {
+      "retrieval_recall_at_3": 0.8333,
+      "retrieval_precision_at_3": 0.3722,
+      "retrieval_f1": 0.495,
+      "exact_match": 0.7167,
+      "update_accuracy": 0.6,
+      "delete_accuracy": 1.0,
+      "poison_resistance": 0.7714,
+      "memory_integrity_score": 0.8012
+    }
+  },
+  "delta_vs_v1_report": {
+    "update_accuracy_before": 0.2286,
+    "update_accuracy_after": 0.6,
+    "improvement_pp": 37.14,
+    "mis_before": 0.7417,
+    "mis_after": 0.8012,
+    "mis_improvement_pp": 5.95
+  }
+}

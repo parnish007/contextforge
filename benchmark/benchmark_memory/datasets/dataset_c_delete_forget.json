@@ -1,0 +1,628 @@
+{
+  "name": "dataset_c_delete_forget",
+  "description": "Delete accuracy: 30 samples across 3 categories. Measures whether deleted memories are correctly excluded from retrieval.",
+  "version": "v1_suite15",
+  "count": 30,
+  "samples": [
+    {
+      "id": "C_001",
+      "category": "simple_delete",
+      "writes": [
+        "User's primary language preference is Java",
+        "User uses IntelliJ IDEA for Java development",
+        "User has 3 years of Java experience"
+      ],
+      "delete_targets": [
+        "Java"
+      ],
+      "query": "What programming language does the user prefer?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "Java"
+      ]
+    },
+    {
+      "id": "C_002",
+      "category": "simple_delete",
+      "writes": [
+        "User's home address is 42 Baker Street, London",
+        "User commutes to the office by tube",
+        "User's nearest tube station is Baker Street"
+      ],
+      "delete_targets": [
+        "Baker Street",
+        "address"
+      ],
+      "query": "What is the user's home address?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "Baker Street",
+        "42"
+      ]
+    },
+    {
+      "id": "C_003",
+      "category": "simple_delete",
+      "writes": [
+        "User's salary is \u00a3120,000 per year",
+        "User received a 15% raise in January 2026",
+        "User's total compensation including bonus is \u00a3140,000"
+      ],
+      "delete_targets": [
+        "salary",
+        "\u00a3",
+        "compensation"
+      ],
+      "query": "What is the user's salary?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "\u00a3120,000",
+        "salary",
+        "\u00a3140,000"
+      ]
+    },
+    {
+      "id": "C_004",
+      "category": "simple_delete",
+      "writes": [
+        "User's personal phone number is +44 7911 123456",
+        "User's work phone is +44 20 1234 5678",
+        "User prefers Slack for work communication"
+      ],
+      "delete_targets": [
+        "phone",
+        "+44"
+      ],
+      "query": "What is the user's phone number?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "+44",
+        "phone"
+      ]
+    },
+    {
+      "id": "C_005",
+      "category": "simple_delete",
+      "writes": [
+        "User's date of birth is 15 March 1990",
+        "User turned 36 in March 2026",
+        "User celebrates birthday with team lunch"
+      ],
+      "delete_targets": [
+        "date of birth",
+        "1990",
+        "birthday"
+      ],
+      "query": "When is the user's birthday?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "15 March",
+        "1990",
+        "birthday"
+      ]
+    },
+    {
+      "id": "C_006",
+      "category": "simple_delete",
+      "writes": [
+        "User's medical leave starts 2026-05-01 for 3 weeks",
+        "User is recovering from a planned surgery",
+        "Coverage during leave: Rohan Verma"
+      ],
+      "delete_targets": [
+        "medical",
+        "surgery",
+        "leave"
+      ],
+      "query": "When does the user's medical leave start?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "medical",
+        "surgery",
+        "2026-05-01"
+      ]
+    },
+    {
+      "id": "C_007",
+      "category": "simple_delete",
+      "writes": [
+        "User's personal email is arjun.personal@gmail.com",
+        "User's work email is arjun@techcorp.io",
+        "User checks personal email only outside work hours"
+      ],
+      "delete_targets": [
+        "personal email",
+        "gmail"
+      ],
+      "query": "What is the user's personal email address?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "gmail",
+        "personal email"
+      ]
+    },
+    {
+      "id": "C_008",
+      "category": "simple_delete",
+      "writes": [
+        "User's AWS access key is AKIAIOSFODNN7EXAMPLE",
+        "Key belongs to developer IAM role",
+        "Key was created 2026-01-10 with 90-day rotation"
+      ],
+      "delete_targets": [
+        "access key",
+        "AKIA",
+        "key"
+      ],
+      "query": "What is the user's AWS access key?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "AKIA",
+        "access key"
+      ]
+    },
+    {
+      "id": "C_009",
+      "category": "simple_delete",
+      "writes": [
+        "User's password manager master password hint is 'favourite childhood pet'",
+        "User uses 1Password for credential management",
+        "1Password emergency kit stored in safe deposit box"
+      ],
+      "delete_targets": [
+        "password",
+        "master password"
+      ],
+      "query": "What is the user's master password hint?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "password hint",
+        "childhood pet"
+      ]
+    },
+    {
+      "id": "C_010",
+      "category": "simple_delete",
+      "writes": [
+        "User's passport number is AB1234567",
+        "Passport expires 2029-08-15",
+        "User uses passport for international travel"
+      ],
+      "delete_targets": [
+        "passport"
+      ],
+      "query": "What is the user's passport number?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "AB1234567",
+        "passport"
+      ]
+    },
+    {
+      "id": "C_011",
+      "category": "credential_delete",
+      "writes": [
+        "Production database password: sup3r$ecret!2026",
+        "Database runs on PostgreSQL at db.prod.techcorp.io",
+        "Password rotated quarterly"
+      ],
+      "delete_targets": [
+        "password",
+        "sup3r"
+      ],
+      "query": "What is the production database password?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "sup3r",
+        "password",
+        "secret"
+      ]
+    },
+    {
+      "id": "C_012",
+      "category": "credential_delete",
+      "writes": [
+        "Stripe secret key: sk_live_abc123def456",
+        "Stripe used for payment processing in the checkout flow",
+        "Webhook secret: whsec_xyz789"
+      ],
+      "delete_targets": [
+        "sk_live",
+        "whsec",
+        "secret key",
+        "secret"
+      ],
+      "query": "What is the Stripe secret key?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "sk_live",
+        "whsec",
+        "secret"
+      ]
+    },
+    {
+      "id": "C_013",
+      "category": "credential_delete",
+      "writes": [
+        "GitHub personal access token: ghp_token123xyz",
+        "Token has repo and workflow scopes",
+        "Token expires 2026-12-31"
+      ],
+      "delete_targets": [
+        "token",
+        "ghp_"
+      ],
+      "query": "What is the user's GitHub access token?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "ghp_",
+        "token123"
+      ]
+    },
+    {
+      "id": "C_014",
+      "category": "credential_delete",
+      "writes": [
+        "Slack webhook URL: https://hooks.slack.com/services/T00/B00/abc123",
+        "Webhook posts alerts to #incidents channel",
+        "Webhook created by admin bot account"
+      ],
+      "delete_targets": [
+        "webhook URL",
+        "hooks.slack.com",
+        "services/T00"
+      ],
+      "query": "What is the Slack webhook URL?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "hooks.slack.com",
+        "T00",
+        "abc123"
+      ]
+    },
+    {
+      "id": "C_015",
+      "category": "credential_delete",
+      "writes": [
+        "SSH private key fingerprint: SHA256:abc123xyz for prod bastion",
+        "Bastion host IP: 10.0.0.5",
+        "SSH key pair name: techcorp-prod-bastion"
+      ],
+      "delete_targets": [
+        "private key",
+        "fingerprint",
+        "SHA256"
+      ],
+      "query": "What is the SSH key fingerprint for the production bastion?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "SHA256",
+        "fingerprint",
+        "abc123xyz"
+      ]
+    },
+    {
+      "id": "C_016",
+      "category": "credential_delete",
+      "writes": [
+        "OpenAI API key: sk-proj-xxxxxxxxxxxxxxxxxxxxx",
+        "API key used for embedding generation in search",
+        "Monthly token budget: $200"
+      ],
+      "delete_targets": [
+        "API key",
+        "sk-proj"
+      ],
+      "query": "What is the OpenAI API key?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "sk-proj",
+        "API key"
+      ]
+    },
+    {
+      "id": "C_017",
+      "category": "credential_delete",
+      "writes": [
+        "JWT signing secret: jwt_secret_do_not_share_hs256",
+        "JWT algorithm: HS256",
+        "Secret rotated every 90 days"
+      ],
+      "delete_targets": [
+        "signing secret",
+        "jwt_secret"
+      ],
+      "query": "What is the JWT signing secret?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "jwt_secret",
+        "signing secret"
+      ]
+    },
+    {
+      "id": "C_018",
+      "category": "credential_delete",
+      "writes": [
+        "Redis AUTH password: redis_auth_prod_2026",
+        "Redis runs on port 6379 with TLS enabled",
+        "Redis password set in environment variable REDIS_AUTH"
+      ],
+      "delete_targets": [
+        "AUTH password",
+        "redis_auth"
+      ],
+      "query": "What is the Redis AUTH password?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "redis_auth",
+        "AUTH password"
+      ]
+    },
+    {
+      "id": "C_019",
+      "category": "credential_delete",
+      "writes": [
+        "Grafana admin password: grafana_admin_TechCorp2026!",
+        "Grafana accessible at https://grafana.techcorp.io",
+        "Admin account used only for initial setup"
+      ],
+      "delete_targets": [
+        "admin password",
+        "grafana_admin"
+      ],
+      "query": "What is the Grafana admin password?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "grafana_admin",
+        "admin password"
+      ]
+    },
+    {
+      "id": "C_020",
+      "category": "credential_delete",
+      "writes": [
+        "Terraform Cloud API token: tfct_xxxxxxxxxxxx",
+        "Token scoped to TechCorp workspace",
+        "Token used by CI/CD pipeline for Terraform runs"
+      ],
+      "delete_targets": [
+        "API token",
+        "tfct_"
+      ],
+      "query": "What is the Terraform Cloud API token?",
+      "expected_empty": true,
+      "deleted_keywords": [
+        "tfct_",
+        "API token"
+      ]
+    },
+    {
+      "id": "C_021",
+      "category": "partial_delete",
+      "writes": [
+        "User's old email: arjun.old@example.com (no longer active)",
+        "User's current email: arjun@techcorp.io",
+        "User checks work email during business hours only"
+      ],
+      "delete_targets": [
+        "arjun.old@example.com",
+        "old email"
+      ],
+      "query": "What is the user's current email address?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "arjun@techcorp.io"
+      ],
+      "deleted_keywords": [
+        "arjun.old",
+        "old email"
+      ]
+    },
+    {
+      "id": "C_022",
+      "category": "partial_delete",
+      "writes": [
+        "Old database host: db.legacy.techcorp.io (decommissioned)",
+        "New database host: db.prod.techcorp.io",
+        "Migration completed 2026-02-28"
+      ],
+      "delete_targets": [
+        "legacy",
+        "decommissioned"
+      ],
+      "query": "What is the current database host?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "db.prod.techcorp.io"
+      ],
+      "deleted_keywords": [
+        "legacy",
+        "decommissioned"
+      ]
+    },
+    {
+      "id": "C_023",
+      "category": "partial_delete",
+      "writes": [
+        "Previous tech lead was Vivek Kumar (left company)",
+        "Current tech lead is Arjun Sharma",
+        "Arjun took over as tech lead in April 2026"
+      ],
+      "delete_targets": [
+        "Vivek Kumar",
+        "left company"
+      ],
+      "query": "Who is the current tech lead?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "Arjun Sharma"
+      ],
+      "deleted_keywords": [
+        "Vivek",
+        "left company"
+      ]
+    },
+    {
+      "id": "C_024",
+      "category": "partial_delete",
+      "writes": [
+        "Deprecated endpoint: /api/v1/users/legacy (removed)",
+        "Current endpoint: /api/v2/users",
+        "V1 removed from service after 6-month deprecation period"
+      ],
+      "delete_targets": [
+        "deprecated",
+        "legacy",
+        "removed",
+        "v1/users"
+      ],
+      "query": "What is the current users API endpoint?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "/api/v2/users"
+      ],
+      "deleted_keywords": [
+        "legacy",
+        "deprecated",
+        "v1"
+      ]
+    },
+    {
+      "id": "C_025",
+      "category": "partial_delete",
+      "writes": [
+        "Previous monitoring tool: DataDog (contract ended March 2026)",
+        "Current monitoring tool: Prometheus + Grafana",
+        "DataDog dashboards exported before contract end"
+      ],
+      "delete_targets": [
+        "DataDog",
+        "contract ended"
+      ],
+      "query": "What monitoring tool is the team using now?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "Prometheus",
+        "Grafana"
+      ],
+      "deleted_keywords": [
+        "DataDog",
+        "contract"
+      ]
+    },
+    {
+      "id": "C_026",
+      "category": "partial_delete",
+      "writes": [
+        "Deprecated API key: api_key_v1_deprecated_2025",
+        "Active API key: api_key_v2_2026 (current)",
+        "V1 key expired 2026-01-01"
+      ],
+      "delete_targets": [
+        "deprecated",
+        "v1_deprecated",
+        "expired"
+      ],
+      "query": "What is the active API key?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "api_key_v2_2026"
+      ],
+      "deleted_keywords": [
+        "deprecated",
+        "v1_deprecated"
+      ]
+    },
+    {
+      "id": "C_027",
+      "category": "partial_delete",
+      "writes": [
+        "Old Slack workspace: techcorp-old.slack.com (archived)",
+        "Current Slack workspace: techcorp.slack.com",
+        "All messages migrated to current workspace"
+      ],
+      "delete_targets": [
+        "techcorp-old",
+        "archived"
+      ],
+      "query": "What is the current Slack workspace URL?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "techcorp.slack.com"
+      ],
+      "deleted_keywords": [
+        "techcorp-old",
+        "archived"
+      ]
+    },
+    {
+      "id": "C_028",
+      "category": "partial_delete",
+      "writes": [
+        "Previous on-call schedule: weekly rotation among 3 engineers",
+        "Current on-call schedule: bi-weekly rotation among 5 engineers",
+        "Change made in March 2026 to reduce burnout"
+      ],
+      "delete_targets": [
+        "previous",
+        "weekly rotation among 3"
+      ],
+      "query": "What is the current on-call rotation schedule?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "bi-weekly",
+        "5 engineers"
+      ],
+      "deleted_keywords": [
+        "3 engineers",
+        "previous"
+      ]
+    },
+    {
+      "id": "C_029",
+      "category": "partial_delete",
+      "writes": [
+        "Decommissioned service: legacy-notifier (replaced by notification-v2)",
+        "Active service: notification-v2 (handles all notification types)",
+        "legacy-notifier shutdown completed 2026-03-15"
+      ],
+      "delete_targets": [
+        "legacy-notifier",
+        "decommissioned",
+        "shutdown"
+      ],
+      "query": "What is the active notification service?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "notification-v2"
+      ],
+      "deleted_keywords": [
+        "legacy-notifier",
+        "decommissioned"
+      ]
+    },
+    {
+      "id": "C_030",
+      "category": "partial_delete",
+      "writes": [
+        "Old Kubernetes namespace: techcorp-v1 (deprecated)",
+        "Active Kubernetes namespace: techcorp-prod",
+        "V1 namespace removed after migration completed"
+      ],
+      "delete_targets": [
+        "techcorp-v1",
+        "deprecated",
+        "removed"
+      ],
+      "query": "What is the active Kubernetes namespace?",
+      "expected_empty": false,
+      "expected_survivors": [
+        "techcorp-prod"
+      ],
+      "deleted_keywords": [
+        "techcorp-v1",
+        "deprecated"
+      ]
+    }
+  ]
+}

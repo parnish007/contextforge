@@ -65,6 +65,15 @@ DCI_FIXED_BUDGET: int = int(os.getenv("DCI_FIXED_BUDGET", "1500"))
 DCI_ADAPTIVE_CAP: int = int(os.getenv("DCI_ADAPTIVE_CAP", "8000"))
 DCI_ADAPTIVE_FRACTION: float = float(os.getenv("DCI_ADAPTIVE_FRACTION", "0.25"))
 
+# ── Recency weighting ─────────────────────────────────────────────────────────
+# When enabled, BM25 scores are multiplied by exp(-lambda * age_seconds) so
+# freshly-written chunks rank above older ones with equal keyword overlap.
+# Set RECENCY_WEIGHTING_ENABLED=false to restore pure-BM25 (backward-compatible).
+RECENCY_WEIGHTING_ENABLED: bool = os.getenv(
+    "RECENCY_WEIGHTING_ENABLED", "true"
+).lower() in ("1", "true", "yes")
+RECENCY_DECAY_LAMBDA: float = float(os.getenv("RECENCY_DECAY_LAMBDA", "0.0001"))
+
 # ── Model context-window lookup table ────────────────────────────────────────
 # Keys: lowercase substrings of model identifiers (first match wins, longest first)
 # Values: context window size in tokens

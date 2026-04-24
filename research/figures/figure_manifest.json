@@ -52,5 +52,84 @@
       "section": "\u00a77.4",
       "data_source": "research/benchmark_results/external_abr.json"
     }
+  ],
+  "fpr_fix_figures": [
+    {
+      "id": "fig13",
+      "filename": "figure_13_mode_comparison",
+      "caption": "Suite 14 — Mode Comparison: FPR & Recall by Dataset (PAPER vs EXPERIMENT vs 5 Baselines)",
+      "section": "§7.6",
+      "script": "research/figures/gen_fpr_fix_figures.py",
+      "data_source": "benchmark/logs/suite_14_fpr_fix_eval.json"
+    },
+    {
+      "id": "fig14",
+      "filename": "figure_14_entropy_distributions_v2",
+      "caption": "Entropy Distributions: Word-Level vs Char-Level by Attack Class",
+      "section": "§7.6",
+      "script": "research/figures/gen_fpr_fix_figures.py",
+      "data_source": "benchmark/logs/suite_14_fpr_fix_eval.json"
+    },
+    {
+      "id": "fig15",
+      "filename": "figure_15_edge_trigger_breakdown",
+      "caption": "Edge-Case False-Positive Trigger Breakdown by Mode",
+      "section": "§7.6",
+      "script": "research/figures/gen_fpr_fix_figures.py",
+      "data_source": "benchmark/logs/suite_14_fpr_fix_eval.json"
+    }
+  ],
+  "suite15_v2_figures": [
+    {
+      "id": "fig16v2",
+      "filename": "fig_16_memory_radar_v2",
+      "caption": "Suite 15 v2 — Memory Integrity Score Radar (recency weighting fix applied)",
+      "section": "§7.9",
+      "script": "benchmark/benchmark_memory/figures/gen_memory_figures_v2.py",
+      "data_source": "benchmark/benchmark_memory/results/suite_15_final_report_v2.json",
+      "outputs": [
+        "benchmark/benchmark_memory/figures/output/fig_16_memory_radar_v2.png",
+        "benchmark/benchmark_memory/figures/output/fig_16_memory_radar_v2.pdf",
+        "research/figures/output/fig_16_memory_radar_v2.png"
+      ]
+    },
+    {
+      "id": "fig17v2",
+      "filename": "fig_17_memory_bars_v2",
+      "caption": "Suite 15 v2 — Memory Quality Benchmark: 5 Metrics × 6 Systems",
+      "section": "§7.9",
+      "script": "benchmark/benchmark_memory/figures/gen_memory_figures_v2.py",
+      "data_source": "benchmark/benchmark_memory/results/suite_15_final_report_v2.json",
+      "outputs": [
+        "benchmark/benchmark_memory/figures/output/fig_17_memory_bars_v2.png",
+        "benchmark/benchmark_memory/figures/output/fig_17_memory_bars_v2.pdf",
+        "research/figures/output/fig_17_memory_bars_v2.png"
+      ]
+    },
+    {
+      "id": "fig18v2",
+      "filename": "fig_18_memory_heatmap_v2",
+      "caption": "Suite 15 v2 — System × Metric Performance Heatmap",
+      "section": "§7.9",
+      "script": "benchmark/benchmark_memory/figures/gen_memory_figures_v2.py",
+      "data_source": "benchmark/benchmark_memory/results/suite_15_final_report_v2.json",
+      "outputs": [
+        "benchmark/benchmark_memory/figures/output/fig_18_memory_heatmap_v2.png",
+        "benchmark/benchmark_memory/figures/output/fig_18_memory_heatmap_v2.pdf",
+        "research/figures/output/fig_18_memory_heatmap_v2.png"
+      ]
+    },
+    {
+      "id": "fig19",
+      "filename": "fig_19_security_tradeoff",
+      "caption": "Figure 19 — Security Trade-off Curve: FPR vs Adversarial Block Rate (Suite 14)",
+      "section": "§7.2",
+      "script": "research/figures/gen_security_tradeoff_fig19.py",
+      "data_source": "results/v3_security_summary.json",
+      "outputs": [
+        "research/figures/output/fig_19_security_tradeoff.png",
+        "research/figures/output/fig_19_security_tradeoff.pdf"
+      ]
+    }
   ]
 }

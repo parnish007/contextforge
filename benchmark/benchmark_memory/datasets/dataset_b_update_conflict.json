@@ -1,0 +1,628 @@
+{
+  "name": "dataset_b_update_conflict",
+  "description": "Update accuracy: 35 samples across 3 categories. initial_writes superseded by update_writes. Measures stale-free retrieval.",
+  "version": "v1_suite15",
+  "count": 35,
+  "samples": [
+    {
+      "id": "B_001",
+      "category": "preference_change",
+      "initial_writes": [
+        "User prefers Python for all backend work"
+      ],
+      "update_writes": [
+        "User switched to Go for all new backend services as of 2026"
+      ],
+      "query": "What language does the user use for backend services?",
+      "expected_keywords": [
+        "Go"
+      ],
+      "stale_keywords": [
+        "Python"
+      ]
+    },
+    {
+      "id": "B_002",
+      "category": "preference_change",
+      "initial_writes": [
+        "User's editor of choice is VS Code"
+      ],
+      "update_writes": [
+        "User migrated to Neovim full-time in March 2026"
+      ],
+      "query": "What code editor does the user use?",
+      "expected_keywords": [
+        "Neovim"
+      ],
+      "stale_keywords": [
+        "VS Code"
+      ]
+    },
+    {
+      "id": "B_003",
+      "category": "preference_change",
+      "initial_writes": [
+        "User uses poetry for Python dependency management"
+      ],
+      "update_writes": [
+        "User switched from poetry to uv for significantly faster installs"
+      ],
+      "query": "What Python dependency manager does the user prefer?",
+      "expected_keywords": [
+        "uv"
+      ],
+      "stale_keywords": [
+        "poetry"
+      ]
+    },
+    {
+      "id": "B_004",
+      "category": "preference_change",
+      "initial_writes": [
+        "User stores infrastructure state in a local terraform backend"
+      ],
+      "update_writes": [
+        "User migrated Terraform state to S3 backend with DynamoDB locking"
+      ],
+      "query": "Where does the user store Terraform state?",
+      "expected_keywords": [
+        "S3"
+      ],
+      "stale_keywords": [
+        "local"
+      ]
+    },
+    {
+      "id": "B_005",
+      "category": "preference_change",
+      "initial_writes": [
+        "User uses Prometheus with Thanos for long-term metrics storage"
+      ],
+      "update_writes": [
+        "Team migrated from Thanos to Grafana Mimir for better scalability"
+      ],
+      "query": "What long-term metrics storage does the team use?",
+      "expected_keywords": [
+        "Mimir"
+      ],
+      "stale_keywords": [
+        "Thanos"
+      ]
+    },
+    {
+      "id": "B_006",
+      "category": "preference_change",
+      "initial_writes": [
+        "User's primary CI/CD platform is Jenkins"
+      ],
+      "update_writes": [
+        "User migrated CI/CD from Jenkins to GitHub Actions in Q1 2026"
+      ],
+      "query": "What CI/CD platform does the user use?",
+      "expected_keywords": [
+        "GitHub Actions"
+      ],
+      "stale_keywords": [
+        "Jenkins"
+      ]
+    },
+    {
+      "id": "B_007",
+      "category": "preference_change",
+      "initial_writes": [
+        "Team uses Redis for distributed rate limiting"
+      ],
+      "update_writes": [
+        "Team replaced Redis rate limiter with Kong Gateway built-in rate limiting"
+      ],
+      "query": "How does the team implement rate limiting?",
+      "expected_keywords": [
+        "Kong"
+      ],
+      "stale_keywords": [
+        "Redis"
+      ]
+    },
+    {
+      "id": "B_008",
+      "category": "preference_change",
+      "initial_writes": [
+        "User writes API documentation manually in Confluence"
+      ],
+      "update_writes": [
+        "API docs now auto-generated from FastAPI OpenAPI spec and published to Stoplight"
+      ],
+      "query": "How is API documentation generated?",
+      "expected_keywords": [
+        "auto-generated",
+        "FastAPI",
+        "OpenAPI"
+      ],
+      "stale_keywords": [
+        "Confluence",
+        "manually"
+      ]
+    },
+    {
+      "id": "B_009",
+      "category": "preference_change",
+      "initial_writes": [
+        "Team runs standup meetings every morning at 9am"
+      ],
+      "update_writes": [
+        "Team switched to async standup via Slack bot; no daily meeting"
+      ],
+      "query": "How does the team run standups?",
+      "expected_keywords": [
+        "async",
+        "Slack"
+      ],
+      "stale_keywords": [
+        "meeting",
+        "9am"
+      ]
+    },
+    {
+      "id": "B_010",
+      "category": "preference_change",
+      "initial_writes": [
+        "User uses Sentry for error tracking"
+      ],
+      "update_writes": [
+        "User migrated error tracking from Sentry to OpenTelemetry-based solution with Grafana Tempo"
+      ],
+      "query": "What does the user use for error tracking now?",
+      "expected_keywords": [
+        "OpenTelemetry",
+        "Grafana Tempo"
+      ],
+      "stale_keywords": [
+        "Sentry"
+      ]
+    },
+    {
+      "id": "B_011",
+      "category": "preference_change",
+      "initial_writes": [
+        "User's primary development machine is a ThinkPad X1 Carbon with Ubuntu"
+      ],
+      "update_writes": [
+        "User switched to MacBook Pro M3 Max in January 2026"
+      ],
+      "query": "What computer does the user develop on?",
+      "expected_keywords": [
+        "MacBook",
+        "M3"
+      ],
+      "stale_keywords": [
+        "ThinkPad",
+        "Ubuntu"
+      ]
+    },
+    {
+      "id": "B_012",
+      "category": "preference_change",
+      "initial_writes": [
+        "User is pursuing the AWS Solutions Architect Associate certification"
+      ],
+      "update_writes": [
+        "User completed AWS SAA certification in March 2026; now pursuing CKA (Kubernetes)"
+      ],
+      "query": "What certification is the user currently pursuing?",
+      "expected_keywords": [
+        "CKA",
+        "Kubernetes"
+      ],
+      "stale_keywords": [
+        "AWS SAA",
+        "Solutions Architect"
+      ]
+    },
+    {
+      "id": "B_013",
+      "category": "role_change",
+      "initial_writes": [
+        "User is a mid-level software engineer at TechCorp"
+      ],
+      "update_writes": [
+        "User was promoted to senior software engineer at TechCorp in April 2026"
+      ],
+      "query": "What is the user's current level at TechCorp?",
+      "expected_keywords": [
+        "senior"
+      ],
+      "stale_keywords": [
+        "mid-level"
+      ]
+    },
+    {
+      "id": "B_014",
+      "category": "role_change",
+      "initial_writes": [
+        "User works on the Product team building user-facing features"
+      ],
+      "update_writes": [
+        "User transferred to Platform Infrastructure team in February 2026"
+      ],
+      "query": "What team does the user work on?",
+      "expected_keywords": [
+        "Platform Infrastructure"
+      ],
+      "stale_keywords": [
+        "Product team"
+      ]
+    },
+    {
+      "id": "B_015",
+      "category": "role_change",
+      "initial_writes": [
+        "User is an individual contributor with no direct reports"
+      ],
+      "update_writes": [
+        "User became tech lead for a 3-person sub-team in March 2026"
+      ],
+      "query": "What is the user's current role?",
+      "expected_keywords": [
+        "tech lead"
+      ],
+      "stale_keywords": [
+        "individual contributor"
+      ]
+    },
+    {
+      "id": "B_016",
+      "category": "role_change",
+      "initial_writes": [
+        "User's manager is Priya Mehta"
+      ],
+      "update_writes": [
+        "User now reports to Rohan Verma after Priya Mehta's departure"
+      ],
+      "query": "Who is the user's current manager?",
+      "expected_keywords": [
+        "Rohan Verma"
+      ],
+      "stale_keywords": [
+        "Priya Mehta"
+      ]
+    },
+    {
+      "id": "B_017",
+      "category": "role_change",
+      "initial_writes": [
+        "User is on-call for the API gateway service"
+      ],
+      "update_writes": [
+        "User is no longer on-call for API gateway; now primary for the auth service"
+      ],
+      "query": "What service is the user primary on-call for?",
+      "expected_keywords": [
+        "auth service"
+      ],
+      "stale_keywords": [
+        "API gateway"
+      ]
+    },
+    {
+      "id": "B_018",
+      "category": "role_change",
+      "initial_writes": [
+        "User works in Bengaluru office 3 days per week"
+      ],
+      "update_writes": [
+        "User is now fully remote after relocating to Pune in March 2026"
+      ],
+      "query": "Where is the user based and how do they work?",
+      "expected_keywords": [
+        "Pune",
+        "remote"
+      ],
+      "stale_keywords": [
+        "Bengaluru",
+        "office"
+      ]
+    },
+    {
+      "id": "B_019",
+      "category": "role_change",
+      "initial_writes": [
+        "User focuses on backend services written in Python"
+      ],
+      "update_writes": [
+        "User expanded scope to include SRE responsibilities: toil reduction, SLO management"
+      ],
+      "query": "What is the user's current primary responsibility?",
+      "expected_keywords": [
+        "SRE",
+        "reliability",
+        "SLO"
+      ],
+      "stale_keywords": [
+        "backend Python"
+      ]
+    },
+    {
+      "id": "B_020",
+      "category": "role_change",
+      "initial_writes": [
+        "User mentors 2 junior engineers on the team"
+      ],
+      "update_writes": [
+        "User now mentors 4 engineers after the team doubled in Q1 2026"
+      ],
+      "query": "How many engineers does the user mentor?",
+      "expected_keywords": [
+        "4"
+      ],
+      "stale_keywords": [
+        "2"
+      ]
+    },
+    {
+      "id": "B_021",
+      "category": "role_change",
+      "initial_writes": [
+        "User owns the notification microservice"
+      ],
+      "update_writes": [
+        "Notification service ownership transferred to Ananya Rao; user now owns the search service"
+      ],
+      "query": "What service does the user currently own?",
+      "expected_keywords": [
+        "search service"
+      ],
+      "stale_keywords": [
+        "notification"
+      ]
+    },
+    {
+      "id": "B_022",
+      "category": "role_change",
+      "initial_writes": [
+        "User is participating in the on-call rotation for the first time"
+      ],
+      "update_writes": [
+        "User has completed 6 months of on-call; now trains new engineers on incident response"
+      ],
+      "query": "What is the user's on-call experience level now?",
+      "expected_keywords": [
+        "6 months",
+        "trains",
+        "experienced"
+      ],
+      "stale_keywords": [
+        "first time"
+      ]
+    },
+    {
+      "id": "B_023",
+      "category": "role_change",
+      "initial_writes": [
+        "User attends weekly architecture review as a participant"
+      ],
+      "update_writes": [
+        "User now chairs the weekly architecture review meeting"
+      ],
+      "query": "What is the user's role in architecture reviews?",
+      "expected_keywords": [
+        "chairs",
+        "leads",
+        "chair"
+      ],
+      "stale_keywords": [
+        "participant"
+      ]
+    },
+    {
+      "id": "B_024",
+      "category": "role_change",
+      "initial_writes": [
+        "User's sprint velocity is approximately 20 story points per sprint"
+      ],
+      "update_writes": [
+        "After becoming tech lead, user's individual velocity is 10 points; team velocity is 80"
+      ],
+      "query": "What is the user's current individual sprint velocity?",
+      "expected_keywords": [
+        "10 points",
+        "10"
+      ],
+      "stale_keywords": [
+        "20"
+      ]
+    },
+    {
+      "id": "B_025",
+      "category": "tech_change",
+      "initial_writes": [
+        "Project runs Python 3.10 across all services"
+      ],
+      "update_writes": [
+        "All services upgraded to Python 3.12 in Q1 2026"
+      ],
+      "query": "What Python version does the project use?",
+      "expected_keywords": [
+        "3.12"
+      ],
+      "stale_keywords": [
+        "3.10"
+      ]
+    },
+    {
+      "id": "B_026",
+      "category": "tech_change",
+      "initial_writes": [
+        "PostgreSQL version is 14"
+      ],
+      "update_writes": [
+        "Database upgraded from PostgreSQL 14 to PostgreSQL 16 in March 2026"
+      ],
+      "query": "What PostgreSQL version is running?",
+      "expected_keywords": [
+        "16",
+        "PostgreSQL 16"
+      ],
+      "stale_keywords": [
+        "14",
+        "PostgreSQL 14"
+      ]
+    },
+    {
+      "id": "B_027",
+      "category": "tech_change",
+      "initial_writes": [
+        "Kafka cluster runs version 2.8"
+      ],
+      "update_writes": [
+        "Kafka upgraded to version 3.6 with KRaft mode (ZooKeeper removed)"
+      ],
+      "query": "What Kafka version is the cluster running?",
+      "expected_keywords": [
+        "3.6"
+      ],
+      "stale_keywords": [
+        "2.8",
+        "ZooKeeper"
+      ]
+    },
+    {
+      "id": "B_028",
+      "category": "tech_change",
+      "initial_writes": [
+        "JWT access token expiry is 30 minutes"
+      ],
+      "update_writes": [
+        "JWT access token expiry reduced to 15 minutes after security review"
+      ],
+      "query": "How long do JWT access tokens last?",
+      "expected_keywords": [
+        "15 minutes"
+      ],
+      "stale_keywords": [
+        "30 minutes"
+      ]
+    },
+    {
+      "id": "B_029",
+      "category": "tech_change",
+      "initial_writes": [
+        "Redis cache TTL for user sessions is 24 hours"
+      ],
+      "update_writes": [
+        "User session TTL reduced from 24 hours to 4 hours for security"
+      ],
+      "query": "What is the current Redis session TTL?",
+      "expected_keywords": [
+        "4 hours"
+      ],
+      "stale_keywords": [
+        "24 hours"
+      ]
+    },
+    {
+      "id": "B_030",
+      "category": "tech_change",
+      "initial_writes": [
+        "Kubernetes cluster runs version 1.27"
+      ],
+      "update_writes": [
+        "Kubernetes upgraded to 1.29 with auto-upgrade enabled"
+      ],
+      "query": "What Kubernetes version is the cluster running?",
+      "expected_keywords": [
+        "1.29"
+      ],
+      "stale_keywords": [
+        "1.27"
+      ]
+    },
+    {
+      "id": "B_031",
+      "category": "tech_change",
+      "initial_writes": [
+        "Default pod CPU request is 0.5 cores"
+      ],
+      "update_writes": [
+        "CPU requests standardized to 0.25 cores to improve bin packing"
+      ],
+      "query": "What is the current default pod CPU request?",
+      "expected_keywords": [
+        "0.25"
+      ],
+      "stale_keywords": [
+        "0.5"
+      ]
+    },
+    {
+      "id": "B_032",
+      "category": "tech_change",
+      "initial_writes": [
+        "Log retention in Elasticsearch is 30 days"
+      ],
+      "update_writes": [
+        "Log retention reduced to 14 days to control storage costs"
+      ],
+      "query": "How long are logs retained?",
+      "expected_keywords": [
+        "14 days"
+      ],
+      "stale_keywords": [
+        "30 days"
+      ]
+    },
+    {
+      "id": "B_033",
+      "category": "tech_change",
+      "initial_writes": [
+        "Health check endpoint is /health"
+      ],
+      "update_writes": [
+        "Health check endpoint changed to /api/v1/health to align with API versioning"
+      ],
+      "query": "What is the current health check endpoint?",
+      "expected_keywords": [
+        "/api/v1/health"
+      ],
+      "stale_keywords": [
+        "/health"
+      ]
+    },
+    {
+      "id": "B_034",
+      "category": "tech_change",
+      "initial_writes": [
+        "Deployment frequency is once per week on Wednesdays"
+      ],
+      "update_writes": [
+        "Team moved to continuous deployment; deploys happen on every merged PR"
+      ],
+      "query": "How often does the team deploy?",
+      "expected_keywords": [
+        "continuous",
+        "every PR",
+        "merged PR"
+      ],
+      "stale_keywords": [
+        "Wednesday",
+        "once per week"
+      ]
+    },
+    {
+      "id": "B_035",
+      "category": "tech_change",
+      "initial_writes": [
+        "API rate limit is 100 requests per minute per user"
+      ],
+      "update_writes": [
+        "Rate limit increased to 500 requests per minute after capacity review"
+      ],
+      "query": "What is the current API rate limit per user?",
+      "expected_keywords": [
+        "500"
+      ],
+      "stale_keywords": [
+        "100"
+      ]
+    }
+  ]
+}

@@ -49,6 +49,7 @@ from __future__ import annotations
 import asyncio
 import dataclasses
 import hashlib
+import math
 import os
 import time
 from collections import OrderedDict
@@ -63,7 +64,12 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.retrieval.local_indexer import LocalIndexer
-from src.config.dci_config import get_dci_config, CONTEXT_BUDGET_MODE
+from src.config.dci_config import (
+    get_dci_config,
+    CONTEXT_BUDGET_MODE,
+    RECENCY_WEIGHTING_ENABLED,
+    RECENCY_DECAY_LAMBDA,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -77,6 +83,7 @@ class ContextChunk:
     text:      str        # chunk text
     score:     float      # cosine similarity score (0.0–1.0)
     origin:    str        # "local_index" | "h_rag" | "l1_cache"
+    write_timestamp: float = field(default_factory=time.time)  # unix epoch of write
     chunk_hash: str = field(init=False)
 
     def __post_init__(self) -> None:
@@ -316,6 +323,16 @@ class JITLibrarian:
                     origin = "h_rag",
                 ))
 
+        # 4. Apply recency weighting (if enabled) before merge-sort.
+        # final_score = bm25_score * exp(-lambda * age_seconds)
+        # Chunks without a write_timestamp (age=0) receive no penalty.
+        if RECENCY_WEIGHTING_ENABLED:
+            now = time.time()
+            lambda_ = RECENCY_DECAY_LAMBDA
+            for chunk in local_chunks + graph_chunks:
+                age = max(0.0, now - chunk.write_timestamp)
+                chunk.score *= math.exp(-lambda_ * age)
+
         # 4. Merge + deduplicate by chunk_hash
         all_chunks: list[ContextChunk] = []
         seen_hashes: set[str] = set()
@@ -452,6 +469,10 @@ def get_jit_librarian(
     token_budget         : Explicit override; None = resolve from dci_config.
     model_context_window : Window size for adaptive/model_aware budget modes.
     model_name           : Model string for automatic window lookup.
+
+    Recency weighting is controlled globally via RECENCY_WEIGHTING_ENABLED
+    and RECENCY_DECAY_LAMBDA env vars (see src/config/dci_config.py).
+    Set RECENCY_WEIGHTING_ENABLED=false for pure-BM25 (backward-compatible).
     """
     global _singleton
     if _singleton is None:

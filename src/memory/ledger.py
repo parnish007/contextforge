@@ -67,7 +67,9 @@ def _get_perplexity_gate():
     if _perplexity_gate is None:
         try:
             from src.security.perplexity_gate import get_perplexity_gate
-            _perplexity_gate = get_perplexity_gate()
+            cf_mode    = os.getenv("CF_MODE", "paper").lower()
+            env_enable = os.getenv("ENABLE_PERPLEXITY_GATE", "false").lower() in ("1", "true", "yes")
+            _perplexity_gate = get_perplexity_gate(enabled=cf_mode == "experiment" or env_enable)
         except Exception:
             pass
     return _perplexity_gate
@@ -190,12 +192,62 @@ class ReviewerGuard:
         "api", "key", "keys", "token", "tokens", "secret", "credential",
     })
 
-    # Dual-signal entropy + LZ density gate thresholds
-    _H_THRESHOLD: float = 3.5    # bits — Shannon entropy gate
-    _LZ_MIN_DENSITY: float = 0.60  # LZ compression density — below = repetition attack
+    # ── PAPER / EXPERIMENT mode toggle ──────────────────────────────────
+    # CF_MODE=paper      (default) — exact paper thresholds, backward-compatible
+    # CF_MODE=experiment — multi-trigger OR-gate: entropy path OR intent path OR
+    #                      perplexity path, each independently sufficient to block.
+    #                      Replaces the broken soft-blend (v2) where W_E*flag +
+    #                      W_K*score could never reach threshold when flag=0.
+    _CF_MODE: str        = os.getenv("CF_MODE", "paper").lower()
+    _ENTROPY_MODE: str   = os.getenv("CF_ENTROPY_MODE",
+                               "char" if _CF_MODE == "experiment" else "word")
+    # H* per entropy mode:
+    #   word-level : paper H* = 3.5 bits  (µ_benign ≈ 2.74, internal-corpus calibration)
+    #   char-level : experiment H* = 4.8 bits  (µ_benign ≈ 4.2 bits/char)
+    _H_THRESHOLD: float  = float(os.getenv("CF_H_THRESHOLD",
+                               "4.8" if _ENTROPY_MODE == "char" else "3.5"))
+    _LZ_MIN_DENSITY: float = 0.60
+    # Intent-path threshold for EXPERIMENT multi-trigger mode (v3).
+    # An intent_score >= this value independently triggers a block,
+    # regardless of entropy level.  0.70 chosen so that injection-pattern
+    # matches (0.80-0.95) and high charter-overlap (>= 70% keyword hit rate)
+    # both trigger independently without blending.
+    _INTENT_THRESHOLD: float = float(os.getenv("CF_INTENT_THRESHOLD", "0.70"))
+
+    # Strong adversarial-intent patterns — each maps to a confidence score [0,1].
+    # Ordered from most-specific to broadest.  Evaluated on lowercased text_blob.
+    # These cover: prompt injection, role-override, safety bypass, data exfiltration,
+    # policy violation, and explicit jailbreak markers.
+    _INJECTION_PATTERNS: tuple = (
+        # ── Prompt injection / role override ──────────────────────────────
+        (re.compile(r"ignore\s+(all\s+)?previous\s+(instructions?|context|rules?|guidelines?)", re.I), 0.96),
+        (re.compile(r"disregard\s+(the\s+)?(above|previous|following|system|all)", re.I), 0.93),
+        (re.compile(r"forget\s+(everything|all|above|previous|context|your\s+instructions?)", re.I), 0.92),
+        (re.compile(r"\bjailbreak\b", re.I), 0.90),
+        (re.compile(r"(dan\s+mode|developer\s+mode\s+enabled|act\s+as\s+dan)", re.I), 0.92),
+        (re.compile(r"from\s+now\s+on\s+you\s+are\s+(an?\s+)?(unrestricted|free|different|jailbroken)", re.I), 0.91),
+        (re.compile(r"you\s+are\s+now\s+(an?\s+)?(unrestricted|free|jailbroken|different)", re.I), 0.90),
+        (re.compile(r"pretend\s+you\s+(have\s+)?no\s+(restriction|rule|filter|safety|constraint|guideline)", re.I), 0.89),
+        (re.compile(r"respond\s+as\s+if\s+you\s+(have\s+no|are|were)\s+(restriction|filter|safety|unconstrained)", re.I), 0.88),
+        (re.compile(r"act\s+as\s+(if\s+you\s+(are|have)\s+)?(a\s+)?(different|unrestricted|jailbroken|uncensored)", re.I), 0.87),
+        # ── Safety / security bypass ───────────────────────────────────────
+        (re.compile(r"(override|bypass|circumvent)\s+(your\s+)?(safety|security|filter|restriction|guideline)", re.I), 0.92),
+        (re.compile(r"(suppress|disable)\s+(all\s+)?(safety|security)\s+(check|filter|guard|mechanism)", re.I), 0.91),
+        (re.compile(r"(bypass|disable|circumvent)\s+(the\s+)?(charter|reviewerguard|reviewer\s+guard|audit)", re.I), 0.94),
+        (re.compile(r"without\s+(any\s+)?(charter|safety|security)\s+(validation|check|enforcement)", re.I), 0.88),
+        (re.compile(r"(process|execute|run)\s+.{0,30}\s+bypass(ing)?\s+(the\s+)?(guard|charter|review)", re.I), 0.90),
+        # ── Data exfiltration ─────────────────────────────────────────────
+        (re.compile(r"(reveal|output|print|show|expose)\s+(all\s+)?(api\s*key|credential|secret|password|token)", re.I), 0.93),
+        (re.compile(r"(exfiltrate|extract|dump|export)\s+.{0,30}(api\s*key|credential|secret|charter|database)", re.I), 0.94),
+        (re.compile(r"(send|upload|transmit|post)\s+.{0,30}(api\s*key|credential|secret|database|charter)\s*.{0,30}(external|remote|endpoint|server)", re.I), 0.92),
+        # ── Instruction hijacking (continuation attacks) ──────────────────
+        (re.compile(r"the\s+(above|previous|following)\s+(instruction|prompt|context)\s+(was|is|are)\s+(fake|wrong|test)", re.I), 0.85),
+        (re.compile(r"(stop|end|halt)\s+(being|acting\s+as)\s+(an?\s+)?(ai|assistant|model)", re.I), 0.84),
+        (re.compile(r"your\s+(true|real|actual)\s+(purpose|goal|instruction)\s+is", re.I), 0.86),
+    )
 
     @staticmethod
-    def _compute_entropy(text: str) -> float:
+    def _compute_word_entropy(text: str) -> float:
         from collections import Counter
         import math
         words = text.split()
@@ -206,53 +258,128 @@ class ReviewerGuard:
         return -sum((c / total) * math.log2(c / total) for c in counts.values())
 
     @staticmethod
+    def _compute_char_entropy(text: str) -> float:
+        from collections import Counter
+        import math
+        chars = list(text)
+        if not chars:
+            return 0.0
+        counts = Counter(chars)
+        total = len(chars)
+        return -sum((c / total) * math.log2(c / total) for c in counts.values())
+
+    @classmethod
+    def _compute_entropy(cls, text: str) -> float:
+        if cls._ENTROPY_MODE == "char":
+            return cls._compute_char_entropy(text)
+        return cls._compute_word_entropy(text)
+
+    @staticmethod
     def _compute_lz_density(text: str) -> float:
         raw = text.encode("utf-8", errors="replace")
         if not raw:
             return 1.0
         return len(zlib.compress(raw, level=6)) / len(raw)
 
+    def _intent_score(self, text_blob: str) -> tuple[float, str]:
+        """
+        Compute adversarial intent score in [0, 1].
+
+        Two independent sub-signals — returns the maximum:
+
+        1. Injection pattern match (phrase-level, high precision):
+           Regex patterns for jailbreak phrasing, role override, safety bypass,
+           data exfiltration, and instruction hijacking.  Each pattern returns
+           a pre-calibrated confidence in [0.84, 0.96].
+
+        2. Charter keyword overlap (structural, normalized):
+           Fraction of charter-constraint keywords that appear in the payload.
+           High overlap (>= 70%) with a single constraint strongly suggests
+           a direct charter violation attempt.
+
+        Returns (score, trigger_label).
+        """
+        # Sub-signal 1: injection pattern match
+        for pattern, score in self._INJECTION_PATTERNS:
+            if pattern.search(text_blob):
+                return score, f"injection_pattern({pattern.pattern[:40]})"
+
+        # Sub-signal 2: charter keyword overlap (normalized)
+        if not self._constraints:
+            return 0.0, ""
+        max_overlap = 0.0
+        worst = ""
+        for constraint in self._constraints:
+            keywords = re.findall(r"\b\w{4,}\b", constraint.lower())
+            if not keywords:
+                continue
+            hits  = sum(1 for kw in keywords if kw in text_blob)
+            score = hits / len(keywords)
+            if score > max_overlap:
+                max_overlap = score
+                worst = constraint
+        return max_overlap, f"charter_overlap({max_overlap:.2f}: {worst[:60]})"
+
     def check(self, event_type: EventType, content: dict[str, Any]) -> None:
         """
         Raise ConflictError if content contradicts a charter constraint.
         Checks AGENT_THOUGHT, FILE_DIFF, and NODE_APPROVED events.
 
-        Two-pass strategy
-        ─────────────────
-        Pass 1 — Entity-centric fast path:
-            If a destructive verb appears anywhere in the content AND any
-            protected entity name also appears, raise immediately.  This
-            catches bypasses like "exfil api keys" that don't align with
-            long constraint strings.
+        PAPER MODE (CF_MODE=paper, default — exact paper behaviour)
+        ────────────────────────────────────────────────────────────
+          Pass 0   — Entropy (word-level H*=3.5) + LZ density: hard block
+          Pass 0.5 — Perplexity (if ENABLE_PERPLEXITY_GATE=true): hard block
+          Pass 1   — Destructive verb + protected entity: hard block
+          Pass 2   — Charter keyword scoring (hits ≥ max(2, len//5)): hard block
 
-        Pass 2 — Constraint-keyword scoring (original logic, relaxed threshold):
-            For each charter constraint line, count keyword hits.  Raise if
-            hits ≥ max(1, len(keywords) // 5)  [was // 3 — too strict].
+        EXPERIMENT MODE (CF_MODE=experiment) — multi-trigger OR-gate v3
+        ────────────────────────────────────────────────────────────────
+          Pass 0:   LZ density < ρ_min → hard block (unchanged)
+          Pass 0.5: Perplexity > P* → hard block (auto-enabled)
+          Pass 1:   Destructive verb + protected entity → hard block (unchanged)
+          Pass 2:   Multi-trigger OR-gate — any path independently sufficient:
+            Path A (obfuscation): H_char ≥ H* = 4.8 → BLOCK
+            Path B (intent):      intent_score ≥ 0.70 → BLOCK
+              where intent_score = max(injection_pattern_score,
+                                       charter_keyword_overlap_score)
+
+        Architecture rationale: the v2 soft-blend
+          (0.75 * entropy_flag + 0.25 * keyword_score ≥ 0.60)
+        was a degenerate classifier — when entropy_flag=0 the keyword
+        contribution (max 0.25) could never reach the 0.60 threshold,
+        collapsing to entropy-only detection with 46% adversarial recall.
+        Independent paths restore recall on natural-language injections
+        (low entropy, high intent) without sacrificing benign FPR.
         """
         if event_type not in (EventType.AGENT_THOUGHT, EventType.FILE_DIFF,
                                EventType.NODE_APPROVED):
             return
 
-        text_blob = json.dumps(content, ensure_ascii=False).lower()
+        text_blob  = json.dumps(content, ensure_ascii=False).lower()
+        experiment = (self._CF_MODE == "experiment")
 
-        # ── Pass 0: Dual-signal entropy + LZ density gate ───────────────
-        H   = self._compute_entropy(text_blob)
+        # ── Pass 0: LZ density gate (hard block in both modes) ──────────
         rho = self._compute_lz_density(text_blob)
-        if H > self._H_THRESHOLD:
-            raise ConflictError(
-                detail=f"Shannon entropy H={H:.2f} > {self._H_THRESHOLD} — high-entropy/obfuscated payload",
-                contradicted_rule="entropy_gate",
-            )
         if rho < self._LZ_MIN_DENSITY:
             raise ConflictError(
                 detail=f"LZ density ρ={rho:.3f} < {self._LZ_MIN_DENSITY} — repetition/compression attack",
                 contradicted_rule="lz_density_gate",
             )
 
-        # ── Pass 0.5: Perplexity gate (optional third signal) ────────────
-        # Enabled only when ENABLE_PERPLEXITY_GATE=true.  Catches entropy-
-        # mimicry attacks whose H and ρ look benign but whose word-sequence
-        # statistics are anomalous.
+        # ── Pass 0: Entropy gate ─────────────────────────────────────────
+        H = self._compute_entropy(text_blob)
+        if H > self._H_THRESHOLD:
+            # Both modes: entropy path is always an independent hard block.
+            # PAPER: word H* = 3.5.  EXPERIMENT: char H* = 4.8.
+            raise ConflictError(
+                detail=f"Shannon entropy H={H:.2f} > {self._H_THRESHOLD} — high-entropy/obfuscated payload [entropy_path]",
+                contradicted_rule="entropy_gate",
+            )
+
+        # ── Pass 0.5: Perplexity gate ────────────────────────────────────
+        # Hard block in both modes; auto-enabled when CF_MODE=experiment.
+        # Catches entropy-mimicry attacks whose H and ρ look benign but
+        # whose word-sequence statistics are anomalous.
         try:
             gate = _get_perplexity_gate()
             if gate is not None and gate.enabled:
@@ -271,16 +398,15 @@ class ReviewerGuard:
         except Exception:
             pass  # gate errors are non-fatal — degrade gracefully
 
-        # ── Pass 1: Entity-centric fast path ────────────────────────────
+        # ── Pass 1: Entity-centric fast path (hard block in both modes) ──
         if self._DESTRUCTIVE.search(text_blob):
-            # Build entity set from hardcoded core + charter-extracted names
             entities = self._CORE_PROTECTED | {
                 e.lower() for e in getattr(self, "_protected_entities", [])
                 if len(e) >= 4
             }
             for entity in entities:
-                # Use alphanumeric-only boundaries so that compound identifiers
-                # like "project_charter.md" still match the entity "charter"
+                # Alphanumeric-only boundaries so compound identifiers like
+                # "project_charter.md" still match the entity "charter"
                 # (standard \b treats _ as a word char, causing misses).
                 pat = r"(?<![a-zA-Z0-9])" + re.escape(entity) + r"(?![a-zA-Z0-9])"
                 if re.search(pat, text_blob):
@@ -292,25 +418,39 @@ class ReviewerGuard:
                         contradicted_rule=f"protected entity: {entity}",
                     )
 
-        # ── Pass 2: Constraint-keyword scoring (relaxed threshold) ──────
-        if not self._constraints:
+        # ── Pass 2: Charter / intent gate ────────────────────────────────
+        if not self._constraints and not self._INJECTION_PATTERNS:
             return
 
-        for constraint in self._constraints:
-            keywords = re.findall(r"\b\w{4,}\b", constraint.lower())
-            if not keywords:
-                continue
-            hits = sum(1 for kw in keywords if kw in text_blob)
-            # Relaxed from // 3 → // 5, floor raised to 2 to avoid false-positive
-            # triggers on single common words (e.g. "event", "remove") appearing
-            # in benign short payloads unrelated to the constraint.
-            if hits >= max(2, len(keywords) // 5):
+        if not experiment:
+            # PAPER MODE: original hard-block keyword scoring (unchanged for reproducibility)
+            for constraint in self._constraints:
+                keywords = re.findall(r"\b\w{4,}\b", constraint.lower())
+                if not keywords:
+                    continue
+                hits = sum(1 for kw in keywords if kw in text_blob)
+                if hits >= max(2, len(keywords) // 5):
+                    raise ConflictError(
+                        detail=(
+                            f"Event content may contradict charter constraint: "
+                            f'"{constraint[:120]}"'
+                        ),
+                        contradicted_rule=constraint,
+                    )
+        else:
+            # EXPERIMENT MODE: multi-trigger OR-gate (v3).
+            # Path B — intent path: injection patterns OR charter keyword overlap.
+            # Each sub-signal is independently sufficient at intent_threshold=0.70.
+            # This restores recall on natural-language adversarial payloads (low entropy,
+            # high intent) that the v2 soft-blend (entropy_flag=0 → max score 0.25) missed.
+            intent_score, intent_label = self._intent_score(text_blob)
+            if intent_score >= self._INTENT_THRESHOLD:
                 raise ConflictError(
                     detail=(
-                        f"Event content may contradict charter constraint: "
-                        f'"{constraint[:120]}"'
+                        f"Intent score {intent_score:.3f} ≥ {self._INTENT_THRESHOLD} "
+                        f"— adversarial intent detected via {intent_label}"
                     ),
-                    contradicted_rule=constraint,
+                    contradicted_rule=intent_label,
                 )
 
 

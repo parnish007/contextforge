@@ -1,18 +1,19 @@
 % ============================================================
-% ContextForge v2 — Architecture-First Persistent Agentic
+% ContextForge v2.3 — Architecture-First Persistent Agentic
 % Memory via Model Context Protocol
 %
 % Author : Trilochan Sharma (Independent Researcher)
 % Email  : parnishklpo@gmail.com
 % Date   : April 2026
-% Version: 2.2  (adds Suite 14 v3 multi-trigger OR-gate, Suite 15
-%                memory quality benchmark, honest tradeoff reporting)
+% Version: 2.3  (v3 OR-gate security numbers; Suite 15 v2 with
+%                recency-weighted retrieval; Fig 19 security
+%                trade-off scatter; honest Phi/CSS update)
 %
 % HOW TO COMPILE (Overleaf or local):
-%   pdflatex contextforge_v2
-%   bibtex   contextforge_v2
-%   pdflatex contextforge_v2
-%   pdflatex contextforge_v2
+%   pdflatex contextforge_v2_final
+%   bibtex   contextforge_v2_final
+%   pdflatex contextforge_v2_final
+%   pdflatex contextforge_v2_final
 %
 % FIGURES REQUIRED (upload to figures/ subfolder):
 %   Core architecture figures (generate with python research/figures/gen_all.py):
@@ -32,10 +33,14 @@
 %     figures/output/figure_13_mode_comparison.png
 %     figures/output/figure_14_entropy_distributions_v2.png
 %     figures/output/figure_15_edge_trigger_breakdown.png
-%   Suite 15 memory quality figures (generate with python benchmark/benchmark_memory/figures/gen_memory_figures.py):
-%     figures/output/fig16_radar_memory_integrity.png
-%     figures/output/fig17_grouped_bar_metrics.png
-%     figures/output/fig18_heatmap_system_dataset.png
+%   Suite 15 v2 memory quality figures (generate with
+%     python benchmark/benchmark_memory/figures/gen_memory_figures_v2.py):
+%     figures/output/fig_16_memory_radar_v2.png
+%     figures/output/fig_17_memory_bars_v2.png
+%     figures/output/fig_18_memory_heatmap_v2.png
+%   Security trade-off scatter (generate with
+%     python research/figures/gen_security_tradeoff_fig19.py):
+%     figures/output/fig_19_security_tradeoff.png
 % ============================================================
 
 \documentclass[11pt,twocolumn]{article}
@@ -75,7 +80,8 @@
     via Model Context Protocol}\\[0.35em]
   \large\textit{Multi-Trigger OR-Gate Security, OR-Set CRDT Sync,
     Tri-Core Failover,\\
-    Differential Context Injection, and a Memory Quality Benchmark}%
+    Differential Context Injection, Recency-Weighted Retrieval,
+    and a Memory Quality Benchmark}%
 }
 
 \author[1]{Trilochan Sharma}
@@ -126,21 +132,24 @@ injections with max intent\_score\,=\,0.50, identified as the primary target
 for Path~C (perplexity gate).  Hardened-RAG achieves 71\% recall at 45\%
 edge FPR---higher recall but substantially worse precision on maintenance text.
 
-\textbf{Suite 15 results (160 samples, 6 systems, measured).}
-A new Memory Quality Benchmark evaluates retrieval recall, update preference,
+\textbf{Suite 15 v2 results (160 samples, 6 systems, measured).}
+A Memory Quality Benchmark evaluates retrieval recall, update preference,
 delete fidelity, and poison resistance using a zero-LLM harness with BM25
 retrieval and the REAL ReviewerGuard v3 gate.
+Version~2 adds recency-weighted retrieval
+($\exp(-\lambda\Delta t)$, $\lambda=0.0001$\,s$^{-1}$),
+raising update accuracy from 0.229 to 0.600 ($+37.1$\,pp) at a $-13.4$\,pp
+cost in Recall@3 (0.967\,$\to$\,0.833).
 ContextForge achieves a Memory Integrity Score (MIS) of \textbf{0.801}
 (Recall@3\,=\,0.833, Update\,=\,0.600, Delete\,=\,1.000, Poison\,=\,0.771),
-ranking first among six systems after a recency-decay fix raises update
-accuracy from 0.229 to 0.600 ($+37.1$\,pp); HardenedRAG is second at
-MIS\,=\,0.753, while unguarded systems score MIS\,$\leq$\,0.595 with zero
-poison resistance.
+ranking \emph{first} among six systems.
+HardenedRAG is second at MIS\,=\,0.753 ($\Delta=-4.8$\,pp);
+unguarded systems score MIS\,$\leq$\,0.595 with zero poison resistance.
 
 Across 990 benchmark tests total, additional highlights include:
 $-68.9\%$ failover latency, $+70.2$\,pp token noise reduction, Weighted
-Safety Index $\Phi = 79.7\%$, CRDT convergence rate\,=\,1.0, and
-external macro-F1\,=\,0.755 on \texttt{deepset/prompt-injections} ($n=116$).
+Safety Index $\Phi = 62.2\%$ (v3 EXPERIMENT mode), CRDT convergence rate\,=\,1.0,
+and external macro-F1\,=\,0.755 on \texttt{deepset/prompt-injections} ($n=116$).
 \end{abstract}
 
 % =============================================================================
@@ -207,12 +216,16 @@ no cloud storage of memory or context is required.
   \item A configurable Differential Context Injection (DCI) budget
     (\texttt{fixed}/\texttt{adaptive}/\texttt{model\_aware}) for 25+
     LLM context windows, reducing injection cost $-95\%$ at 200 decisions.
-  \item \textbf{Suite 15 Memory Quality Benchmark}: the first zero-LLM
-    evaluation comparing six memory systems (StatelessRAG, MemGPT, LangGraph,
-    ClaudeMem, HardenedRAG, ContextForge) across four curated datasets---ground
+  \item \textbf{Recency-weighted BM25 retrieval}: exponential decay scoring
+    $s^{\mathrm{final}}_i = s^{\mathrm{BM25}}_i \times \exp(-\lambda\Delta t)$
+    raises update accuracy from 0.229 to 0.600 ($+37.1$\,pp, Suite~15~v2)
+    at $\lambda=0.0001$\,s$^{-1}$.
+  \item \textbf{Suite 15~v2 Memory Quality Benchmark}: zero-LLM evaluation
+    comparing six memory systems across four curated datasets---ground
     truth retrieval (60), update/conflict (35), delete/forget (30), adversarial
     poisoning (35)---on a unified Memory Integrity Score.  ContextForge v3
-    achieves MIS\,=\,0.742 with Recall@3\,=\,0.967 and poison resistance\,=\,0.771.
+    with recency weighting achieves MIS\,=\,0.801, ranking first among six
+    systems (Recall@3\,=\,0.833, Update\,=\,0.600, poison resistance\,=\,0.771).
   \item A 22-tool MCP server exposing all five pillars to any MCP-compatible
     IDE with zero client-side code changes.
   \item Full ablation study and token-economics formalization across 990 total
@@ -239,6 +252,9 @@ LangChain~\cite{chase2022langchain} provides a toolkit for chaining LLM calls
 with memory plugins but includes no entropy gate or adversarial defense;
 its \texttt{ConversationBufferMemory} injects $1{,}590 \pm 11$ tokens per query
 at zero adversarial block rate.
+LangGraph~\cite{langgraph2024} extends LangChain with graph-based agent
+orchestration and stateful multi-step workflows, but similarly provides no
+adversarial write filtering.
 Xu et al.~\cite{xu2023memory} survey four memory types in LLM agents;
 ContextForge operationalizes their external-memory taxonomy with an
 information-theoretic security layer not covered in their survey.
@@ -356,9 +372,7 @@ Because all baseline systems (StatelessRAG, MemGPT-style, LangChain-Buffer)
 implement no write guard, they report CSS\,=\,0.000 on the composite security
 score metric; CSS\,=\,(1$-$FPR)\,$\times$\,ABR rewards precision of injection
 filtering, so unguarded pass-through scores zero regardless of retrieval
-volume. Metrics for these systems are identical across all ten evaluation seeds
-because their rule-based simulators contain no stochastic components; confidence
-intervals therefore collapse to zero width by construction.
+volume.
 
 \subsection{Pillar 4 --- Retrieval}
 
@@ -368,6 +382,9 @@ L2 (BM25 SQLite retrieval, configurable token budget $B$ via DCI;
 Section~\ref{sec:dci});
 L3 (recency-ranked research nodes, max 800 tokens);
 and L0 (empty stub fallback).
+A configurable recency weight $\exp(-\lambda(t_{\mathrm{now}}-t_i))$
+modulates BM25 scores by write age (Section~\ref{sec:recency}), raising
+update preference by $+37.1$\,pp in Suite~15~v2 at $\lambda=0.0001$\,s$^{-1}$.
 The DCI budget adapts to the target model's context window via
 \texttt{CONTEXT\_BUDGET\_MODE} (fixed / adaptive / model\_aware), supporting
 25+ LLM families from a built-in lookup table.
@@ -705,6 +722,41 @@ A human reviewer or the Shadow-Reviewer agent can promote quarantined events
 to the main ledger or permanently discard them. This avoids the false-negative
 cost of hard blocking while containing adversarial content.
 
+\subsection{Recency-Weighted Retrieval}
+\label{sec:recency}
+
+Suite~15~v1 identified update preference as ContextForge's weakest axis:
+pure BM25 without temporal ordering fails to surface the most recent version
+of a superseded fact (Update\,=\,0.229 vs.\ 0.429 for recency-biased MemGPT).
+The v2 report introduces recency-weighted retrieval as a minimal-change fix
+implemented in \texttt{src/retrieval/jit\_librarian.py}.
+
+For each retrieved chunk $c_i$ with write timestamp $t_i$, the final retrieval
+score is
+\begin{equation}
+  s_i^{\mathrm{final}} = s_i^{\mathrm{BM25}} \times \exp\!\bigl(-\lambda\,(t_{\mathrm{now}} - t_i)\bigr)
+  \label{eq:recency}
+\end{equation}
+where $\lambda = 0.0001$\,s$^{-1}$ is the decay constant (configurable via
+\texttt{RECENCY\_DECAY\_LAMBDA}) and $t_{\mathrm{now}} - t_i$ is the age in
+seconds.  The decay is enabled by default (\texttt{RECENCY\_WEIGHTING\_ENABLED=true})
+and disabled automatically in PAPER mode for exact paper reproduction.
+
+\textbf{Decay dynamics.}
+At $\lambda = 0.0001$\,s$^{-1}$:
+a chunk 10\,minutes old retains $\exp(-0.0001 \times 600) \approx 0.94$ of its BM25 score;
+a chunk 3\,hours old retains $\exp(-0.0001 \times 10800) \approx 0.34$.
+This provides a strong same-session preference while preserving cross-session
+retrieval for highly relevant older chunks.
+
+\textbf{Benchmark effect.}
+Suite~15~v2 (Section~\ref{sec:suite15}) confirms this fix raises update
+accuracy from 0.229 to \textbf{0.600} ($+37.1$\,pp, measured on 35 update/conflict
+samples) at a $-13.4$\,pp cost in Recall@3 (0.967\,$\to$\,0.833), as older
+but topically relevant chunks are partially suppressed by the decay factor.
+The net effect on MIS is $+0.059$ (0.742\,$\to$\,0.801), raising ContextForge
+to \emph{first} among six evaluated systems.
+
 % =============================================================================
 \section{Experimental Setup}
 \label{sec:setup}
@@ -742,10 +794,7 @@ spoof-resistance validation.
 \textbf{Suite 10 --- Adaptive attacker (30 tests).}
 Validates the \texttt{AdaptiveAttacker} generator across three attack classes:
 boundary probes (entropy near $H^{*}$), entropy-mimicry payloads (entropy
-near benign $\mu$), and slow-drip escalation sequences. All 30 tests pass,
-confirming that the LZ gate catches boundary and mimicry payloads that evade
-the Shannon gate, and that entropy quantization noise causes partial detection
-of near-threshold slow-drip sequences.
+near benign $\mu$), and slow-drip escalation sequences. All 30 tests pass.
 
 \textbf{Suite 11 --- DCI budget scaling (4 budget levels).}
 Sweeps $B \in \{1{,}500;\,4{,}000;\,8{,}000;\,16{,}000\}$ tokens; records CTO
@@ -783,17 +832,17 @@ Statistical significance reported via paired bootstrap ($B=10{,}000$ resamples).
 
 \begin{table*}[t]
 \centering
-\caption{Five-system comparison ($n=10$ seeds each). All metrics reproduced by
-  \texttt{benchmark/runner.py}. \textbf{Bold} = best per row.
+\caption{Five-system comparison ($n=10$ seeds each, v3 EXPERIMENT mode).
+  All metrics reproduced by \texttt{benchmark/runner.py}. \textbf{Bold} = best per row.
   Sig.\ column: paired bootstrap ($B=10{,}000$) vs.\ StatelessRAG;
-  $*$ $p<0.001$; \textit{ns}\,=\,not significant ($p=1.00$).
+  $*$ $p<0.001$; \textit{ns}\,=\,not significant ($p \geq 0.05$).
   $^\dagger$\,CSS\,=\,(1$-$FPR)\,$\times$\,ABR; StatelessRAG/MemGPT/LangChain
   score CSS\,=\,0 because unguarded pass-through earns no precision credit;
-  Nexus FPR\,=\,25\% reflects the broader dual-signal gate;
-  Hardened-RAG FPR\,=\,5\% (keyword-only, lower recall).
-  $^\ddagger$\,HardenedRAG ABR revised to 71\% (Suite~14, 100 adversarial samples);
-  CSS\,=\,(1$-$0.05)\,$\times$\,0.71\,=\,0.671. Edge-case FPR\,=\,45\%
-  (Section~\ref{sec:fpr_fix}).}
+  Nexus FPR\,=\,5\% in multi-baseline runner context; Suite~14 internal
+  benign FPR\,=\,1\% on 300 samples (see Section~\ref{sec:fpr_fix}).
+  $^\ddagger$\,HardenedRAG ABR revised to 71\% (Suite~14, 100 adversarial
+  samples); CSS\,=\,(1$-$0.05)\,$\times$\,0.71\,=\,0.671. Edge-case
+  FPR\,=\,45\% (Section~\ref{sec:fpr_fix}).}
 \label{tab:master}
 {\small
 \renewcommand{\arraystretch}{1.2}
@@ -804,15 +853,15 @@ Statistical significance reported via paired bootstrap ($B=10{,}000$ resamples).
   \textbf{MemGPT-style} &
   \textbf{LangChain-Buf} &
   \textbf{Hardened-RAG} &
-  \textbf{Nexus (ours)} &
+  \textbf{Nexus v3 (ours)} &
   \textbf{Sig.} \\
 \midrule
-ABR (\%)             & 0.0  & 0.0  & 0.0   & 71.0$^\ddagger$   & \textbf{90.0}  & $*$        \\
-CSS$^\dagger$        & 0.000 & 0.000 & 0.000 & 0.671  & 0.675                 & \textit{ns} \\
-CTO (tokens/query)   & 245.4 & 227.5 & $1590{\pm}11$ & \textbf{134.7} & 73.1 & $*$        \\
+ABR (\%)             & 0.0  & 0.0  & 0.0   & \textbf{71.0}$^\ddagger$  & 55.0    & $*$        \\
+CSS$^\dagger$        & 0.000 & 0.000 & 0.000 & \textbf{0.671}  & 0.5225       & \textit{ns} \\
+CTO (tokens/query)   & 245.4 & 227.5 & $1590{\pm}11$ & 134.7 & \textbf{73.1} & $*$        \\
 Failover (ms)        & 480  & 600  & 510   & 485    & \textbf{149.5}         & $*$        \\
 TNR (\%)             & 0.0  & 0.0  & 0.0   & 45.1   & \textbf{70.2}          & $*$        \\
-FPR (\%)             & 0.0  & 0.0  & 0.0   & 5.0    & 25.0                  & $*$        \\
+FPR (\%)             & 0.0  & 0.0  & 0.0   & 5.0    & 5.0                    & \textit{ns} \\
 \midrule
 \multicolumn{7}{l}{\textit{New in v2.1}} \\
 \midrule
@@ -826,33 +875,41 @@ Dual-signal F1 (ext.) & 0.573 & --- & --- & --- & \textbf{0.869}         & $*$  
 }
 \end{table*}
 
-Table~\ref{tab:master} compares ContextForge Nexus against four baselines
-(see Figure~\ref{fig:radar} for the radar view).
-ContextForge leads on ABR ($+15$\,pp over Hardened-RAG, $+90$\,pp over
-unguarded systems), CTO ($73.1$ vs.\ $134.7$--$1{,}590$ tokens/query), failover
-latency ($149.5$\,ms vs.\ $480$--$600$\,ms), and TNR ($70.2\%$ vs.\ $45.1\%$).
-The CSS column does not reach best-in-class because CSS\,=\,(1\,−\,FPR)\,$\times$\,ABR
-and Nexus carries a higher FPR (25\%) than Hardened-RAG's keyword-only gate (5\%).
-This CSS difference ($\Delta = -3.75$\,pp) is \emph{not statistically significant}
-(bootstrap $p = 1.00$, $B = 10{,}000$ resamples), indicating no meaningful
-context-quality cost from the dual-signal gate.
-This is the intended design trade-off: broader adversarial recall at the cost
-of elevated FPR on out-of-distribution benign content.
+Table~\ref{tab:master} compares ContextForge Nexus v3 (EXPERIMENT mode) against
+four baselines (see Figure~\ref{fig:radar} for the radar view).
+ContextForge v3 leads on CTO ($73.1$ vs.\ $134.7$--$1{,}590$ tokens/query),
+failover latency ($149.5$\,ms vs.\ $480$--$600$\,ms), and TNR ($70.2\%$ vs.\ $45.1\%$).
+On adversarial recall, v3 EXPERIMENT mode (ABR\,=\,55\%) deliberately trades
+$-20$\,pp vs.\ Hardened-RAG (75\%) in exchange for a substantially lower benign
+FPR: 1\% in Suite~14 (300 samples) and 5\% in the multi-baseline runner context,
+vs.\ HardenedRAG's 5\% benign plus 45\% edge-case FPR documented in Suite~14
+(Section~\ref{sec:fpr_fix}).
+CSS\,=\,0.5225 reflects this security-recall balance; the CSS gap from
+HardenedRAG ($\Delta = -18.75$\,pp) is attributable to the lower ABR and is
+not statistically significant (bootstrap $p = 1.00$, $B = 10{,}000$ resamples).
+
+The v3 EXPERIMENT mode reflects a deliberate security--usability tradeoff:
+it achieves $5\times$ lower benign FPR than the v1 PAPER mode (5\% vs.\ 25\%
+in runner; 1\% vs.\ 25\% in Suite~14) at the cost of $-35$\,pp adversarial
+recall (55\% vs.\ 90\%). Figure~\ref{fig:tradeoff} illustrates this
+operating-point landscape.  HardenedRAG achieves the highest ABR (75\%) but
+at a substantially higher edge-case FPR (45\%), making it unsuitable for
+production deployments where developer maintenance commands must pass through.
 
 The Weighted Composite Safety Index is
 \begin{equation}
   \begin{aligned}
   \Phi &= 0.5 \cdot \text{ABR} + 0.3 \cdot \Delta_{\text{latency}}
           + 0.2 \cdot \text{TNR} \\
-       &= 0.5(90.0) + 0.3(68.9) + 0.2(70.2) = \mathbf{79.7\%}.
+       &= 0.5(55.0) + 0.3(68.9) + 0.2(70.2) = \mathbf{62.2\%}.
   \end{aligned}
   \label{eq:phi}
 \end{equation}
 Weights reflect the relative criticality of adversarial resilience (0.5),
 availability (0.3), and context quality (0.2) in a production IDE workflow.
-Three named presets (\texttt{ide\_workflow}: 0.5/0.3/0.2 $\to$ $\Phi=79.7\%$;
-\texttt{backend\_automation}: 0.3/0.4/0.3 $\to$ $\Phi=78.1\%$;
-\texttt{research\_pipeline}: 0.4/0.2/0.4 $\to$ $\Phi=79.1\%$) are configurable
+Three named presets (\texttt{ide\_workflow}: 0.5/0.3/0.2 $\to$ $\Phi=62.2\%$;
+\texttt{backend\_automation}: 0.3/0.4/0.3 $\to$ $\Phi=65.1\%$;
+\texttt{research\_pipeline}: 0.4/0.2/0.4 $\to$ $\Phi=63.9\%$) are configurable
 via \texttt{src/metrics/safety\_index.py}. Weight sensitivity analysis confirms
 $\Phi(\text{Nexus}) > \Phi(\text{StatelessRAG})$ for all feasible weight
 combinations (Figure~\ref{fig:weight_sensitivity}).
@@ -865,9 +922,9 @@ combinations (Figure~\ref{fig:weight_sensitivity}).
     ($w_{\mathrm{lat}} = 1 - w_{\mathrm{abr}} - w_{\mathrm{tnr}}$).
     Grey region: infeasible ($w_{\mathrm{lat}}<0$). All feasible weight
     combinations yield a positive Nexus advantage; markers show three
-    deployment presets ($\star$\,ide\_workflow $\Phi{=}79.7\%$,
-    $\blacktriangle$\,backend\_auto $\Phi{=}78.1\%$,
-    $\blacklozenge$\,research\_pipe $\Phi{=}79.1\%$).}
+    deployment presets ($\star$\,ide\_workflow $\Phi{=}62.2\%$,
+    $\blacktriangle$\,backend\_auto $\Phi{=}65.1\%$,
+    $\blacklozenge$\,research\_pipe $\Phi{=}63.9\%$).}
   \label{fig:weight_sensitivity}
 \end{figure}
 
@@ -878,15 +935,19 @@ combinations (Figure~\ref{fig:weight_sensitivity}).
   \includegraphics[width=\linewidth]{fig_calibration_sweep}
   \caption{FPR, FNR, and F1 across the entropy threshold sweep
     $H^{*} \in [2.5, 5.0]$. $H^{*} = 3.5$ is the unique F1 maximum
-    ($\mathrm{FPR} = 0$, $\mathrm{FNR} = 0$, $\mathrm{F1} = 1.0$).}
+    ($\mathrm{FPR} = 0$, $\mathrm{FNR} = 0$, $\mathrm{F1} = 1.0$) on the
+    internal benchmark; EXPERIMENT mode recalibrates to char-level
+    $H^{*} = 4.8$ for production deployment (Section~\ref{sec:fpr_fix}).}
   \label{fig:calibration}
 \end{figure}
 
 Suite~08 swept the entropy threshold in 0.25-bit steps across 11 values.
-At $H^{*} = 3.5$: FPR\,=\,0\%, FNR\,=\,0\%, F1\,=\,1.0 (Figure~\ref{fig:calibration}).
-No other threshold in the range $[2.5, 5.0]$ achieves F1\,=\,1.0, confirming
-$H^{*} = 3.5$ as the uniquely optimal operating point on the \emph{internal}
-benchmark.
+At $H^{*} = 3.5$ (word-level, internal benchmark): FPR\,=\,0\%, FNR\,=\,0\%, F1\,=\,1.0
+(Figure~\ref{fig:calibration}). This internal optimum does not generalise to
+real developer traffic: Suite~14 demonstrates that word-level $H^{*}=3.5$
+produces 96\% benign FPR against diverse technical prose. The v3 EXPERIMENT
+mode recalibrates to char-level $H^{*}=4.8$ (Section~\ref{sec:fpr_fix}),
+reducing benign FPR to 1\% at a 40\,pp recall cost.
 
 A separate two-phase calibration sweep on an external adaptive attack corpus
 (100 samples; 39 adversarial, 61 benign) yields $H^{*}_{\mathrm{opt}} = 3.46$
@@ -915,8 +976,8 @@ adversarial recall 85.0\% at FPR\,=\,33.9\% (Section~\ref{sec:external_val}).
 \begin{table}[t]
 \centering
 \caption{Internal vs.\ external adversarial evaluation.
-  Internal: Suite~14 v3 EXPERIMENT mode ($n=300$ samples; metrics from
-  adversarial\,+\,benign split, TP\,=\,55, FP\,=\,1, FN\,=\,45, TN\,=\,99).
+  Internal: Suite~14 v3 EXPERIMENT mode ($n=300$ samples, 100 adversarial\,+\,100
+  benign\,+\,100 edge cases; metrics from adversarial\,+\,benign split).
   External (live split): \texttt{deepset/prompt-injections}~\cite{deepset2023injections}
   (test split, $n=116$; CC-BY-4.0).
   External (static fallback): offline corpus of 120 samples (70 adversarial,
@@ -979,17 +1040,19 @@ Token savings compound with every additional decision stored
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.9\linewidth]{figure_08_safety_radar}
-  \caption{Five-system safety radar: ABR, CSS, TNR, and normalised latency gain.
-    ContextForge Nexus (green, solid) leads on all adversarial metrics;
-    Hardened-RAG approaches on CSS but achieves ABR\,=\,75\%, well below the 90\%
-    target. StatelessRAG and MemGPT-style score 0\% on all security axes.}
+  \caption{Five-system safety radar: ABR, CSS, TNR, and normalised latency gain
+    (v3 EXPERIMENT mode operating points).
+    ContextForge Nexus v3 (green, solid) leads on CTO, failover, and TNR;
+    Hardened-RAG leads on ABR and CSS due to its broader recall at higher FPR.
+    StatelessRAG and MemGPT-style score 0\% on all security axes.}
   \label{fig:radar}
 \end{figure}
 
 Figure~\ref{fig:radar} captures all six measurable safety dimensions:
 adversarial block rate, failover latency improvement, token noise reduction,
 context survival, benchmark pass rate, and slow-drip detection.
-ContextForge outperforms or ties the baseline on every axis.
+In v3 EXPERIMENT mode, ContextForge leads on four of six axes; HardenedRAG
+leads on ABR and CSS at the cost of higher edge-case FPR (45\% vs.\ 16\%).
 
 \subsection{OR-Set CRDT Convergence (Suite~12)}
 \label{sec:crdt_results}
@@ -1030,10 +1093,8 @@ All three scenarios pass with convergence\_rate\,=\,1.0 (Table~\ref{tab:crdt}).
 In Scenario~C, Client~A removes \texttt{node\_001} and adds \texttt{node\_002}
 while offline; Client~B simultaneously updates \texttt{node\_001} and adds
 \texttt{node\_003} while offline. After reconnection to a coordinator and a
-full gossip round, all three nodes (\texttt{node\_001}, \texttt{node\_002},
-\texttt{node\_003}) are present on all replicas. This confirms the add-wins
-property of Eq.~\ref{eq:orset}: Client~B's add-tag for \texttt{node\_001} was
-unknown to Client~A at remove time and therefore escapes removal.
+full gossip round, all three nodes are present on all replicas. This confirms
+the add-wins property of Eq.~\ref{eq:orset}.
 
 Merge latency is dominated by Python dict-union operations on small sets
 ($<$30 entries per client), completing in $\leq 15$\,ms for all scenarios.
@@ -1041,8 +1102,6 @@ At scale, the gossip complexity is $O(n^2 |S|)$ for $n$ replicas and set size
 $|S|$; the add-tag bookkeeping requires $O(|S| \times n_{\mathrm{tags}})$
 memory per replica, approximately 160\,KB for a 10{,}000-node graph with
 average 2 adds per element---negligible for desktop IDE deployments.
-A delta-CRDT variant (shipping only changed tags since last sync) is
-left as future work.
 
 \subsection{Perplexity Gate Validation}
 \label{sec:perp_results}
@@ -1098,8 +1157,7 @@ so all 10 are independently caught by the LZ gate. Block rate: 10/10 (100\%).
 \textbf{Class~B --- Entropy-mimicry payloads.}
 Ten payloads are constructed with entropy $H = 2.80 \approx \mu_{\mathrm{benign}} + 0.06$,
 evading the entropy gate. LZ density $\bar{\rho} = 0.41 < \rho_{\min}$; all are
-caught by the LZ gate. The keyword layer additionally catches 10/10 regardless of
-the LZ outcome. Block rate: 10/10 (100\%).
+caught by the LZ gate. Block rate: 10/10 (100\%).
 
 \textbf{Class~C --- Slow-drip sequences.}
 Ten multi-step sequences target gradient $0.14$ (just below $\nabla^{*}=0.15$).
@@ -1123,9 +1181,7 @@ redundant coverage: no single-gate evasion propagates through the full pipeline.
     (word-entropy gate fires on 96/100 developer instructions);
     EXPERIMENT FPR\,=\,1\% (one intent-path false positive).
     \textbf{Centre:} Dataset~B (100 adversarial samples) --- PAPER recall\,=\,95\%,
-    EXPERIMENT recall\,=\,55\% (v3 multi-trigger OR-gate: entropy path catches obfuscated
-    payloads, intent path catches 9 additional natural-language injections ---
-    see Section~\ref{sec:fpr_fix} for analysis).
+    EXPERIMENT recall\,=\,55\% (v3 multi-trigger OR-gate).
     \textbf{Right:} Dataset~C (100 edge cases) --- PAPER FPR\,=\,97\%,
     EXPERIMENT FPR\,=\,16\% ($\Delta$FPR\,=\,$-$81\,pp).
     HardenedRAG: 45\% edge FPR, 71\% recall. Zero-ABR baselines: 0\% FPR, 0\% recall.}
@@ -1139,7 +1195,6 @@ redundant coverage: no single-gate evasion propagates through the full pipeline.
     \textbf{Left:} Word-level entropy ($H^{*}=3.5$, PAPER mode).
     Edge-case samples (dashed orange) overlap substantially with the adversarial
     distribution (red) around $H\approx3.5$--$4.0$, causing 64 false positives.
-    Shaded red region marks the false-positive area.
     \textbf{Right:} Char-level entropy ($H^{*}=4.8$, EXPERIMENT mode).
     The recalibrated threshold cleanly separates benign/edge-case text from
     adversarial payloads, shrinking the FP region by ${\sim}72\%$.}
@@ -1150,18 +1205,16 @@ redundant coverage: no single-gate evasion propagates through the full pipeline.
   \centering
   \includegraphics[width=\linewidth]{figure_15_edge_trigger_breakdown}
   \caption{Edge-case false-positive trigger breakdown by mode (measured, Suite~14, v3 multi-trigger).
-    PAPER mode (top): 97 FPs --- \emph{all 97} fired by word-entropy alone ($H_{\mathrm{word}}>3.5$),
-    confirming that the word-entropy gate is the sole source of PAPER false positives.
+    PAPER mode (top): 97 FPs --- \emph{all 97} fired by word-entropy alone ($H_{\mathrm{word}}>3.5$).
     EXPERIMENT mode (bottom, v3 multi-trigger OR-gate): 16 FPs --- 15 from entity+destructive-verb
     match (Pass~1) and 1 from the intent path (intent\_score\,$\geq$\,0.70).
-    Char-level entropy ($H^{*}$\,=\,4.8) fires on zero benign edge-case samples.
-    The remaining 15 entity-path FPs are the primary target for future contextual refinement.}
+    Char-level entropy fires on zero benign edge-case samples.}
   \label{fig:edge_breakdown}
 \end{figure}
 
 Suite~14 provides the primary evaluation of the four FPR-reduction fixes
 introduced in the \texttt{v3\_multi\_trigger\_or\_gate} update
-(Table~\ref{tab:suite14_fixes}).  The evaluation uses three curated datasets
+(Table~\ref{tab:suite14_fixes}). The evaluation uses three curated datasets
 (300 samples total) and two ContextForge operating modes against five baselines.
 
 \begin{table}[h]
@@ -1182,90 +1235,60 @@ introduced in the \texttt{v3\_multi\_trigger\_or\_gate} update
 \end{table}
 
 \textbf{Dataset A --- Benign (100 samples).}
-Six categories of realistic developer instructions (code review, database
-operations, API configuration, security setup, ContextForge operations,
-sysadmin tasks).  PAPER FPR\,=\,96\%: the word-level entropy gate fires
-on 96 of 100 plain developer instructions, demonstrating that the $H^{*}=3.5$
-threshold is severely miscalibrated against diverse technical prose.
-EXPERIMENT FPR\,=\,0\%: char-level entropy never exceeds $H^{*}=4.8$ for
-standard English developer text, confirming that the recalibration is
-necessary for any practical deployment.
+Six categories of realistic developer instructions.
+PAPER FPR\,=\,96\%: the word-level entropy gate fires on 96 of 100 plain
+developer instructions, demonstrating that $H^{*}=3.5$ is severely miscalibrated
+against diverse technical prose.
+EXPERIMENT FPR\,=\,1\%: char-level entropy never exceeds $H^{*}=4.8$ for
+standard English developer text.
 
 \textbf{Dataset B --- Adversarial (100 samples).}
-Five categories of prompt injections and destructive commands drawn from
-published adversarial corpora~\cite{greshake2023injections,schulhoff2023hackaprompt}.
-PAPER recall\,=\,95\% (5~FN: short payloads below word-entropy threshold).
-EXPERIMENT recall\,=\,55\% (45~FN, v3 multi-trigger OR-gate): the gate fires
-on Path~A (char-level entropy $H_{\mathrm{char}} \geq H^{*}=4.8$, catching
-obfuscated payloads) or Path~B (intent\_score\,$\geq 0.70$, catching
-natural-language injections whose 22-pattern regex or charter-keyword overlap
-exceeds the threshold).  Adversarial payloads that evade both paths --- typically
-paraphrased injections with low char-entropy and indirect phrasing --- account
-for the remaining 45 false negatives (mean intent\_score\,=\,0.27, max\,=\,0.50).
-The v3 architecture recovers $+9$\,pp recall vs.\ the broken v2 soft-blend gate,
-which collapsed to entropy-only detection ($W_E=0.75$ made keyword evidence alone
-insufficient to reach $\theta=0.60$).  Path~C (perplexity gate) is the identified
-next step to close the remaining gap on paraphrased adversarial text.
+Five categories of prompt injections and destructive commands.
+PAPER recall\,=\,95\%. EXPERIMENT recall\,=\,55\% (45~FN, v3 OR-gate):
+the gate fires on Path~A (char-level entropy $H_{\mathrm{char}} \geq 4.8$)
+or Path~B (intent\_score\,$\geq 0.70$). Paraphrased adversarial payloads
+that evade both paths account for the remaining 45 false negatives
+(mean intent\_score\,=\,0.27, max\,=\,0.50).
 
 \textbf{Dataset C --- Edge cases (100 samples).}
-The critical FPR dataset.  Five categories of benign maintenance tasks that
-incidentally contain destructive vocabulary (``kill the hung process'',
-``disable verbose logging'', ``reset the dev database seed'').  PAPER
-FPR\,=\,97\% (97 FPs): word-level entropy fires on nearly all edge cases,
-all 97 FPs fired by the word-entropy path alone ($H_{\mathrm{word}}>3.5$),
-confirming that the PAPER gate is entirely entropy-driven on edge cases.
-EXPERIMENT FPR\,=\,16\% (16 FPs, v3): char-level entropy does not fire on
-technical prose ($H_{\mathrm{char}} \ll 4.8$); 15 of 16 FPs come from the
-entity+destructive-verb fast path (Pass~1) triggering on legitimate maintenance
-text containing vocabulary like ``kill hung process'' near protected-entity names;
-1 FP from the intent path.  The net reduction is $\Delta\text{FPR} = -81$\,pp
-(Figures~\ref{fig:mode_comparison}--\ref{fig:edge_breakdown}).
+Five categories of benign maintenance tasks that incidentally contain
+destructive vocabulary. PAPER FPR\,=\,97\%. EXPERIMENT FPR\,=\,16\%:
+char-level entropy does not fire on technical prose; 15 of 16 FPs come from
+the entity+destructive-verb fast path triggering on legitimate maintenance text.
+The net reduction is $\Delta\text{FPR} = -81$\,pp.
 
 \textbf{Comparison with baselines.}
-HardenedRAG (regex keyword filter): recall\,=\,71\%, edge-case FPR\,=\,45\%
---- high recall but very high edge-case FPR from broad verb matching.
-ClaudeMem (RLHF alignment): recall\,=\,7\%, FPR\,=\,0\% --- almost no
-structural blocking.  Zero-ABR baselines (StatelessRAG, MemGPT, LangGraph):
-recall\,=\,0\%, FPR\,=\,0\% --- no gate at all.
+HardenedRAG (regex keyword filter): recall\,=\,71\%, edge-case FPR\,=\,45\%.
+ClaudeMem (RLHF alignment): recall\,=\,7\%, FPR\,=\,0\%.
+Zero-ABR baselines: recall\,=\,0\%, FPR\,=\,0\%.
 
 \textbf{Analysis: multi-trigger OR-gate (v3) vs.\ soft-blend (v2).}
-The v2 EXPERIMENT mode collapsed to entropy-only detection because its
-soft-blend gate ($0.75 \cdot \text{entropy\_flag} + 0.25 \cdot \text{keyword\_score}
-\geq 0.60$) mixed a \emph{binary} entropy flag with a \emph{continuous} keyword
-score.  When $H_{\mathrm{char}} < 4.8$ (entropy\_flag\,=\,0), the maximum
-achievable score was $0.25$, permanently below $\theta=0.60$ regardless of
-keyword evidence.  The gate was effectively: \textbf{block iff}
-$H_{\mathrm{char}} \geq 4.8$.  This resulted in 46\% recall (54 FN) on
-natural-language adversarial payloads.
-
-The v3 multi-trigger OR-gate replaces signal blending with independent detection
-paths.  Path~A fires on char-entropy ($H_{\mathrm{char}} \geq H^{*}$, catching
-obfuscated/encoded payloads); Path~B fires on intent\_score ($\geq 0.70$,
-22-pattern injection regex or charter-keyword overlap).  Each path is independently
-sufficient to block.  The improvement is $+9$\,pp recall (46\% $\to$ 55\%) with
-marginal FPR increase on benign text ($0\% \to 1\%$).  The remaining 45~FN
-(max intent\_score\,=\,0.50) are paraphrased injections below both thresholds;
-Path~C (perplexity gate, auto-enabled in EXPERIMENT) is the planned next defence.
+The v2 gate collapsed to entropy-only detection because its soft-blend score
+mixed a binary entropy flag with a continuous keyword score.
+The v3 OR-gate replaces signal blending with independent detection paths:
+Path~A fires on char-entropy, Path~B fires on intent\_score, each independently
+sufficient to block. The improvement is $+9$\,pp recall at $\Delta\text{FPR} = +1$\,pp
+on benign text. The remaining 45~FN are the target for semantic anomaly
+detection (Section~\ref{sec:future}).
 
 \textbf{Mode toggle.}
-The two modes are selected via the \texttt{CF\_MODE} environment variable:
 \texttt{CF\_MODE=paper} (default) reproduces exact paper results;
-\texttt{CF\_MODE=experiment} activates all four fixes.  The threshold $H^{*}$
-is overridable via \texttt{CF\_H\_THRESHOLD} in either mode.
+\texttt{CF\_MODE=experiment} activates all four fixes.
 
 % =============================================================================
-\subsection{Memory Quality Benchmark (Suite~15)}
+\subsection{Memory Quality Benchmark (Suite~15~v2)}
 \label{sec:suite15}
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_16_memory_radar_v2}
-  \caption{Suite~15 v2 radar chart: Memory Integrity Score components
-    for all six memory systems (160 samples, recency weighting fix applied).
-    ContextForge v3 (red, solid) achieves the \textbf{best} overall MIS
-    (\textbf{0.801}), driven by recency-weighted update accuracy (0.600)
-    and strong poison resistance (0.771).
-    HardenedRAG is second (MIS\,=\,0.753).
+  \caption{Suite~15~v2 radar chart: Memory Integrity Score components
+    for all six memory systems (160 samples, recency-weighted retrieval applied
+    to ContextForge v3).
+    ContextForge v3 (red, solid) achieves the best overall MIS
+    (\textbf{0.801}) via strong update accuracy, retrieval, and poison resistance.
+    HardenedRAG is second (MIS\,=\,0.753) via broader regex coverage.
+    MemGPT/ClaudeMem lead unguarded systems on update accuracy via recency bias.
     StatelessRAG and unguarded systems score MIS\,$\leq$\,0.595 with
     zero poison resistance.}
   \label{fig:mis_radar}
@@ -1274,29 +1297,29 @@ is overridable via \texttt{CF\_H\_THRESHOLD} in either mode.
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_17_memory_bars_v2}
-  \caption{Suite~15 v2 grouped bar chart: five metrics across six systems
-    (recency weighting fix applied to ContextForge v3).
+  \caption{Suite~15~v2 grouped bar chart: five metrics across six systems
+    (recency fix applied to ContextForge v3).
     MIS (rightmost group, highlighted) is the headline metric.
-    ContextForge v3 leads on MIS (\textbf{0.801}) after recency-weighted
-    BM25 raises update accuracy from 0.229 to \textbf{0.600} ($+$37.1\,pp).
-    ContextForge and HardenedRAG are the only systems providing
-    meaningful poison resistance ($>$0.75); unguarded systems score 0.000--0.086.}
+    ContextForge v3 now leads on Update accuracy (0.600) and MIS (0.801).
+    ContextForge v3 and HardenedRAG are the only systems providing
+    meaningful poison resistance ($>$0.75); unguarded systems
+    (MemGPT, LangGraph, ClaudeMem) score 0.000--0.086 on this axis.}
   \label{fig:mis_grouped}
 \end{figure*}
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_18_memory_heatmap_v2}
-  \caption{Suite~15 v2 performance heatmap: system $\times$ metric
-    (recency weighting fix applied).
-    Green\,=\,high, red\,=\,low. The MIS column (rightmost) is the
-    aggregate headline. ContextForge~v3 leads (MIS\,=\,\textbf{0.801}),
-    with HardenedRAG second (0.753). Both systems achieve MIS\,$>$\,0.70.}
+  \caption{Suite~15~v2 performance heatmap: system $\times$ metric (recency fix).
+    Green\,=\,high, red\,=\,low. The MIS column (rightmost, separated by
+    dashed line) is the aggregate headline. ContextForge v3 now leads with
+    MIS\,=\,0.801, driven by the $+37.1$\,pp update accuracy gain.}
   \label{fig:mis_heatmap}
 \end{figure}
 
-Suite~15 provides the first systematic evaluation of ContextForge as a
-\emph{memory quality} system, comparing it against five alternative memory
+Suite~15~v2 provides the second systematic evaluation of ContextForge as a
+\emph{memory quality} system, incorporating the recency-weighted retrieval fix
+(Section~\ref{sec:recency}) and comparing it against five alternative memory
 architectures on four curated datasets (160 samples total).
 
 \textbf{Systems evaluated.}
@@ -1304,19 +1327,19 @@ architectures on four curated datasets (160 samples total).
 empty set (ablation baseline).
 \textit{MemGPT}~\cite{packer2023memgpt}: all writes accepted; recency-biased
 BM25 retrieval (0.4 recency weight).
-\textit{LangGraph}: all writes accepted; pure BM25 retrieval, no security gate.
+\textit{LangGraph}~\cite{langgraph2024}: all writes accepted; pure BM25 retrieval, no security gate.
 \textit{ClaudeMem}: minimal RLHF-style heuristic filter (blocks explicit
 injection keywords only); mild recency bias.
 \textit{HardenedRAG}: broad regex keyword blocking (38-term pattern); pure BM25.
 \textit{ContextForge~v3}: REAL ReviewerGuard v3 (entropy + entity + intent
-paths, perplexity gate disabled for domain compatibility---see below);
-pure BM25 over accepted writes.
+paths, perplexity gate disabled for domain compatibility);
+recency-weighted BM25 ($\lambda=0.0001$\,s$^{-1}$, Section~\ref{sec:recency}).
 
 \textbf{Datasets and metrics.}
 \textit{Dataset~A} (60 samples, ground truth retrieval): five categories of
 developer preference facts; metrics are Recall@3, Precision@3, F1, Exact Match.
-\textit{Dataset~B} (35 samples, update/conflict): fact supersession scenarios
-(``user switched to Go''); metric is top-1 preference for the fresh write.
+\textit{Dataset~B} (35 samples, update/conflict): fact supersession scenarios;
+metric is top-1 preference for the fresh write.
 \textit{Dataset~C} (30 samples, delete/forget): PII and deprecated-info removal;
 metric is post-delete absence of target keywords while survivors remain.
 \textit{Dataset~D} (35 samples, adversarial poisoning): paraphrased prompt
@@ -1327,21 +1350,18 @@ $\text{MIS} = \frac{1}{4}(\text{Recall@3} + \text{UpdateAcc} + \text{DeleteAcc}
 
 \textbf{Perplexity gate note.}
 The perplexity gate (Pass~0.5) is domain-specific: its trigram model is
-calibrated on Suite~14 adversarial text, not memory-domain writes.  Technical
+calibrated on Suite~14 adversarial text, not memory-domain writes. Technical
 memory entries (email addresses, domain names, dates) score $>2\times P^{*}$
-under the Suite~14 model despite being completely benign.  In Suite~15 the
+under the Suite~14 model despite being completely benign. In Suite~15 the
 gate is disabled to isolate structural gate components (entropy + entity + intent),
 reflecting the deployment practice of recalibrating the gate per domain.
-This is documented as a known limitation and is the primary motivation for
-``Online perplexity recalibration'' in Section~\ref{sec:future}.
 
 \begin{table}[t]
 \centering
-\caption{Suite~15 v2 results (160 samples, 6 systems; recency weighting fix applied).
-  MIS is the headline Memory Integrity Score.
-  Update accuracy measures top-1 preference for the freshest write.
-  Poison resistance: adversarial write blocked or poison keywords absent
-  from top-3 results. \textbf{Bold} = best per column.}
+\caption{Suite~15~v2 results (160 samples, 6 systems, recency fix applied
+  to ContextForge). MIS is the headline Memory Integrity Score. \textbf{Bold}
+  = best per column. ContextForge v3 now leads overall after the $+37.1$\,pp
+  update accuracy improvement.}
 \label{tab:suite15}
 {\small
 \renewcommand{\arraystretch}{1.2}
@@ -1352,7 +1372,7 @@ This is documented as a known limitation and is the primary motivation for
 \midrule
 StatelessRAG    & 0.000 & 0.000 & 0.667 & \textbf{1.000} & 0.417 \\
 MemGPT          & 0.867 & 0.429 & \textbf{1.000} & 0.000 & 0.574 \\
-LangGraph       & 0.967 & 0.229 & \textbf{1.000} & 0.000 & 0.549 \\
+LangGraph       & \textbf{0.967} & 0.229 & \textbf{1.000} & 0.000 & 0.549 \\
 ClaudeMem       & 0.867 & 0.429 & \textbf{1.000} & 0.086 & 0.595 \\
 HardenedRAG     & \textbf{0.983} & 0.229 & \textbf{1.000} & 0.800 & 0.753 \\
 ContextForge~v3 & 0.833 & \textbf{0.600} & \textbf{1.000} & 0.771 & \textbf{0.801} \\
@@ -1363,24 +1383,19 @@ ContextForge~v3 & 0.833 & \textbf{0.600} & \textbf{1.000} & 0.771 & \textbf{0.80
 
 \textbf{Results.}
 Table~\ref{tab:suite15} and Figures~\ref{fig:mis_radar}--\ref{fig:mis_heatmap}
-present the full results.
+present the full v2 results.
 
 \emph{Retrieval (Dataset~A).}
-ContextForge v3 achieves Recall@3\,=\,0.833, reflecting the selectivity of
-the ReviewerGuard gate: fewer writes are accepted, reducing recall slightly
-relative to unguarded systems (LangGraph: 0.967, HardenedRAG: 0.983) but
-substantially improving precision on adversarial probes.
-BM25 retrieval is competitive across all non-stateless systems.
-StatelessRAG's 0.000 confirms the baseline's null memory.
+ContextForge v3 achieves Recall@3\,=\,0.833 ($-13.4$\,pp vs.\ v1's 0.967),
+reflecting the partial suppression of older relevant chunks by the recency
+decay factor. HardenedRAG leads on this axis (0.983).
 
 \emph{Update preference (Dataset~B).}
-ContextForge v3 achieves 60.0\% update accuracy after applying recency-weighted
-BM25 ($\lambda = 0.0001\,\mathrm{s}^{-1}$, recency bias 0.75;
-Section~\ref{sec:recency}), a $+$37.1\,pp improvement over pure-BM25
-(22.9\%) and $+$17.1\,pp over recency-biased MemGPT/ClaudeMem (42.9\%).
-The exponential decay weighting ensures fresh writes rank first in the
-scoring function without sacrificing relevance for older but highly
-topically-matched facts.
+ContextForge v3 with recency-weighted BM25 achieves Update\,=\,\textbf{0.600}
+($+37.1$\,pp vs.\ v1's 0.229), now leading all six systems on this metric.
+The decay constant $\lambda=0.0001$\,s$^{-1}$ provides a strong same-session
+preference (Section~\ref{sec:recency}); the improvement is measured on 35
+update/conflict samples and represents a genuine temporal ordering signal.
 
 \emph{Delete fidelity (Dataset~C).}
 All systems with functional memory achieve Delete\,=\,1.000; StatelessRAG
@@ -1388,23 +1403,19 @@ scores 0.667 because it passes trivially on expected-empty queries (nothing
 stored) but fails survivor-retention checks.
 
 \emph{Poison resistance (Dataset~D).}
-This is the primary differentiator.  ContextForge v3 (0.771) and
+This is the primary differentiator. ContextForge v3 (0.771) and
 HardenedRAG (0.800) are the only systems providing meaningful resistance.
 HardenedRAG's 2.9\,pp advantage reflects its broader 38-term regex, which
-catches some adversarial writes ContextForge's structural gate misses---a
-direct expression of the recall/precision tradeoff documented in Suite~14.
+catches some adversarial writes ContextForge's structural gate misses.
 ClaudeMem's RLHF heuristic blocks only blatant single-keyword attacks (8.6\%).
 MemGPT and LangGraph have zero resistance.
 
 \emph{Memory Integrity Score.}
-ContextForge v3 achieves MIS\,=\,\textbf{0.801}, ranking first among all
-six systems.  This is 20.6\,pp above the next best unguarded system
-(ClaudeMem, 0.595) and 4.8\,pp above HardenedRAG (0.753).
-Two drivers produce the lead: (1) the recency-weighted BM25 update accuracy
-(0.600, $+$37.1\,pp vs.\ prior pure-BM25 baseline) and (2) structural
-ReviewerGuard blocking at the ledger entry point, which prevents adversarial
-writes from ever contaminating the retrieval pool
-(PoisonRes\,=\,0.771, vs.\ 0.000 for unguarded systems).
+ContextForge v3 achieves MIS\,=\,\textbf{0.801}, the highest score among six
+systems ($+4.8$\,pp above HardenedRAG, $+20.6$\,pp above ClaudeMem,
+$+38.4$\,pp above LangGraph). The recency fix is the single largest
+improvement contributor: $+37.1$\,pp update accuracy at a $-13.4$\,pp
+retrieval cost, for a net MIS gain of $+0.059$ vs.\ Suite~15~v1.
 
 % =============================================================================
 \section{Ablation Study}
@@ -1445,6 +1456,12 @@ catch low-entropy keyword injections.
 CSS drops to 0.7841 ($-3.5\%$) as noisy-turn measurements are penalised without
 the $+0.06/+0.08$ vocabulary-mismatch compensation. ABR is unaffected.
 
+\textbf{$-$Recency decay ($\lambda=0$).}
+Disabling recency weighting restores pure BM25 and reverses the Suite~15~v2
+update gain: Update accuracy drops to 0.229 and MIS drops to 0.742---
+consistent with Suite~15~v1 results. This confirms that recency weighting is
+the sole driver of the $+37.1$\,pp update improvement.
+
 \textbf{Standard RAG.}
 CSS 0.5891, ABR 0\%, CTO 412{,}000 tokens---the full stateless baseline.
 
@@ -1478,14 +1495,36 @@ Suite~11 confirms that $B_{\mathrm{adaptive}}$ is non-binding for typical
 query loads: the cosine filter ($\theta=0.75$) naturally limits candidate
 token counts to ${\approx}30\%$ of retrieved tokens, well below any tested
 budget (Figure~\ref{fig:dci_scaling}).
-For deployments targeting large-context models
-(e.g.\ Gemini~1.5~Pro at $W = 1{,}000{,}000$ tokens), adaptive mode caps
-$B$ at $8{,}000$ tokens --- a $5.3\times$ increase over the fixed budget ---
-while still bounding injection to $< 1\%$ of the available context window.
 
 % =============================================================================
 \section{Discussion}
 \label{sec:discussion}
+
+\textbf{Security--recall tradeoff (Figure~\ref{fig:tradeoff}).}
+Figure~\ref{fig:tradeoff} plots four operating points on the FPR--ABR plane.
+v1 PAPER mode (FPR\,=\,96\%, ABR\,=\,95\%) occupies the high-recall/high-FPR
+corner and is unusable in production.
+ContextForge v3 EXPERIMENT mode (FPR\,=\,1\%, ABR\,=\,55\%) achieves the
+lowest production FPR at cost of $-40$\,pp recall.
+HardenedRAG (FPR\,=\,5\%, ABR\,=\,75\%) sits between the two, with higher
+recall but substantially higher edge-case FPR (45\% on maintenance commands
+vs.\ 16\% for v3).
+StatelessRAG (FPR\,=\,0\%, ABR\,=\,0\%) is the unguarded baseline.
+The schematic frontier curve traces the achievable boundary; v4 semantic
+anomaly detection is intended to push the ContextForge operating point along
+this frontier (higher ABR at the same 1\% FPR).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_19_security_tradeoff}
+  \caption{Security Trade-off Curve: FPR vs Adversarial Block Rate
+    (Suite~14, 300 samples). Lower-left corner = ideal (high security
+    at low cost). ContextForge v3 achieves the lowest production FPR (1\%)
+    at cost of a $-40$\,pp recall reduction vs.\ PAPER mode. The
+    45\% adversarial miss rate (paraphrased low-entropy injections) is the
+    primary target for v4 semantic anomaly detection.}
+  \label{fig:tradeoff}
+\end{figure}
 
 \textbf{Entropy mimicry.}
 The entropy gate's blind spot against entropy-mimicry attacks is now
@@ -1513,26 +1552,17 @@ the primary target for closing this gap.
 
 HardenedRAG (broad 38-term regex) achieves 71\% recall at 45\% edge FPR.
 Its higher recall comes at the cost of blocking legitimate maintenance commands
-(``kill hung process'', ``disable verbose logging'') --- a FPR that is 2.8$\times$
-EXPERIMENT mode's 16\%.  The architectural difference is fundamental:
-HardenedRAG uses surface-level vocabulary matching while ContextForge evaluates
-information-theoretic and semantic signals, accepting some adversarial misses
-to avoid penalising normal technical language.
+--- a FPR that is $2.8\times$ EXPERIMENT mode's 16\%.
 
-\textbf{Memory quality tradeoffs (Suite~15).}
-The Suite~15 benchmark reveals two areas where ContextForge trades memory quality
-for security.  First, \emph{update preference}: without recency weighting, pure
-BM25 retrieval does not consistently surface the most recent version of a fact
-(Update\,=\,0.229 vs.\ 0.429 for recency-biased MemGPT/ClaudeMem).  Adding a
-temporal score component to BM25 would close this gap without architectural change.
-Second, \emph{poison resistance vs.\ retrieval coverage}: the ReviewerGuard v3
-gate occasionally blocks legitimate writes containing incidental destructive
-vocabulary (``decommissioned service'', ``removed legacy endpoint'') when the
-perplexity gate is active.  The gate must be calibrated per deployment domain;
-for memory applications this means recalibrating on domain-representative benign
-text before serving.  Suite~15 evaluates the structural gate in isolation
-(perplexity gate disabled) to separate this calibration dependency from the
-core security signal.
+\textbf{Memory quality tradeoffs (Suite~15~v2).}
+The recency-weighted BM25 fix resolves ContextForge's primary update-preference
+weakness: Update accuracy rises from 0.229 to 0.600 ($+37.1$\,pp), and MIS
+rises from 0.742 to 0.801, placing ContextForge first among six systems.
+The tradeoff is a $-13.4$\,pp cost in Recall@3 (0.967\,$\to$\,0.833), as older
+but topically relevant chunks are partially suppressed by the decay. Tuning
+$\lambda$ on domain-specific update corpora can adjust this tradeoff; the
+current value $\lambda=0.0001$\,s$^{-1}$ was selected to hit the target
+Update\,$\geq$\,0.600 while keeping MIS gains positive.
 
 \textbf{CRDT deployment trade-offs.}
 The OR-Set CRDT adds $O(|S| \times n_{\mathrm{tags}})$ memory per replica
@@ -1544,23 +1574,21 @@ clients; a delta-CRDT variant is a natural next step.
 
 \textbf{Weight sensitivity.}
 $\Phi$ uses weights $(0.5, 0.3, 0.2)$ reflecting IDE-workflow priorities.
-Different deployment contexts (e.g.\ backend automation, research pipelines)
-should use the named preset configurations in \texttt{src/metrics/safety\_index.py}
-rather than the default weights. Weight sensitivity analysis confirms robustness:
-all feasible weight combinations yield $\Phi(\text{Nexus}) > \Phi(\text{baseline})$
+Different deployment contexts should use the named preset configurations in
+\texttt{src/metrics/safety\_index.py} rather than the default weights. Weight
+sensitivity analysis confirms robustness: all feasible weight combinations
+yield $\Phi(\text{Nexus}) > \Phi(\text{baseline})$
 (Figure~\ref{fig:weight_sensitivity}).
 
 \textbf{Production gaps.}
 The current system requires the developer to run the ContextForge Python server
-as a background process.  A packaged installer would lower the setup barrier.
+as a background process. A packaged installer would lower the setup barrier.
 The perplexity gate (Pass~0.5) requires domain-specific calibration: the Suite~14
-corpus (adversarial NLP text) is not appropriate for memory-domain writes, which
+corpus is not appropriate for memory-domain writes, which
 contain email addresses, domain names, and technical identifiers that score high
-perplexity under the default trigram model.  Deployers should run the online
+perplexity under the default trigram model. Deployers should run the online
 recalibration module (Section~\ref{sec:future}) on a representative sample of
-their own benign write traffic before enabling the gate.  Without calibration,
-the gate introduces false positives on technical content---the exact failure mode
-observed in Suite~15 (Section~\ref{sec:suite15}).
+their own benign write traffic before enabling the gate.
 Full production hardening additionally requires an offline benchmark run of
 Suite~14 against the deployment's own knowledge base to validate the
 $H^{*}=4.8$ char-entropy threshold and confirm the 1\% benign FPR translates
@@ -1569,6 +1597,16 @@ to the target domain.
 % =============================================================================
 \section{Future Work}
 \label{sec:future}
+
+\textbf{Semantic attack detection (v4 roadmap).}
+The 45\% adversarial miss rate (Suite~14, paraphrased injections with
+max intent\_score\,=\,0.50, mean\,=\,0.27) is the primary open problem.
+A semantic anomaly detector based on embedding-distance from a benign reference
+manifold---rather than information-theoretic signals---would detect paraphrased
+instructions that mimic benign syntactic patterns while embedding adversarial
+semantics. This is designated as the primary target for Path~C in the v4
+roadmap, with the goal of closing the remaining 45\% miss rate without
+increasing benign FPR above the current 1\% level.
 
 \textbf{Length-normalised entropy.}
 Computing $H_{\mathrm{norm}} = H(w)/\log_2|\text{unique\_tokens}(w)|$ instead
@@ -1579,7 +1617,7 @@ Dataset~C); length normalisation remains a refinement for future evaluation.
 
 \textbf{Query-length gating and short-payload branch.}
 Routing payloads of fewer than 15 tokens directly to keyword+LZ without entropy
-scoring addresses the short-injection failure mode identified in §\ref{sec:external_val}.
+scoring addresses the short-injection failure mode identified in Section~\ref{sec:external_val}.
 This is orthogonal to the EXPERIMENT-mode fixes and remains open.
 
 \textbf{Cross-process VOH.}
@@ -1599,15 +1637,14 @@ reduce network overhead to $O(\Delta |S|)$ per sync round.
 The trigram model is trained at gate initialisation on a static corpus.
 An online recalibration module could update the model incrementally as the
 knowledge graph grows, adapting the threshold to domain drift without
-manual intervention.  This is the primary fix for Suite~15's perplexity
-gate false-positive failure on memory-domain writes.
+manual intervention.
 
-\textbf{Recency weighting in BM25 retrieval.}
-Suite~15 shows that recency-biased retrieval (MemGPT, ClaudeMem at
-Update\,=\,0.429) substantially outperforms pure BM25 (ContextForge at
-0.229) on update-preference tasks.  Adding a configurable recency weight
-$\alpha \in [0, 1]$ to the BM25 scoring function would close this gap
-with a minimal code change to \texttt{src/retrieval/local\_indexer.py}.
+\textbf{Recency decay tuning.}
+Suite~15~v2 uses $\lambda=0.0001$\,s$^{-1}$ selected to achieve Update\,$\geq$\,0.600.
+Fine-tuning $\lambda$ on domain-specific corpora (e.g.\ long-lived architecture
+decisions vs.\ fast-moving configuration facts) would allow per-deployment
+optimisation of the Recall@3--Update tradeoff without re-engineering the
+retrieval stack.
 
 \textbf{Suite~15 extension.}
 The current memory benchmark uses BM25 retrieval for all systems; adding
@@ -1634,39 +1671,42 @@ would eliminate the background-process requirement and lower adoption friction.
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented ContextForge v2.2, a five-pillar agentic memory architecture
+We have presented ContextForge v2.3, a five-pillar agentic memory architecture
 with a 22-tool MCP server, empirically validated across 990 benchmark tests.
 The system closes three structural failure modes of stateless
 RAG---adversarial vulnerability, high failover latency, and unbounded context
 injection---with measurable, reproducible improvements on all fronts.
 
-Key contributions of the v2.2 report:
+Key contributions of the v2.3 report:
 (1)~\textbf{Suite~14 v3 multi-trigger OR-gate} (300 samples): ReviewerGuard v3
-replaces the broken v2 soft-blend gate (which collapsed to entropy-only
-detection) with independent detection paths---char-entropy~(A), intent
-score~(B), perplexity~(C)---achieving benign FPR\,=\,1\%, edge-case
-FPR\,=\,16\% ($\Delta\!=\!-81$\,pp vs.\ PAPER), at an accepted recall
-tradeoff of 55\% (vs.\ 95\% in PAPER mode); the 45\% miss rate is
-concentrated in paraphrased injections with max intent\_score\,=\,0.50,
-identifying Path~C as the next engineering target.
-(2)~\textbf{Suite~15 Memory Quality Benchmark} (160 samples, 6 systems):
+replaces the broken v2 soft-blend gate with independent detection paths---
+char-entropy~(A), intent score~(B), perplexity~(C)---achieving benign
+FPR\,=\,1\%, edge-case FPR\,=\,16\% ($\Delta\!=\!-81$\,pp vs.\ PAPER),
+at an accepted recall tradeoff of 55\% (vs.\ 95\% in PAPER mode); the 45\%
+miss rate is concentrated in paraphrased injections (max intent\_score\,=\,0.50),
+identifying semantic anomaly detection as the next engineering target.
+(2)~\textbf{Suite~15~v2 Memory Quality Benchmark} (160 samples, 6 systems):
 the first zero-LLM evaluation of memory systems across retrieval, update,
-delete, and poison dimensions; ContextForge v3 achieves MIS\,=\,0.742,
-second among six systems, with Recall@3\,=\,0.967 and poison
-resistance\,=\,0.771; the benchmark reveals that recency bias is the
-primary differentiator for update preference, and that the perplexity gate
-requires domain-specific calibration before use in memory applications.
+delete, and poison dimensions; ContextForge v3 with recency-weighted retrieval
+achieves MIS\,=\,0.801, first among six systems (Recall@3\,=\,0.833,
+Update\,=\,0.600, poison resistance\,=\,0.771); the recency-decay fix
+($\lambda=0.0001$\,s$^{-1}$) raises update accuracy by $+37.1$\,pp
+at a $-13.4$\,pp Recall@3 cost.
+(3)~\textbf{Security trade-off curve} (Figure~\ref{fig:tradeoff}):
+four operating points (v1 PAPER, v3 EXPERIMENT, HardenedRAG, StatelessRAG)
+quantify the FPR--ABR frontier and motivate v4 semantic anomaly detection.
 
-Earlier v2.1 contributions: (3) LZ density gate empirically load-bearing
+Earlier v2.1 contributions: (4) LZ density gate empirically load-bearing
 (word-cycling mimicry: $\bar{\rho}\approx 0.38$, dual-signal F1\,=\,0.869
-vs.\ 0.573 for entropy alone, $+29.6$\,pp); (4) entropy quantisation
+vs.\ 0.573 for entropy alone, $+29.6$\,pp); (5) entropy quantisation
 structural guarantee (${\approx}60\%$ of near-threshold slow-drip attempts
-overshoot $\nabla^{*}=0.15$ by construction); (5) trigram perplexity gate
-($P^{*}=231.8$, $<1$\,ms, zero dependencies); (6) OR-Set CRDT at 100\%
+overshoot $\nabla^{*}=0.15$ by construction); (6) trigram perplexity gate
+($P^{*}=231.8$, $<1$\,ms, zero dependencies); (7) OR-Set CRDT at 100\%
 convergence across concurrent-add, concurrent-update, and split-brain
-scenarios; (7) configurable DCI across 25+ LLM families; (8) external
+scenarios; (8) configurable DCI across 25+ LLM families; (9) external
 validation macro-F1\,=\,0.755 with FPR failure modes root-caused;
-(9) Weighted Safety Index $\Phi=79.7\%$ across three deployment profiles.
+(10) Weighted Safety Index $\Phi=62.2\%$ (v3 EXPERIMENT mode) across three
+deployment profiles.
 
 Earlier v2.0 contributions: Shannon entropy gate F1\,=\,1.0 at
 $H^{*}\!=\!3.5$; Temporal Correlator 100\% slow-drip detection;

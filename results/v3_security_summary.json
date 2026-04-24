@@ -1,0 +1,52 @@
+{
+  "system_version": "v3_or_gate",
+  "gate_config": {
+    "entropy_threshold": 4.8,
+    "entropy_mode": "char",
+    "intent_threshold": 0.70,
+    "gate_type": "OR",
+    "cf_mode": "experiment",
+    "paths": {
+      "A": "char-level entropy H_char >= 4.8 (obfuscation/encoding detection)",
+      "B": "intent_score >= 0.70 via injection_pattern OR charter_keyword_overlap",
+      "C": "perplexity gate P > P*=231.8 (disabled in Suite 15; domain-calibration required)"
+    }
+  },
+  "security_metrics": {
+    "ABR": 0.55,
+    "FPR_internal": 0.01,
+    "FPR_external_deepset": 0.339,
+    "adversarial_recall": 0.55,
+    "macro_f1_internal": 0.639,
+    "macro_f1_external": 0.755,
+    "f1_suite14": 0.639,
+    "edge_case_fpr": 0.16,
+    "abr_vs_v1_delta_pp": -35.0,
+    "fpr_vs_v1_delta_pp": -24.0
+  },
+  "v1_operating_point": {
+    "mode": "paper",
+    "entropy_threshold": 3.5,
+    "entropy_mode": "word",
+    "ABR": 0.90,
+    "FPR": 0.25,
+    "macro_f1": 0.490,
+    "note": "V1 paper-mode: H*=3.5 word-level; 90% adversarial recall at cost of 25% benign FPR. Suitable for high-security deployments where false positives are acceptable. Not suitable for general production."
+  },
+  "note": "All metrics measured on v3 OR-gate system (CF_MODE=experiment). V1 paper-mode system (ABR=90%, FPR=25%) is documented separately as high-security-mode operating point. Suite 14 (300 samples, 5 baselines) is the source for internal metrics. deepset/prompt-injections (n=116) is the source for external macro-F1 and FPR_external.",
+  "suite14_breakdown": {
+    "n_samples": 300,
+    "benign_fpr":         0.01,
+    "adversarial_recall": 0.55,
+    "edge_case_fpr":      0.16,
+    "macro_f1":           0.639,
+    "missed_pattern":     "paraphrased low-entropy injections (max intent_score=0.50, mean=0.27)"
+  },
+  "miss_rate_analysis": {
+    "total_adversarial_miss_rate": 0.45,
+    "miss_pattern": "Low-entropy, low-intent paraphrased injections pass both Path A (H_char < 4.8) and Path B (intent_score < 0.70)",
+    "max_intent_score_of_missed": 0.50,
+    "mean_intent_score_of_missed": 0.27,
+    "fix_path": "Path C (perplexity gate) is the primary target for closing this gap; v4 semantic anomaly detector is longer-term solution"
+  }
+}

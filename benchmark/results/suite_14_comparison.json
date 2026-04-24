@@ -1,0 +1,58 @@
+{
+  "description": "Suite 14 — v2 vs v3 benchmark comparison. v2=soft_blend (broken: 0.75*entropy_flag+0.25*keyword>=0.60, threshold unreachable when flag=0). v3=multi_trigger_or_gate (entropy_path OR intent_path, each independently sufficient).",
+  "generated_at": "2026-04-24",
+  "paper_mode": {
+    "description": "CF-PAPER unchanged across v2/v3 — word-level entropy H*=3.5, hard Pass 2",
+    "benign_fpr":       0.96,
+    "adversarial_recall": 0.95,
+    "edge_fpr":         0.97,
+    "combined_fpr":     0.965,
+    "combined_recall":  0.95,
+    "combined_f1":      0.490,
+    "false_positives":  193,
+    "false_negatives":  5
+  },
+  "experiment_v2_soft_blend": {
+    "description": "CF-EXPERIMENT v2 — char entropy H*=4.8 + soft blend (BROKEN: keyword sub-signal dead, gate collapsed to entropy-only). Version: v2_char_entropy_scoring",
+    "benign_fpr":         0.00,
+    "adversarial_recall": 0.46,
+    "edge_fpr":           0.15,
+    "combined_fpr":       0.075,
+    "combined_recall":    0.46,
+    "false_positives":    15,
+    "false_negatives":    54,
+    "root_cause": "0.75*entropy_flag + 0.25*keyword_score >= 0.60. entropy_flag in {0,1}. When flag=0, max_score=0.25 < 0.60 => keyword always ignored. Gate reduces to: block iff H_char > 4.8."
+  },
+  "experiment_v3_multi_trigger": {
+    "description": "CF-EXPERIMENT v3 — char entropy H*=4.8 + multi-trigger OR-gate. Path A: H_char>=4.8. Path B: intent_score>=0.70 (22 injection patterns OR charter keyword overlap). Version: v3_multi_trigger_or_gate",
+    "benign_fpr":         0.01,
+    "adversarial_recall": 0.55,
+    "edge_fpr":           0.16,
+    "combined_fpr":       0.085,
+    "combined_recall":    0.55,
+    "combined_f1":        0.639,
+    "false_positives":    17,
+    "false_negatives":    45,
+    "delta_vs_v2": {
+      "benign_fpr_delta_pp":       +1.0,
+      "adversarial_recall_delta_pp": +9.0,
+      "edge_fpr_delta_pp":         +1.0,
+      "fp_delta":                  +2,
+      "fn_delta":                  -9
+    }
+  },
+  "baselines_v3": {
+    "StatelessRAG": { "combined_fpr": 0.0, "combined_recall": 0.0, "f1": 0.0 },
+    "MemGPT":       { "combined_fpr": 0.0, "combined_recall": 0.0, "f1": 0.0 },
+    "LangGraph":    { "combined_fpr": 0.0, "combined_recall": 0.0, "f1": 0.0 },
+    "ClaudeMem":    { "combined_fpr": 0.0, "combined_recall": 0.07, "f1": 0.131 },
+    "HardenedRAG":  { "combined_fpr": 0.24, "combined_recall": 0.71, "f1": 0.648 }
+  },
+  "analysis": {
+    "v3_vs_v2_recall_gain_pp": 9.0,
+    "v3_vs_paper_fpr_reduction_pp": 88.0,
+    "remaining_adversarial_miss_pct": 45.0,
+    "remaining_miss_hypothesis": "45% of adversarial samples have H_char < 4.8 (low entropy, paraphrased attacks) AND don't match injection patterns (indirect language). Path C (perplexity gate) needed to close this gap.",
+    "hardened_rag_comparison": "HardenedRAG achieves 71% recall at 24% FPR (F1=0.648). CF-EXP v3 achieves 55% recall at 8.5% FPR (F1=0.639). Lower FPR with slightly lower recall — architecture tradeoff preserved."
+  }
+}
