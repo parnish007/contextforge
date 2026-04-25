@@ -419,7 +419,7 @@ to reduce false positives on legitimate technical content.
 ```
 contextforge/
 ├── mcp/
-│   ├── server.py          # Python MCP server — 9 tools, Stdio + SSE
+│   ├── server.py          # Python MCP server — 22 tools, Stdio + SSE
 │   ├── index.ts           # TypeScript MCP server — 22 tools (full parity)
 │   ├── package.json       # npm package (contextforge-mcp)
 │   ├── tsconfig.json

@@ -406,7 +406,7 @@ python -X utf8 benchmark/test_v5/iter_05_chaos.py   # Heat-Death Chaos    (44.6 
 python -X utf8 benchmark/suites/suite_14_fpr_fix_eval.py
 
 # Suite 15 v2 — Memory Quality (160 samples × 6 systems, recency fix)
-python -X utf8 benchmark/benchmark_memory/run_suite15_v2.py
+python -X utf8 benchmark/benchmark_memory/scripts/suite_15_memory_eval_v2.py
 
 # MCP coding agent simulator (12 tools × 8 scenarios)
 python -X utf8 benchmark/mcp_agent_sim/run_simulation.py
