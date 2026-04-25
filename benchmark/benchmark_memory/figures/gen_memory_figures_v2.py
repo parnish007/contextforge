@@ -7,12 +7,14 @@ Figure 17 v2 — Grouped bar: all 5 key metrics across 6 systems
 Figure 18 v2 — Heatmap: system × dataset performance matrix
 
 Run: python benchmark/benchmark_memory/figures/gen_memory_figures_v2.py
-Outputs → benchmark/benchmark_memory/figures/output/
+Outputs → benchmark/benchmark_memory/figures/output/  (primary)
+        → research/figures/output/                     (mirrored for pdflatex)
 """
 from __future__ import annotations
 
 import json
 import math
+import shutil
 from pathlib import Path
 
 import matplotlib
@@ -21,10 +23,20 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 
-ROOT     = Path(__file__).resolve().parents[3]
-V2_JSON  = ROOT / "benchmark" / "benchmark_memory" / "results" / "suite_15_final_report_v2.json"
-OUT_DIR  = ROOT / "benchmark" / "benchmark_memory" / "figures" / "output"
+ROOT       = Path(__file__).resolve().parents[3]
+V2_JSON    = ROOT / "benchmark" / "benchmark_memory" / "results" / "suite_15_final_report_v2.json"
+OUT_DIR    = ROOT / "benchmark" / "benchmark_memory" / "figures" / "output"
+PAPER_DIR  = ROOT / "research" / "figures" / "output"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+PAPER_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _save_png(fig, name: str) -> None:
+    """Save PNG to benchmark output and mirror to research/figures/output/ for pdflatex."""
+    out = OUT_DIR / name
+    fig.savefig(out, dpi=300, bbox_inches="tight")
+    shutil.copy2(out, PAPER_DIR / name)
+    print(f"  Saved: {out.relative_to(ROOT)}  →  research/figures/output/{name}")
 
 # ── Load v2 results ────────────────────────────────────────────────────────────
 with open(V2_JSON, encoding="utf-8") as f:
@@ -97,11 +109,8 @@ def fig16_radar_v2():
                  "Suite 15 v2: 6 systems × 4 metrics (160 samples, recency fix)",
                  fontsize=12, fontweight="bold", pad=20)
 
-    out = OUT_DIR / "fig_16_memory_radar_v2.png"
-    fig.savefig(out, dpi=300, bbox_inches="tight")
-    fig.savefig(out.with_suffix(".pdf"), dpi=300, bbox_inches="tight")
+    _save_png(fig, "fig_16_memory_radar_v2.png")
     plt.close(fig)
-    print(f"  Saved: {out.relative_to(ROOT)}")
 
 
 # ── Figure 17 v2 — Grouped bar ────────────────────────────────────────────────
@@ -149,11 +158,8 @@ def fig17_grouped_bar_v2():
     ax.spines["right"].set_visible(False)
     ax.axvspan(x[-1] - 0.42, x[-1] + 0.42, alpha=0.04, color="#F44336", zorder=0)
 
-    out = OUT_DIR / "fig_17_memory_bars_v2.png"
-    fig.savefig(out, dpi=300, bbox_inches="tight")
-    fig.savefig(out.with_suffix(".pdf"), dpi=300, bbox_inches="tight")
+    _save_png(fig, "fig_17_memory_bars_v2.png")
     plt.close(fig)
-    print(f"  Saved: {out.relative_to(ROOT)}")
 
 
 # ── Figure 18 v2 — Heatmap ────────────────────────────────────────────────────
@@ -199,11 +205,8 @@ def fig18_heatmap_v2():
         "Green=high, Red=low; MIS = Memory Integrity Score (headline)",
         fontsize=12, fontweight="bold", pad=14)
 
-    out = OUT_DIR / "fig_18_memory_heatmap_v2.png"
-    fig.savefig(out, dpi=300, bbox_inches="tight")
-    fig.savefig(out.with_suffix(".pdf"), dpi=300, bbox_inches="tight")
+    _save_png(fig, "fig_18_memory_heatmap_v2.png")
     plt.close(fig)
-    print(f"  Saved: {out.relative_to(ROOT)}")
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────

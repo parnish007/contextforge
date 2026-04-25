@@ -182,9 +182,11 @@ $RECYCLE.BIN/
 # They are the authoritative 300 DPI publication figures and are small
 # enough (< 500 KB each) to keep in git.
 #
-# PDF versions of research figures ARE tracked — they are needed for
-# pdflatex compilation and arXiv/conference submission.
-# Do NOT add *.pdf or research/figures/**/*.pdf to this file.
+# PDF versions of research figures are NOT tracked — they are matplotlib
+# side-outputs regenerated automatically. pdflatex resolves \includegraphics
+# to the PNGs when no PDF is present. Ignore them to avoid bloat.
+research/figures/output/*.pdf
+research/figures/*.pdf
 
 # Papers directory — generated images only (sources tracked)
 papers/images/

@@ -29,7 +29,7 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 POINTS = [
     (96.0,  95.0, "Paper Mode\n(v1, unusable in production)",  "#E53935", "^", 180),
     ( 1.0,  55.0, "ContextForge v3\n(deployed, FPR=1%)",       "#1565C0", "o", 220),
-    ( 5.0,  75.0, "HardenedRAG\n(regex baseline)",             "#6A1FA2", "s", 160),
+    ( 5.0,  71.0, "HardenedRAG\n(regex baseline, ABR=71%)",    "#6A1FA2", "s", 160),
     ( 0.0,   0.0, "Stateless RAG\n(no guard)",                 "#9e9e9e", "x", 120),
 ]
 

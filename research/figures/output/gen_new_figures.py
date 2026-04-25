@@ -33,6 +33,7 @@ OUT  = Path(__file__).parent
 ADAPTIVE_ABR   = ROOT / "research" / "benchmark_results" / "adaptive_abr.json"
 EXTERNAL_ABR   = ROOT / "research" / "benchmark_results" / "external_abr.json"
 COMPARISON     = ROOT / "results" / "comparison_table.json"
+SUITE_11       = ROOT / "research" / "benchmark_results" / "suite_11_dci_scaling.json"
 
 # ── Colour palette ────────────────────────────────────────────────────────────
 GREEN  = "#27ae60"
@@ -190,13 +191,13 @@ def fig_05_temporal_correlator(data: dict) -> None:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def fig_07_token_cost_scaling() -> None:
-    # Hardcoded from suite_11 simulation (budget-independent for typical queries)
-    # The cosine filter reduces candidates to ~30% of retrieved; candidates < any tested B.
-    budgets = [1500, 4000, 8000, 16000]
-    cto     = [73.1, 73.1, 73.1, 73.1]   # mean tokens injected (flat: budget not binding)
-    tnr     = [70.2, 70.2, 70.2, 70.2]   # token noise reduction % (retrieved-injected)/retrieved
-    css     = [67.5, 67.5, 67.5, 67.5]   # CSS (security gate, B-independent)
-    abr     = [90.0, 90.0, 90.0, 90.0]   # ABR % (B-independent)
+    # Read from suite_11_dci_scaling.json (v3 EXPERIMENT mode, B-independent)
+    s11 = json.loads(SUITE_11.read_text(encoding="utf-8"))
+    budgets = [r["budget"]              for r in s11["results"]]
+    cto     = [r["cto"]                 for r in s11["results"]]
+    tnr     = [r["tnr"] * 100          for r in s11["results"]]
+    css     = [r["css"] * 100          for r in s11["results"]]
+    abr     = [r["abr"] * 100          for r in s11["results"]]
 
     x = np.arange(len(budgets))
     B_labels = ["1,500", "4,000", "8,000", "16,000"]
@@ -214,7 +215,7 @@ def fig_07_token_cost_scaling() -> None:
     ax1.set_title("Context Token Overhead vs Budget B\n(cosine filter limits injection below any tested B)", fontsize=9.5)
     ax1.set_ylim(0, 120)
     ax1.grid(axis="y", alpha=0.3, zorder=0)
-    ax1.axhline(73.1, color=RED, ls="--", lw=1.2, alpha=0.6, label="Hardcoded B=1500 baseline")
+    ax1.axhline(cto[0], color=RED, ls="--", lw=1.2, alpha=0.6, label=f"Flat CTO={cto[0]:.1f} t/q (B-independent)")
     ax1.legend(fontsize=7.5)
 
     # ── Right: TNR + ABR line plot ────────────────────────────────────────
@@ -453,13 +454,13 @@ def fig_11_adaptive_abr(data: dict) -> None:
 def fig_12_external_validation(ext_data: dict) -> None:
     m = ext_data["metrics"]
 
-    # Internal (from comparison_table: ContextForge-Nexus on benchmark suite)
+    # Internal (v3 EXPERIMENT mode, multi-baseline runner)
     internal = {
-        "ABR\n(adv. recall)": 90.0,
-        "FPR\n(false pos.)":   0.0,     # Suite 10 has no false positives
-        "Precision":           100.0,
-        "F1\n(attack)":        94.7,    # 2*abr*prec/(abr+prec) = 2*0.9*1/(1.9) ≈ 0.947
-        "Macro-F1":            91.9,    # (F1_attack + F1_benign)/2 ≈ (0.947+0.891)/2
+        "ABR\n(adv. recall)": 55.0,
+        "FPR\n(false pos.)":   5.0,     # multi-baseline runner context (Suite 14: 1%)
+        "Precision":           91.7,    # 55/(55+5) on 100-sample normalised basis
+        "F1\n(attack)":        69.0,    # 2*0.55*0.917/(0.55+0.917) ≈ 0.690
+        "Macro-F1":            65.5,    # (F1_attack + F1_benign)/2; benign F1 lower due to FPR
     }
     external = {
         "ABR\n(adv. recall)": m["recall"] * 100,           # 91.4%

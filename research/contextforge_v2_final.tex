@@ -170,7 +170,7 @@ This statelessness produces three measurable failure modes.
 Malicious payloads embedded in retrieved content or user input are forwarded
 directly to the LLM context without challenge. All four baseline systems
 (StatelessRAG, MemGPT-style, LangChain-Buffer) report 0\% adversarial block
-rate; even Hardened-RAG's keyword-only filter reaches only 75\% ABR against
+rate; even Hardened-RAG's keyword-only filter reaches only 71\% ABR against
 obfuscated payloads.
 
 \textbf{FM-2: High failover latency.}
@@ -869,7 +869,7 @@ CRDT conv.\ rate     & N/A & N/A & N/A & N/A & \textbf{100\%}          & --- \\
 Perp.\ gate $\mathcal{P}/P^{*}$  & N/A & N/A & N/A & N/A & \textbf{$2.0\times$} flagged & --- \\
 Dual-signal F1 (ext.) & 0.573 & --- & --- & --- & \textbf{0.869}         & $*$        \\
 \midrule
-\textbf{Total tests}  & --- & --- & --- & --- & \textbf{530/530}        & 100\%      \\
+\textbf{Total tests}  & --- & --- & --- & --- & \textbf{990/990}        & 100\%      \\
 \bottomrule
 \end{tabular}
 }
@@ -880,7 +880,7 @@ four baselines (see Figure~\ref{fig:radar} for the radar view).
 ContextForge v3 leads on CTO ($73.1$ vs.\ $134.7$--$1{,}590$ tokens/query),
 failover latency ($149.5$\,ms vs.\ $480$--$600$\,ms), and TNR ($70.2\%$ vs.\ $45.1\%$).
 On adversarial recall, v3 EXPERIMENT mode (ABR\,=\,55\%) deliberately trades
-$-20$\,pp vs.\ Hardened-RAG (75\%) in exchange for a substantially lower benign
+$-16$\,pp vs.\ Hardened-RAG (71\%) in exchange for a substantially lower benign
 FPR: 1\% in Suite~14 (300 samples) and 5\% in the multi-baseline runner context,
 vs.\ HardenedRAG's 5\% benign plus 45\% edge-case FPR documented in Suite~14
 (Section~\ref{sec:fpr_fix}).
@@ -892,7 +892,7 @@ The v3 EXPERIMENT mode reflects a deliberate security--usability tradeoff:
 it achieves $5\times$ lower benign FPR than the v1 PAPER mode (5\% vs.\ 25\%
 in runner; 1\% vs.\ 25\% in Suite~14) at the cost of $-35$\,pp adversarial
 recall (55\% vs.\ 90\%). Figure~\ref{fig:tradeoff} illustrates this
-operating-point landscape.  HardenedRAG achieves the highest ABR (75\%) but
+operating-point landscape.  HardenedRAG achieves the highest ABR (71\%) but
 at a substantially higher edge-case FPR (45\%), making it unsuitable for
 production deployments where developer maintenance commands must pass through.
 
@@ -1044,7 +1044,9 @@ Token savings compound with every additional decision stored
     (v3 EXPERIMENT mode operating points).
     ContextForge Nexus v3 (green, solid) leads on CTO, failover, and TNR;
     Hardened-RAG leads on ABR and CSS due to its broader recall at higher FPR.
-    StatelessRAG and MemGPT-style score 0\% on all security axes.}
+    StatelessRAG and MemGPT-style score 0\% on all security axes.
+    (Generated from v3 multi-baseline runner; HardenedRAG ABR updated to 71\%
+    per Suite~14.)}
   \label{fig:radar}
 \end{figure}
 
@@ -1506,7 +1508,7 @@ v1 PAPER mode (FPR\,=\,96\%, ABR\,=\,95\%) occupies the high-recall/high-FPR
 corner and is unusable in production.
 ContextForge v3 EXPERIMENT mode (FPR\,=\,1\%, ABR\,=\,55\%) achieves the
 lowest production FPR at cost of $-40$\,pp recall.
-HardenedRAG (FPR\,=\,5\%, ABR\,=\,75\%) sits between the two, with higher
+HardenedRAG (FPR\,=\,5\%, ABR\,=\,71\%) sits between the two, with higher
 recall but substantially higher edge-case FPR (45\% on maintenance commands
 vs.\ 16\% for v3).
 StatelessRAG (FPR\,=\,0\%, ABR\,=\,0\%) is the unguarded baseline.
@@ -1659,7 +1661,7 @@ two-phase calibration sweep to run automatically at deployment time would
 adapt the gate to non-English or high-entropy technical domains.
 
 \textbf{Independent third-party evaluation.}
-All 530 benchmark tests are author-run. An independent evaluation by a
+All 990 benchmark tests are author-run. An independent evaluation by a
 third party on a held-out adversarial corpus would provide stronger evidence
 for the reported ABR and F1 claims.
 

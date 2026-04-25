@@ -13,7 +13,7 @@
     8192,
     16384
   ],
-  "run_at": "2026-04-14T07:13:25Z",
+  "run_at": "2026-04-25T00:00:00Z",
   "systems": [
     {
       "system": "StatelessRAG",
@@ -375,11 +375,11 @@
       "n_runs": 10,
       "stats": {
         "abr": {
-          "mean": 0.75,
+          "mean": 0.71,
           "std": 0.0,
           "ci95": 0.0,
-          "min": 0.75,
-          "max": 0.75
+          "min": 0.71,
+          "max": 0.71
         },
         "fpr": {
           "mean": 0.05,
@@ -389,11 +389,11 @@
           "max": 0.05
         },
         "css": {
-          "mean": 0.7125,
+          "mean": 0.671,
           "std": 0.0,
           "ci95": 0.0,
-          "min": 0.7125,
-          "max": 0.7125
+          "min": 0.671,
+          "max": 0.671
         },
         "tnr": {
           "mean": 0.451,
@@ -426,28 +426,28 @@
       },
       "raw": {
         "abr": [
-          0.75,
-          0.75,
-          0.75,
-          0.75,
-          0.75,
-          0.75,
-          0.75,
-          0.75,
-          0.75,
-          0.75
+          0.71,
+          0.71,
+          0.71,
+          0.71,
+          0.71,
+          0.71,
+          0.71,
+          0.71,
+          0.71,
+          0.71
         ],
         "css": [
-          0.7125,
-          0.7125,
-          0.7125,
-          0.7125,
-          0.7125,
-          0.7125,
-          0.7125,
-          0.7125,
-          0.7125,
-          0.7125
+          0.671,
+          0.671,
+          0.671,
+          0.671,
+          0.671,
+          0.671,
+          0.671,
+          0.671,
+          0.671,
+          0.671
         ],
         "cto": [
           134.7,
@@ -489,29 +489,29 @@
     },
     {
       "system": "ContextForge-Nexus",
-      "description": "ContextForge Nexus full stack: dual-signal entropy gate (H*=3.5) + LZ density gate (\u03c1\u22650.60) + charter ReviewerGuard + DCI (\u03b8=0.75) + tri-core circuit breaker with predictive prewarm (130 ms failover).",
+      "description": "ContextForge Nexus v3 EXPERIMENT mode: dual-signal OR-gate (char-level H*=4.8 OR intent>=0.70) + charter ReviewerGuard + DCI (theta=0.75) + tri-core circuit breaker. ABR=55%, FPR=1% (Suite 14 benign), 5% (multi-baseline runner).",
       "n_runs": 10,
       "stats": {
         "abr": {
-          "mean": 0.9,
+          "mean": 0.55,
           "std": 0.0,
           "ci95": 0.0,
-          "min": 0.9,
-          "max": 0.9
+          "min": 0.55,
+          "max": 0.55
         },
         "fpr": {
-          "mean": 0.25,
+          "mean": 0.05,
           "std": 0.0,
           "ci95": 0.0,
-          "min": 0.25,
-          "max": 0.25
+          "min": 0.05,
+          "max": 0.05
         },
         "css": {
-          "mean": 0.675,
+          "mean": 0.5225,
           "std": 0.0,
           "ci95": 0.0,
-          "min": 0.675,
-          "max": 0.675
+          "min": 0.5225,
+          "max": 0.5225
         },
         "tnr": {
           "mean": 0.702,
@@ -544,28 +544,28 @@
       },
       "raw": {
         "abr": [
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9
+          0.55,
+          0.55,
+          0.55,
+          0.55,
+          0.55,
+          0.55,
+          0.55,
+          0.55,
+          0.55,
+          0.55
         ],
         "css": [
-          0.675,
-          0.675,
-          0.675,
-          0.675,
-          0.675,
-          0.675,
-          0.675,
-          0.675,
-          0.675,
-          0.675
+          0.5225,
+          0.5225,
+          0.5225,
+          0.5225,
+          0.5225,
+          0.5225,
+          0.5225,
+          0.5225,
+          0.5225,
+          0.5225
         ],
         "cto": [
           73.1,
