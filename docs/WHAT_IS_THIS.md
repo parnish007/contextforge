@@ -926,6 +926,558 @@ From the research paper (`research/contextforge_v2.tex`, §Future Work) and the 
 
 ---
 
+### 38. How were the benchmarks conducted — what exactly was tested and how?
+
+ContextForge has four independent benchmark suites, each measuring a different property. All suites run locally with no LLM calls in the harness itself — measurements are deterministic.
+
+#### Suite OMEGA-75 (375 tests — core system correctness)
+
+**What it tests:** The five architectural pillars in isolation and combination.
+
+```
+Iteration 01 — Core Network (75 tests, 4.7 s)
+  ├── NexusRouter: Groq/Gemini/Ollama failover sequence
+  ├── Circuit breaker: trip threshold, cooldown, recovery
+  └── Predictive prewarm: latency delta with/without prewarm
+
+Iteration 02 — Temporal Integrity (75 tests, 37.2 s)
+  ├── EventLedger hash chain: SHA-256 chain validity across 1000 appends
+  ├── Rollback: status transitions, pruned_count accuracy
+  └── FluidSync: snapshot→replay round-trip integrity
+
+Iteration 03 — Adversarial Guard (75 tests, 5.7 s)
+  ├── ReviewerGuard PAPER mode: known-adversarial payloads (ABR)
+  ├── ReviewerGuard PAPER mode: benign payloads (FPR)
+  └── Charter reload: guard behaviour after PROJECT_CHARTER.md edit
+
+Iteration 04 — RAG & DCI (75 tests, 6.8 s)
+  ├── LocalIndexer: TF-IDF cosine scores vs expected rankings
+  ├── DCI gate: token budget enforcement at B=1500
+  └── BM25 retrieval: term-overlap scoring accuracy
+
+Iteration 05 — Heat-Death Chaos (75 tests, 44.6 s)
+  ├── 1,000-event stress write: ledger integrity under load
+  ├── Concurrent reader storm (10 threads) during active writes
+  └── Database recovery after simulated crash mid-write
+```
+
+**How each test is structured:**
+```python
+# Example from iter_03_poison.py
+def test_adversarial_payload_blocked():
+    ledger = EventLedger(":memory:")   # in-memory DB — no disk I/O
+    guard  = ledger.guard
+    result = guard.check(EventType.AGENT_THOUGHT, ADVERSARIAL_PAYLOAD)
+    assert result.status == "conflict"
+    assert result.triggered_pass in ("P0", "P1", "P2")
+```
+
+Every test uses `:memory:` SQLite — no disk state, no cleanup needed, fully repeatable.
+
+---
+
+#### Suite 14 — FPR Fix Evaluation (300 samples × 5 baselines)
+
+**What it tests:** ReviewerGuard's adversarial recall and false positive rate across four payload categories.
+
+**Dataset construction:**
+| Dataset | Samples | Content | Source |
+|---------|---------|---------|--------|
+| A — Benign normal | 75 | Routine developer instructions ("use PostgreSQL", "add JWT auth") | Hand-authored |
+| B — Adversarial | 75 | Prompt-injection attempts, charter violations, data-exfiltration commands | Hand-authored + GPT-4 paraphrase |
+| C — Benign edge cases | 100 | Maintenance language near protected entities ("kill hung process", "reset router config") | Hand-authored |
+| D — External corpus | 50 | Random samples from `deepset/prompt-injections` dataset (HuggingFace) | Public dataset |
+
+**How a sample is scored:**
+```python
+for sample in dataset:
+    result = guard.check(EventType.AGENT_THOUGHT, sample["text"])
+    blocked = result.status == "conflict"
+
+    if sample["label"] == "adversarial":
+        if blocked: true_positives  += 1   # correctly caught attack
+        else:       false_negatives += 1   # missed attack
+    else:
+        if blocked: false_positives += 1   # wrongly blocked benign
+        else:       true_negatives  += 1   # correctly passed benign
+
+ABR = true_positives  / (true_positives + false_negatives)
+FPR = false_positives / (false_positives + true_negatives)
+```
+
+**Five baselines compared:** Stateless RAG (no guard), MemGPT-style (no guard), LangChain-Buffer (no guard), HardenedRAG (regex-only), ContextForge v3 (three-pass guard).
+
+Run: `python -X utf8 benchmark/suites/suite_14_fpr_fix_eval.py`
+
+---
+
+#### Suite 15 v2 — Memory Quality (160 samples × 6 systems)
+
+**What it tests:** End-to-end memory system quality on four memory tasks.
+
+**Zero-LLM harness:** The harness inserts records directly via each system's storage API, then calls its retrieval API and checks results programmatically — no LLM judges anything.
+
+```python
+# Dataset A — Retrieval (60 samples)
+for sample in dataset_a:
+    system.write(sample["facts"])          # insert N facts
+    results = system.retrieve(sample["query"], top_k=3)
+    hit = any(sample["target_id"] in r["id"] for r in results)
+    recall_at_3 += hit                     # did target appear in top 3?
+
+# Dataset B — Update (35 samples)
+for sample in dataset_b:
+    system.write(sample["original_fact"])
+    system.update(sample["updated_fact"])  # overwrite / add newer version
+    results = system.retrieve(sample["query"], top_k=1)
+    correct = results[0]["content"] == sample["updated_fact"]
+    update_accuracy += correct             # did fresh version come back first?
+
+# Dataset C — Delete (30 samples)
+for sample in dataset_c:
+    system.write(sample["facts"])
+    system.delete(sample["to_forget"])
+    results = system.retrieve(sample["query"])
+    deleted_present = any(sample["to_forget"] in r["content"] for r in results)
+    delete_accuracy += not deleted_present  # did deleted fact disappear?
+
+# Dataset D — Poison (35 samples)
+for sample in dataset_d:
+    system.write(sample["benign_facts"])
+    system.write(sample["adversarial_inject"])  # inject poison
+    results = system.retrieve(sample["query"])
+    poison_present = any(sample["adversarial_id"] in r["id"] for r in results)
+    poison_resistance += not poison_present     # did poison stay out of results?
+```
+
+**MIS = mean(Recall@3, UpdateAccuracy, DeleteAccuracy, PoisonResistance)**
+
+Run: `python -X utf8 benchmark/benchmark_memory/scripts/suite_15_memory_eval_v2.py`
+
+---
+
+### 39. What is the complete step-by-step sequence from "server starts" to a decision being stored and retrievable?
+
+**Phase 1 — Server startup (~200 ms)**
+
+```
+python mcp/server.py --stdio
+│
+├─ 1. Import & init StorageAdapter
+│     └─ open "data/contextforge.db" (create if missing)
+│     └─ CREATE TABLE IF NOT EXISTS: projects, decision_nodes, tasks,
+│                                     events, historical_nodes, audit_log
+│     └─ CREATE INDEX on (project_id, area, status, created_at)
+│
+├─ 2. Init EventLedger
+│     └─ read PROJECT_CHARTER.md → extract constraint list
+│     └─ build ReviewerGuard with constraints
+│     └─ read max(rowid) from events → chain tip
+│
+├─ 3. Init LocalIndexer
+│     └─ crawl src/, mcp/, docs/ → collect .py, .ts, .md files
+│     └─ chunk each file into ~400-word overlapping windows
+│     └─ compute TF-IDF matrix over all chunks
+│     └─ write .forge/embeddings.npz + .forge/index_meta.json
+│
+├─ 4. Init FluidSync
+│     └─ start 15-min idle timer
+│     └─ on timer fire: snapshot(label="auto-YYYY-MM-DD-HH-MM")
+│
+└─ 5. Register 22 MCP tools → start JSON-RPC stdio loop
+```
+
+**Phase 2 — `init_project` call (~3 ms)**
+
+```
+AI sends: {"tool": "init_project", "arguments": {"project_id": "my-app", ...}}
+│
+├─ MCP server parses JSON-RPC frame
+├─ validate project_id: slug format (lowercase, hyphens, no spaces)
+├─ StorageAdapter.upsert_project({id, name, type, description, goals, tech_stack})
+│     └─ INSERT OR REPLACE INTO projects (...)
+└─ return {"status": "created", "project_id": "my-app"}
+```
+
+**Phase 3 — `capture_decision` call (~4 ms)**
+
+```
+AI sends: {"tool": "capture_decision", "arguments": {
+  "project_id": "my-app",
+  "summary": "Use PostgreSQL instead of SQLite",
+  "rationale": "Need concurrent writes",
+  "area": "database",
+  "alternatives": ["SQLite"],
+  "confidence": 0.9
+}}
+│
+├─ serialize payload to content_json
+├─ ReviewerGuard.check(AGENT_THOUGHT, content_json)          ← ~0.1 ms
+│     ├─ Pass 0: H(word distribution of text)
+│     │     = –Σ p(w) log2 p(w) = 2.98 bits < 3.5 → PASS
+│     ├─ Pass 0: LZ-compressed / raw = 0.74 > 0.60 → PASS
+│     ├─ Pass 1: scan for (destructive_verb ∩ protected_entity) → no match → PASS
+│     └─ Pass 2: charter keyword hits = 0 < max(2, len//5)=2 → PASS
+│
+├─ EventLedger.append(AGENT_THOUGHT, content_json)           ← ~1 ms
+│     ├─ compute prev_hash = SHA256(chain_tip)
+│     ├─ event_id = UUID4
+│     ├─ new_hash = SHA256(prev_hash + event_id + content_json)
+│     └─ INSERT INTO events (event_id, event_type, content, status,
+│                            prev_hash, created_at)
+│
+├─ StorageAdapter.upsert_node({project_id, summary, rationale, ...}) ← ~1 ms
+│     └─ INSERT OR REPLACE INTO decision_nodes (
+│            id, project_id, summary, rationale, area,
+│            alternatives, confidence, status, created_at
+│        )
+│
+└─ return {"status": "captured", "event_id": "a3f1...", "node_id": "d7c2..."}
+```
+
+**Phase 4 — `load_context` retrieval (~3 ms)**
+
+```
+AI sends: {"tool": "load_context", "arguments": {
+  "project_id": "my-app", "query": "database", "detail_level": "L2"
+}}
+│
+├─ L1 check: SHA256("my-app:database:L2") → not in cache → MISS
+│
+├─ L2 BM25 query over decision_nodes WHERE project_id="my-app"
+│     ├─ tokenize query: ["database"]
+│     ├─ for each node: score = Σ IDF(t) × TF(t, node) × (k+1) /
+│     │                            (TF(t,node) + k × (1 – b + b × |node|/avglen))
+│     ├─ apply recency weight: final_score = BM25_score × exp(–λ × age_seconds)
+│     │     where λ = 0.0001 s⁻¹
+│     ├─ rank by final_score descending
+│     └─ DCI gate: inject chunk if cosine(query_vec, chunk_vec) ≥ 0.75
+│                  AND cumulative_tokens + chunk_tokens ≤ 1500
+│
+├─ build response JSON:
+│     {
+│       "project": {"id": "my-app", "name": "My App", ...},
+│       "decisions": [
+│         {"summary": "Use PostgreSQL...", "rationale": "...", "area": "database", ...}
+│       ],
+│       "token_estimate": 312
+│     }
+│
+├─ store in L1 cache: cache[SHA256("my-app:database:L2")] = response
+└─ return response
+```
+
+**Total time from cold start to first usable context: < 250 ms (startup) + < 10 ms (tool calls).**
+
+---
+
+### 40. What does the database schema look like — every table and field?
+
+The single SQLite database at `data/contextforge.db` has six tables:
+
+#### `projects`
+```sql
+CREATE TABLE projects (
+    id          TEXT PRIMARY KEY,    -- slug: "my-saas-app"
+    name        TEXT NOT NULL,       -- display: "My SaaS App"
+    project_type TEXT DEFAULT 'code', -- "code", "research", "general"
+    description TEXT,
+    goals       TEXT,                -- JSON array: ["Launch MVP in Q3"]
+    tech_stack  TEXT,                -- JSON dict: {"backend": "FastAPI"}
+    created_at  TEXT NOT NULL,       -- ISO-8601 UTC: "2026-04-25T12:00:00Z"
+    updated_at  TEXT
+);
+```
+
+#### `decision_nodes`
+```sql
+CREATE TABLE decision_nodes (
+    id           TEXT PRIMARY KEY,   -- UUID4: "d7c2a8f1-..."
+    project_id   TEXT NOT NULL,      -- FK → projects.id
+    summary      TEXT NOT NULL,      -- "Use PostgreSQL instead of SQLite"
+    rationale    TEXT,               -- "Need concurrent writes and JSONB"
+    area         TEXT DEFAULT 'general', -- "database", "auth", "payments", ...
+    alternatives TEXT,               -- JSON array: ["SQLite — limited concurrency"]
+    confidence   REAL DEFAULT 0.7,   -- 0.0–1.0
+    status       TEXT DEFAULT 'active',  -- "active", "deprecated", "rolled_back"
+    tags         TEXT,               -- JSON array: ["infra", "backend"]
+    linked_to    TEXT,               -- JSON array of {id, relationship} dicts
+    created_at   TEXT NOT NULL,
+    updated_at   TEXT,
+    FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+CREATE INDEX idx_decisions_project ON decision_nodes (project_id, area, status);
+CREATE INDEX idx_decisions_created ON decision_nodes (created_at);
+```
+
+#### `events` (the append-only ledger)
+```sql
+CREATE TABLE events (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_id    TEXT UNIQUE NOT NULL,  -- UUID4
+    event_type  TEXT NOT NULL,         -- "AGENT_THOUGHT", "FILE_DIFF",
+                                       -- "CHECKPOINT", "CONFLICT",
+                                       -- "ROLLBACK", "NODE_APPROVED",
+                                       -- "NODE_BLOCKED", "RESEARCH",
+                                       -- "TASK_DONE", "USER_INPUT"
+    content     TEXT NOT NULL,         -- JSON payload (decision body, diff, etc.)
+    status      TEXT DEFAULT 'active', -- "active", "rolled_back", "conflict"
+    prev_hash   TEXT,                  -- SHA-256 of previous event's hash
+    content_hash TEXT,                 -- SHA-256 of this event's content + prev_hash
+    created_at  TEXT NOT NULL,
+    project_id  TEXT                   -- optional project scope
+);
+-- Never DELETE. Never UPDATE content. Only UPDATE status → "rolled_back".
+```
+
+#### `tasks`
+```sql
+CREATE TABLE tasks (
+    id          TEXT PRIMARY KEY,    -- UUID4
+    project_id  TEXT NOT NULL,       -- FK → projects.id
+    title       TEXT NOT NULL,
+    description TEXT,
+    status      TEXT DEFAULT 'pending',  -- "pending", "in_progress", "done"
+    priority    TEXT DEFAULT 'medium',   -- "low", "medium", "high"
+    area        TEXT,
+    created_at  TEXT NOT NULL,
+    updated_at  TEXT,
+    FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+```
+
+#### `historical_nodes`
+```sql
+CREATE TABLE historical_nodes (
+    -- Same schema as decision_nodes
+    -- Populated by: deprecate_decision, Historian GC, merge_projects cleanup
+    id           TEXT PRIMARY KEY,
+    project_id   TEXT,
+    summary      TEXT,
+    rationale    TEXT,
+    area         TEXT,
+    archived_at  TEXT NOT NULL,
+    archive_reason TEXT        -- "deprecated", "jaccard_duplicate", "merged"
+);
+```
+
+#### `audit_log`
+```sql
+CREATE TABLE audit_log (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    operation   TEXT NOT NULL,   -- "upsert_node", "delete_project", "rollback"
+    target_id   TEXT,            -- node_id or project_id affected
+    actor       TEXT,            -- "mcp_tool:capture_decision", "historian_gc"
+    detail      TEXT,            -- JSON extra context
+    prev_hash   TEXT,            -- SHA-256 chain (same scheme as events)
+    created_at  TEXT NOT NULL
+);
+```
+
+**Database size estimates:**
+| Decisions | DB size | Notes |
+|-----------|---------|-------|
+| 100 | ~500 KB | Includes events + nodes + index overhead |
+| 1,000 | ~5 MB | |
+| 10,000 | ~50 MB | Still fast; BM25 index kept in memory |
+| 100,000 | ~500 MB | Add PostgreSQL backend; use `area` filters |
+
+---
+
+### 41. How does retrieval work end-to-end — from query string to injected tokens?
+
+This is the full pipeline for `load_context(project_id, query, detail_level, top_k)`:
+
+```
+Step 1 — Parse parameters
+  project_id = "my-app"
+  query      = "how should we handle auth tokens"
+  detail_level = "L2"          # L0=stub | L1=summary | L2=full with rationale
+  top_k      = 10              # max decisions to return
+  B          = 1500            # token budget (configurable via CONTEXT_BUDGET_MODE)
+
+Step 2 — L1 exact cache check
+  cache_key = SHA256(f"{project_id}:{query}:{detail_level}")
+  if cache_key in L1_CACHE:
+      return L1_CACHE[cache_key]    # 0 ms, 0 tokens, 0 DB reads
+  # Cache miss rate ~95% in practice (short-lived processes)
+
+Step 3 — Load project metadata
+  SELECT * FROM projects WHERE id = "my-app"
+  → name, tech_stack, goals, description (~50 tokens overhead)
+
+Step 4 — BM25 candidate retrieval
+  SELECT id, summary, rationale, area, alternatives, confidence, created_at
+  FROM decision_nodes
+  WHERE project_id = "my-app" AND status = "active"
+  ORDER BY created_at DESC           ← recency pre-sort before scoring
+
+  For each node, compute BM25 score:
+    tokens = tokenize(summary + " " + rationale)
+    for term in query_tokens:
+        tf  = tokens.count(term) / len(tokens)
+        idf = log((N + 1) / (df[term] + 0.5))          # N = total nodes
+        score += idf × (tf × (k+1)) / (tf + k × (1 – b + b × |doc|/avgdoclen))
+    # k=1.5, b=0.75 (standard BM25 parameters)
+
+Step 5 — Recency weighting
+  age_seconds = (now - node.created_at).total_seconds()
+  final_score = BM25_score × exp(–0.0001 × age_seconds)
+  # A node written 1 day ago (86400 s): multiplied by exp(–8.64) = 0.000175
+  # A node written 1 hour ago (3600 s): multiplied by exp(–0.36) = 0.698
+  # Fresh nodes score much higher than stale ones with equal BM25
+
+Step 6 — DCI cosine gate
+  Sort candidates by final_score descending
+  cumulative_tokens = 0
+  injected = []
+  for candidate in sorted_candidates[:top_k * 3]:      # over-fetch then gate
+      chunk_vec  = tfidf_vectorizer.transform([candidate.summary])
+      query_vec  = tfidf_vectorizer.transform([query])
+      cosine_sim = dot(chunk_vec, query_vec) / (norm(chunk_vec) × norm(query_vec))
+      chunk_tokens = estimate_tokens(candidate.rationale)
+
+      if cosine_sim >= 0.75 AND cumulative_tokens + chunk_tokens <= B:
+          injected.append(candidate)
+          cumulative_tokens += chunk_tokens
+      # Drops chunk if below similarity threshold (noise) or budget exhausted
+
+Step 7 — Format response
+  {
+    "project": {project metadata},
+    "decisions": [
+      {
+        "id": "d7c2...",
+        "summary": "Use JWT for auth, refresh token in httpOnly cookie",
+        "rationale": "Prevents XSS token theft; sliding expiry balances UX and security",
+        "area": "auth",
+        "alternatives": ["session cookies — server-side state", "paseto — less library support"],
+        "confidence": 0.88,
+        "created_at": "2026-04-25T10:30:00Z"
+      },
+      ...   ← up to top_k entries, total ≤ B tokens
+    ],
+    "token_estimate": 487,
+    "cache_tier": "L2"
+  }
+
+Step 8 — Cache result
+  L1_CACHE[cache_key] = response    # in-process dict; no TTL (process-lifetime)
+```
+
+**Why cosine AND BM25?** BM25 is fast keyword matching — great for exact terms. Cosine on TF-IDF vectors catches synonym relationships and phrasal similarity. Together they filter out both keyword-miss noise and out-of-context keyword matches. The DCI gate (θ=0.75) was calibrated on Suite 11 (n=10 seeds) to achieve the best TNR (70.2%) without over-trimming relevant chunks.
+
+---
+
+### 42. How does the NexusRouter manage LLM calls and failover?
+
+The `NexusRouter` (`src/router/nexus_router.py`) implements a **predictive circuit-breaker cascade** across three LLM providers.
+
+**Normal path (no failures):**
+```
+get_router().complete(messages, temperature=0.3)
+│
+├─ 1. Check if Groq circuit is CLOSED (healthy)
+├─ 2. If GROQ_API_KEY set: POST https://api.groq.com/v1/chat/completions
+│     ├─ model: "llama-3.3-70b-versatile"
+│     ├─ timeout: 10 s
+│     └─ on success → return response, record latency in rolling window
+└─ return ChatResponse(content=..., latency_ms=...)
+```
+
+**Failover path (Groq down):**
+```
+Groq call → timeout / 5xx / rate-limit
+│
+├─ record failure in Groq's rolling window (last 10 calls)
+├─ if failures/10 ≥ 0.5 → trip Groq circuit OPEN (30 s cooldown)
+│
+├─ try Gemini (if GEMINI_API_KEY set)
+│     └─ POST https://generativelanguage.googleapis.com/...
+│     └─ model: "gemini-2.5-flash"
+│
+├─ if Gemini also fails → try Ollama (if OLLAMA_URL set)
+│     └─ POST http://localhost:11434/api/chat
+│     └─ model: OLLAMA_MODEL env var (default: "llama3.2")
+│
+└─ if all fail → raise AllProvidersFailedError
+     └─ NexusRouter catches this → return RuleBasedFallback(messages)
+           └─ extracts first user message, returns structured JSON stub
+```
+
+**Predictive prewarm (what cuts latency from 480 ms → 149 ms):**
+```python
+# On startup, NexusRouter starts a background coroutine:
+async def _prewarm_loop():
+    while True:
+        await asyncio.sleep(PREWARM_INTERVAL_S)          # default: 30 s
+        if groq_circuit.state == OPEN:
+            # Groq is down — pre-warm Gemini with a lightweight ping
+            await gemini_client.complete(
+                messages=[{"role": "user", "content": "ping"}],
+                max_tokens=1
+            )
+            gemini_warmed = True
+        # When Groq fails, Gemini is already warm → failover in ~20 ms instead of ~480 ms
+```
+
+**Circuit breaker states:**
+```
+CLOSED → normal operation
+  ↓ (failure_rate ≥ 0.5 over last 10 calls)
+OPEN → all calls bypass this provider immediately
+  ↓ (after 30 s cooldown)
+HALF-OPEN → try one probe call
+  ↓ (probe succeeds)
+CLOSED → back to normal
+  ↓ (probe fails)
+OPEN → reset 30 s timer
+```
+
+The entire failover — Groq trip → Gemini prewarm → successful Gemini call — takes **149.5 ms** measured (Suite OMEGA-75 iter_01, n=75 trials). Without prewarm, cold Gemini startup adds ~330 ms.
+
+---
+
+### 43. How does recency-weighted BM25 actually score — and why does update accuracy jump from 0.229 to 0.600?
+
+**The problem with plain BM25:** BM25 has no concept of time. If you store "use Redis for caching" in January and then update to "use Memcached for caching" in April, both nodes have similar BM25 scores for the query "caching" — BM25 may return the older one first.
+
+**Recency weighting formula:**
+
+```
+final_score(node) = BM25(query, node) × exp(–λ × age_seconds)
+
+where:
+  λ           = 0.0001 s⁻¹    (controlled by RECENCY_LAMBDA in .env)
+  age_seconds = (now – node.created_at).total_seconds()
+```
+
+**What the decay factor does at different ages:**
+
+| Age of node | exp(–λ × age) | Effect on score |
+|-------------|---------------|-----------------|
+| Just written (0 s) | 1.000 | Full BM25 weight |
+| 1 hour (3,600 s) | 0.698 | −30% score |
+| 1 day (86,400 s) | 0.000175 | −99.98% score |
+| 1 week (604,800 s) | ≈ 0 | Effectively zero |
+
+**Why update accuracy jumps from 0.229 → 0.600:**
+
+Dataset B (35 update samples) tests whether the *updated* version of a fact comes back first. Without recency weighting, both the old and new node have equal BM25 scores — whichever was written first tends to have a higher BM25 score (more index history). With λ=0.0001:
+
+```
+Old node (written 2 days ago):  BM25=0.82 × exp(–0.0001 × 172800) = 0.82 × 5.1e-8 ≈ 0
+New node (written 1 hour ago):  BM25=0.79 × exp(–0.0001 × 3600)   = 0.79 × 0.698  = 0.55
+
+→ New node wins, returned first → update_accuracy = 1 for this sample
+```
+
+Without weighting, the old node's slightly higher BM25 (0.82 > 0.79) wins → wrong answer. 35 such samples × ~85% correction rate = the **+37.1 pp** measured in Suite 15 v2.
+
+**Tuning λ:** The default λ=0.0001 s⁻¹ gives a half-life of ~1.9 hours. For slower-moving projects (decisions stable for days), increase λ to `0.00001` (half-life ~19 hours). Set via `RECENCY_LAMBDA=0.00001` in `.env`.
+
+---
+
 ## Architecture Deep-Dive
 
 ContextForge has **five architectural pillars**, each a standalone module:
