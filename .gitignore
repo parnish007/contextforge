@@ -104,6 +104,8 @@ data/*.tex
 # PDFs at the repo root are LaTeX compilation artifacts, not source files.
 # .tex sources are tracked; regenerate PDFs locally with pdflatex.
 contextforge*.pdf
+# Exception: publication-ready paper PDF is tracked explicitly
+!CONTEXTFORGE_PAPER*.pdf
 *.docx
 
 # ── Forge Snapshots (runtime encrypted state) ─────────────────────────────────
