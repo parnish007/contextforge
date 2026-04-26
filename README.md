@@ -362,7 +362,7 @@ sync.create_snapshot(label="before-refactor")
 </details>
 
 <details>
-<summary><b>💾 Ledger & Sync (6 tools)</b></summary>
+<summary><b>💾 Ledger & Sync (5 tools)</b></summary>
 
 | Tool | Purpose |
 |:---|:---|
@@ -371,6 +371,15 @@ sync.create_snapshot(label="before-refactor")
 | `list_snapshots` | List all `.forge` snapshot files |
 | `replay_sync` | Cross-device context restore from `.forge` |
 | `list_events` | Inspect the append-only event ledger |
+
+</details>
+
+<details>
+<summary><b>🔍 Search (1 tool)</b></summary>
+
+| Tool | Purpose |
+|:---|:---|
+| `search_context` | Semantic search over local files — zero cloud tokens |
 
 </details>
 
@@ -434,7 +443,7 @@ python research/figures/gen_security_tradeoff_fig19.py
 
 | Document | Start here if… |
 |:---|:---|
-| [`docs/WHAT_IS_THIS.md`](docs/WHAT_IS_THIS.md) | You want to understand what this is before installing (36-question FAQ) |
+| [`docs/WHAT_IS_THIS.md`](docs/WHAT_IS_THIS.md) | You want to understand what this is before installing (43-question FAQ) |
 | [`docs/SETUP.md`](docs/SETUP.md) | **You're ready to install** — IDE configs, API keys, Ollama, troubleshooting |
 | [`docs/HOW_TO_USE.md`](docs/HOW_TO_USE.md) | You have it running and want to use it effectively (all 22 tools with workflows) |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | You want to understand or extend the internals |
