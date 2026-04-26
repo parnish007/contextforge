@@ -6,7 +6,7 @@
 
 <div align="center">
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=18&pause=1200&color=FF6B35&center=true&vCenter=true&width=700&lines=Persistent+memory+across+every+AI+coding+session;93%25+token+savings+vs+CLAUDE.md+paste;%231+Memory+Quality+of+6+systems+%E2%80%94+MIS+%3D+0.801;90%25+adversarial+block+rate+%7C+990+tests+passing;Zero+cloud+retrieval+cost+%7C+runs+fully+offline)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=18&pause=1200&color=FF6B35&center=true&vCenter=true&width=700&lines=Persistent+memory+across+every+AI+coding+session;93%25+token+savings+vs+CLAUDE.md+paste;%231+Memory+Quality+of+6+systems+MIS+%3D+0.801;90%25+adversarial+block+rate+%7C+990+tests+passing;Zero+cloud+retrieval+cost+%7C+runs+fully+offline)](https://git.io/typing-svg)
 
 </div>
 
@@ -20,6 +20,7 @@
 ![Tests](https://img.shields.io/badge/Tests-990_Passing-22C55E?style=for-the-badge&logo=checkmarx&logoColor=white)
 ![Memory Rank](https://img.shields.io/badge/Memory_Quality-%231_of_6_Systems-EF4444?style=for-the-badge)
 ![Composite Safety](https://img.shields.io/badge/Safety_Index_Φ-79.7%25-7C3AED?style=for-the-badge)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19784778-1682D4?style=for-the-badge&logo=zenodo&logoColor=white)](https://doi.org/10.5281/zenodo.19784778)
 
 </div>
 
@@ -34,7 +35,7 @@
 <div align="center">
 
 > **Author:** Trilochan Sharma — Independent Researcher · [@parnish007](https://github.com/parnish007)
-> **Paper:** [`research/contextforge_v2_final.tex`](research/contextforge_v2_final.tex) (v2.3) · **Benchmark:** 990 tests · Φ = 79.7%
+> **Paper:** [`research/contextforge_v2_final.tex`](research/contextforge_v2_final.tex) (v2.3) · **Zenodo:** [doi.org/10.5281/zenodo.19784778](https://doi.org/10.5281/zenodo.19784778) · **Benchmark:** 990 tests · Φ = 79.7%
 
 </div>
 
@@ -362,7 +363,7 @@ sync.create_snapshot(label="before-refactor")
 </details>
 
 <details>
-<summary><b>💾 Ledger & Sync (5 tools)</b></summary>
+<summary><b>💾 Ledger & Sync (6 tools)</b></summary>
 
 | Tool | Purpose |
 |:---|:---|
@@ -371,14 +372,6 @@ sync.create_snapshot(label="before-refactor")
 | `list_snapshots` | List all `.forge` snapshot files |
 | `replay_sync` | Cross-device context restore from `.forge` |
 | `list_events` | Inspect the append-only event ledger |
-
-</details>
-
-<details>
-<summary><b>🔍 Search (1 tool)</b></summary>
-
-| Tool | Purpose |
-|:---|:---|
 | `search_context` | Semantic search over local files — zero cloud tokens |
 
 </details>
@@ -443,7 +436,7 @@ python research/figures/gen_security_tradeoff_fig19.py
 
 | Document | Start here if… |
 |:---|:---|
-| [`docs/WHAT_IS_THIS.md`](docs/WHAT_IS_THIS.md) | You want to understand what this is before installing (43-question FAQ) |
+| [`docs/WHAT_IS_THIS.md`](docs/WHAT_IS_THIS.md) | You want to understand what this is before installing (36-question FAQ) |
 | [`docs/SETUP.md`](docs/SETUP.md) | **You're ready to install** — IDE configs, API keys, Ollama, troubleshooting |
 | [`docs/HOW_TO_USE.md`](docs/HOW_TO_USE.md) | You have it running and want to use it effectively (all 22 tools with workflows) |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | You want to understand or extend the internals |
@@ -455,7 +448,26 @@ python research/figures/gen_security_tradeoff_fig19.py
 
 ---
 
-## 📦 Publication Outputs
+## 📦 Publication & Citation
+
+<div align="center">
+
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19784778-1682D4?style=for-the-badge&logo=zenodo&logoColor=white)](https://doi.org/10.5281/zenodo.19784778)
+
+</div>
+
+If you use ContextForge in your research, please cite:
+
+```bibtex
+@software{sharma_2025_contextforge,
+  author    = {Sharma, Trilochan},
+  title     = {ContextForge: Agentic Memory for AI-Assisted Development},
+  year      = {2025},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.19784778},
+  url       = {https://doi.org/10.5281/zenodo.19784778}
+}
+```
 
 | Asset | Description |
 |:---|:---|
