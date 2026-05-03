@@ -462,7 +462,7 @@ If you use ContextForge in your research, please cite:
 @software{sharma_2025_contextforge,
   author    = {Sharma, Trilochan},
   title     = {ContextForge: Agentic Memory for AI-Assisted Development},
-  year      = {2025},
+  year      = {2026},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.19784778},
   url       = {https://doi.org/10.5281/zenodo.19784778}
